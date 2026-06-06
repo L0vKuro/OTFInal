@@ -36,7 +36,7 @@ export default function HomePage() {
 
           <div className="relative z-10 flex flex-col items-center text-center px-6">
             {/* Logo — big, no black box */}
-            <div className="relative mb-10" style={{ width: '400px', height: '120px', mixBlendMode: 'screen', filter: 'drop-shadow(0 0 40px rgba(232,25,26,0.5))' }}>
+            <div className="relative mb-10" style={{ width: '600px', height: '180px', mixBlendMode: 'screen', filter: 'drop-shadow(0 0 40px rgba(232,25,26,0.5))' }}>
               <Image src="/logo-transparent-red (1).png" alt="Overtake" fill className="object-contain" priority />
             </div>
 
