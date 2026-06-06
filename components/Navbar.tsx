@@ -37,7 +37,7 @@ export default function Navbar() {
           {/* ── Logo ── */}
           <Link href="/" className="flex items-center group">
             <img
-              src="https://i.imgur.com/j8SWrYB.png"
+              src="https://imgur.com/ekFkWc4"
               alt="OVERTAKE"
               style={{ height: '52px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen' }}
             />
