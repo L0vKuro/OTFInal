@@ -110,14 +110,14 @@ export default function PartnersPage() {
                 className="flex items-center gap-3 bg-[#E8191A] hover:bg-[#B81011] px-8 py-4 font-bold tracking-widest uppercase text-sm transition-all hover:shadow-[0_0_30px_rgba(232,25,26,0.4)] clip-corner text-white w-fit"
                 style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
                 <Mail size={16} />
-                partnerships@overtakegg.com
+                here@overtakegg.com
               </a>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               {[
                 { label: 'Brand Visibility', desc: 'Across all Overtake platforms, jerseys, and content' },
-                { label: 'Creator Integrations', desc: 'Organic content with 10M+ combined reach' },
+                { label: 'Creator Integrations', desc: 'Organic content with 1M+ combined reach' },
                 { label: 'Event Presence', desc: 'Logos and activations at live tournament events' },
                 { label: 'Custom Campaigns', desc: 'Tailored activations built around your goals' },
               ].map((benefit) => (
