@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Menu, X, ChevronRight } from 'lucide-react'
@@ -16,11 +16,18 @@ const navLinks = [
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
+  const [hidden, setHidden] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const lastScroll = useRef(0)
   const pathname = usePathname()
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20)
+    const onScroll = () => {
+      const current = window.scrollY
+      setHidden(current > lastScroll.current && current > 80)
+      setScrolled(current > 20)
+      lastScroll.current = current
+    }
     window.addEventListener('scroll', onScroll)
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
@@ -30,6 +37,8 @@ export default function Navbar() {
   return (
     <>
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        hidden ? '-translate-y-full' : 'translate-y-0'
+      } ${
         scrolled ? 'bg-[#0D0D0D]/95 backdrop-blur-md border-b border-white/5 py-3' : 'bg-transparent py-5'
       }`}>
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
@@ -39,7 +48,7 @@ export default function Navbar() {
             <img
               src="/wordmark.png"
               alt="OVERTAKE"
-              style={{ height: '138px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen' }}
+              style={{ height: '52px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen' }}
             />
           </Link>
 
@@ -81,7 +90,7 @@ export default function Navbar() {
         }`}>
           <div className="flex items-center justify-between p-6 border-b border-white/5">
             <img
-              src="/overtake-wordmark.png"
+              src="/wordmark.png"
               alt="OVERTAKE"
               style={{ height: '36px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen' }}
             />
