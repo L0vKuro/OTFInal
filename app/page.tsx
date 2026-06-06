@@ -202,8 +202,10 @@ export default function HomePage() {
                   className="group relative bg-[#0D0D0D] border border-white/5 hover:border-[#E8191A]/30 overflow-hidden card-hover block">
                   <div className="h-48 relative overflow-hidden bg-[#1A1A1A]">
                     <img src={article.image} alt={article.title}
-                      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.25)', transition: 'all 0.5s' }}
-                      className="group-hover:brightness-75 scale-105 group-hover:scale-100" />
+                      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.25)', transition: 'filter 0.5s ease, transform 0.5s ease' }}
+                        onMouseEnter={e => (e.currentTarget.style.filter = 'brightness(1)')}
+                          onMouseLeave={e => (e.currentTarget.style.filter = 'brightness(0.25)')}
+                          className="scale-105 group-hover:scale-100"
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0D] via-[#0D0D0D]/40 to-transparent group-hover:via-transparent transition-all duration-500" />
                     <div className="absolute top-3 left-3 z-10">
                       <span className="text-[10px] font-mono font-bold px-2 py-1 bg-[#E8191A] text-[#F2F2F2] uppercase tracking-widest">{article.category}</span>
