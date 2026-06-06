@@ -36,8 +36,8 @@ export default function HomePage() {
 
           <div className="relative z-10 flex flex-col items-center text-center px-6">
             {/* Logo — big, no black box */}
-            <div className="relative mb-10" style={{ width: '220px', height: '220px', mixBlendMode: 'screen', filter: 'drop-shadow(0 0 40px rgba(232,25,26,0.5))' }}>
-              <Image src="/overtake-logo.png" alt="Overtake" fill className="object-contain" priority />
+            <div className="relative mb-10" style={{ width: '400px', height: '120px', mixBlendMode: 'screen', filter: 'drop-shadow(0 0 40px rgba(232,25,26,0.5))' }}>
+              <Image src="/wordmark.png" alt="Overtake" fill className="object-contain" priority />
             </div>
 
             <h1 className="font-display font-black text-4xl md:text-6xl uppercase text-[#F2F2F2] mb-2 leading-tight"
