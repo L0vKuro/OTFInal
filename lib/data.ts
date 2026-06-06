@@ -127,10 +127,12 @@ export const creators = [
 
 export const partners = [
   {
-    name: 'YOUR BRAND',
-    category: 'Partner',
-    tier: 'Founding',
-    desc: 'Interested in partnering with Overtake? Reach out to us.',
+    name: 'RepulseCo',
+    category: 'Apparel',
+    tier: 'Official',
+    desc: 'The fear of being normal. RepulseCo is redefining the future of esports clothing — built for competitors who refuse to blend in.',
+    logo: '/repulse.jpg',
+    link: 'https://www.repulseco.com/',
   },
 ]
 
