@@ -81,7 +81,7 @@ export default function Navbar() {
         }`}>
           <div className="flex items-center justify-between p-6 border-b border-white/5">
             <img
-              src="https://i.imgur.com/j8SWrYB.png"
+              src="https://imgur.com/ekFkWc4"
               alt="OVERTAKE"
               style={{ height: '36px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen' }}
             />
