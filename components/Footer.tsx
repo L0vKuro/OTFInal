@@ -44,7 +44,7 @@ export default function Footer() {
               <img
                 src="/wordmark.png"
                 alt="OVERTAKE"
-                style={{ height: '48px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen' }}
+                style={{ height: '68px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen' }}
               />
             </Link>
             <p className="text-[#F2F2F2]/35 text-sm leading-relaxed max-w-xs mb-6">
