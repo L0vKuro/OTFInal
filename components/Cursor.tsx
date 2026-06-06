@@ -12,18 +12,35 @@ export default function Cursor() {
   }, [])
 
   return (
-    <div
-      className="fixed pointer-events-none z-[9999] rounded-full"
-      style={{
-        left: pos.x,
-        top: pos.y,
-        width: '32px',
-        height: '32px',
-        transform: 'translate(-50%, -50%)',
-        background: 'rgba(0, 0, 0, 0.6)',
-        border: '1px solid rgba(255,255,255,0.15)',
-        backdropFilter: 'blur(2px)',
-      }}
-    />
+    <>
+      {/* Large faded cloud */}
+      <div
+        className="fixed pointer-events-none z-[9998]"
+        style={{
+          left: pos.x,
+          top: pos.y,
+          width: '300px',
+          height: '300px',
+          transform: 'translate(-50%, -50%)',
+          background: 'radial-gradient(circle, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.15) 50%, transparent 75%)',
+          borderRadius: '50%',
+          filter: 'blur(18px)',
+          transition: 'left 0.08s ease, top 0.08s ease',
+        }}
+      />
+      {/* Small center dot */}
+      <div
+        className="fixed pointer-events-none z-[9999]"
+        style={{
+          left: pos.x,
+          top: pos.y,
+          width: '8px',
+          height: '8px',
+          transform: 'translate(-50%, -50%)',
+          background: 'rgba(255,255,255,0.6)',
+          borderRadius: '50%',
+        }}
+      />
+    </>
   )
 }
