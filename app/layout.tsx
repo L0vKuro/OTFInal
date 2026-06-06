@@ -1,8 +1,8 @@
-import Cursor from '@/components/Cursor'
 import type { Metadata } from 'next'
 import './globals.css'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import Cursor from '@/components/Cursor'
 
 export const metadata: Metadata = {
   title: 'OVERTAKE — Competitive Esports Organization',
@@ -31,6 +31,7 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-[#0D0D0D] text-[#F2F2F2] min-h-screen flex flex-col">
+        <Cursor />
         <Navbar />
         <main className="flex-1">
           {children}
