@@ -31,34 +31,39 @@ export default function HomePage() {
       {/* ─── SPLASH SCREEN ─── */}
       {!splashDone && (
         <div className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#0D0D0D] transition-opacity duration-700 ${fadeOut ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-          <div className="absolute inset-0 bg-grid opacity-20" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-[#E8191A]/12 blur-[160px] rounded-full animate-pulse" />
+          {/* Background grid */}
+          <div className="absolute inset-0 bg-grid opacity-30" />
+
+          {/* Animated red glow orbs */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#E8191A]/10 blur-[150px] rounded-full animate-pulse" />
           <div className="absolute top-1/4 right-1/4 w-[300px] h-[300px] bg-[#E8191A]/6 blur-[100px] rounded-full" />
 
-          <div className="relative z-10 flex flex-col items-center text-center px-6">
+          {/* Diagonal lines */}
+          <div className="absolute inset-0 overflow-hidden opacity-10">
+            {[...Array(10)].map((_, i) => (
+              <div key={i} className="absolute top-0 bottom-0 w-px bg-[#E8191A]/40"
+                style={{ left: `${i * 10}%`, transform: 'skewX(-15deg)' }} />
+            ))}
+          </div>
 
-            {/* Logo — no background, mix-blend-mode removes black */}
-            <div className="relative w-32 h-32 mb-6" style={{ mixBlendMode: 'screen' }}>
+          <div className="relative z-10 flex flex-col items-center text-center px-6">
+            {/* Logo */}
+            <div className="relative w-28 h-28 mb-8 drop-shadow-[0_0_30px_rgba(232,25,26,0.6)]">
               <Image src="/overtake-logo.png" alt="Overtake" fill className="object-contain" priority />
             </div>
 
-            {/* Wordmark — BIG, transparent, no black box */}
-            <div className="relative mb-10" style={{ width: '420px', height: '80px', mixBlendMode: 'screen' }}>
-              <Image
-                src="/overtake-wordmark-new.png"
-                alt="OVERTAKE"
-                fill
-                className="object-contain"
-                priority
-              />
+            {/* Wordmark */}
+            <div className="relative h-12 w-72 mb-12">
+              <Image src="/overtake-wordmark-new.png" alt="OVERTAKE" fill className="object-contain"
+                style={{ mixBlendMode: 'screen' }} priority />
             </div>
 
             {/* Question */}
-            <h1 className="font-display font-black text-4xl md:text-6xl uppercase text-[#F2F2F2] mb-2 leading-tight"
+            <h1 className="font-display font-black text-3xl md:text-5xl uppercase text-[#F2F2F2] mb-3 leading-tight"
               style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-              ARE YOU READY TO
+              Are you ready to
             </h1>
-            <h2 className="font-display font-black text-5xl md:text-7xl uppercase leading-tight mb-14"
+            <h2 className="font-display font-black text-4xl md:text-6xl uppercase leading-tight mb-12"
               style={{
                 fontFamily: 'Barlow Condensed, sans-serif',
                 background: 'linear-gradient(135deg, #FF3334, #E8191A)',
@@ -69,17 +74,17 @@ export default function HomePage() {
               OVERTAKE YOUR LIMITS?
             </h2>
 
-            {/* YES / NO — same size and shape */}
+            {/* Buttons */}
             <div className="flex items-center gap-5">
               <button onClick={handleYes}
-                className="group flex items-center justify-center gap-3 bg-[#E8191A] hover:bg-[#B81011] font-black tracking-widest uppercase text-xl transition-all hover:shadow-[0_0_40px_rgba(232,25,26,0.6)] text-[#F2F2F2]"
-                style={{ fontFamily: 'Barlow Condensed, sans-serif', width: '200px', height: '64px', clipPath: 'polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%)' }}>
+                className="group flex items-center gap-3 bg-[#E8191A] hover:bg-[#B81011] px-12 py-4 font-black tracking-widest uppercase text-lg transition-all hover:shadow-[0_0_40px_rgba(232,25,26,0.6)] clip-corner text-[#F2F2F2]"
+                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
                 YES
-                <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
               </button>
               <button onClick={handleNo}
-                className="flex items-center justify-center font-black tracking-widest uppercase text-xl text-[#F2F2F2]/60 hover:text-[#F2F2F2] border border-white/20 hover:border-white/40 transition-all"
-                style={{ fontFamily: 'Barlow Condensed, sans-serif', width: '200px', height: '64px', clipPath: 'polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%)' }}>
+                className="flex items-center gap-3 border border-white/15 hover:border-white/30 px-12 py-4 font-black tracking-widest uppercase text-lg text-[#F2F2F2]/50 hover:text-[#F2F2F2] transition-all"
+                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
                 NO
               </button>
             </div>
@@ -92,30 +97,38 @@ export default function HomePage() {
 
         {/* ─── HERO ─── */}
         <section className="relative min-h-screen flex items-center overflow-hidden">
-          {/* Base bg */}
           <div className="absolute inset-0 bg-[#0D0D0D]" />
+          <div className="absolute inset-0 bg-grid opacity-40" />
 
-          {/* Wallpaper — faded/transparent behind content */}
-          <div className="absolute inset-0">
-            <Image
-              src="/overtake-wallpaper.png"
-              alt=""
-              fill
-              className="object-cover object-center"
-              style={{ opacity: 0.18 }}
-              priority
-            />
-            {/* Extra dark gradient overlay so text stays readable */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#0D0D0D] via-[#0D0D0D]/80 to-[#0D0D0D]/40" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0D] via-transparent to-[#0D0D0D]/60" />
+          {/* 3D logo watermark behind text */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
+            <div className="relative w-[700px] h-[700px] opacity-[0.06]"
+              style={{
+                filter: 'drop-shadow(0 0 60px rgba(232,25,26,0.8)) drop-shadow(0 0 120px rgba(232,25,26,0.4))',
+                transform: 'perspective(800px) rotateX(15deg) rotateY(-10deg) scale(1.1)',
+              }}>
+              <Image src="/overtake-logo.png" alt="" fill className="object-contain" />
+            </div>
           </div>
 
-          <div className="absolute inset-0 bg-grid opacity-25" />
+          {/* Second layer — slightly offset for depth */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
+            <div className="relative w-[550px] h-[550px] opacity-[0.04]"
+              style={{
+                filter: 'drop-shadow(0 0 40px rgba(232,25,26,1))',
+                transform: 'perspective(800px) rotateX(5deg) rotateY(5deg) scale(0.95)',
+              }}>
+              <Image src="/overtake-logo.png" alt="" fill className="object-contain" />
+            </div>
+          </div>
+
+          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#E8191A]/8 blur-[120px] rounded-full" />
+          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#E8191A]/5 blur-[100px] rounded-full" />
 
           {/* Diagonal lines */}
           <div className="absolute right-0 top-0 h-full w-1/2 overflow-hidden opacity-10">
             {[...Array(8)].map((_, i) => (
-              <div key={i} className="absolute top-0 right-0 w-px h-full bg-[#E8191A]/40"
+              <div key={i} className="absolute top-0 right-0 w-px h-full bg-[#E8191A]/30"
                 style={{ right: `${i * 60}px`, transform: 'skewX(-15deg)', transformOrigin: 'top' }} />
             ))}
           </div>
@@ -195,6 +208,7 @@ export default function HomePage() {
                 View All Teams <ArrowRight size={14} />
               </Link>
             </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {teams.map((team) => (
                 <Link key={team.id} href={`/teams#${team.id}`}

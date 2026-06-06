@@ -35,15 +35,21 @@ export default function Navbar() {
       }`}>
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
 
-          {/* ── Logo ── */}
+          {/* ── Logo: crosshair + wordmark ── */}
           <Link href="/" className="flex items-center gap-3 group">
-            {/* Crosshair icon — mix-blend-mode removes black bg */}
-            <div className="relative flex-shrink-0" style={{ width: '44px', height: '44px', mixBlendMode: 'screen' }}>
+            <div className="relative w-10 h-10 flex-shrink-0 group-hover:drop-shadow-[0_0_10px_rgba(232,25,26,0.9)] transition-all duration-300">
               <Image src="/overtake-logo.png" alt="Overtake" fill className="object-contain" priority />
             </div>
-            {/* Wordmark — big and transparent */}
-            <div className="relative flex-shrink-0" style={{ width: '200px', height: '44px', mixBlendMode: 'screen' }}>
-              <Image src="/overtake-wordmark-new.png" alt="OVERTAKE" fill className="object-contain object-left" priority />
+            {/* New red/white wordmark — remove black background with mix-blend-mode */}
+            <div className="relative h-9 w-44 flex-shrink-0">
+              <Image
+                src="/overtake-wordmark-new.png"
+                alt="OVERTAKE"
+                fill
+                className="object-contain object-left"
+                priority
+                style={{ mixBlendMode: 'screen' }}
+              />
             </div>
           </Link>
 
@@ -60,10 +66,10 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* ── CTA + Toggle ── */}
+          {/* ── CTA + Mobile Toggle ── */}
           <div className="flex items-center gap-4">
             <Link href="/join"
-              className="hidden sm:flex items-center gap-2 bg-[#E8191A] hover:bg-[#B81011] px-6 py-3 text-sm font-bold tracking-widest uppercase transition-all hover:shadow-[0_0_20px_rgba(232,25,26,0.4)] clip-corner text-[#F2F2F2]"
+              className="hidden sm:flex items-center gap-2 bg-[#E8191A] hover:bg-[#B81011] px-5 py-2.5 text-sm font-bold tracking-widest uppercase transition-all hover:shadow-[0_0_20px_rgba(232,25,26,0.4)] clip-corner text-[#F2F2F2]"
               style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
               Join Overtake <ChevronRight size={14} />
             </Link>
@@ -84,12 +90,13 @@ export default function Navbar() {
           menuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}>
           <div className="flex items-center justify-between p-6 border-b border-white/5">
-            <div className="flex items-center gap-2">
-              <div className="relative flex-shrink-0" style={{ width: '36px', height: '36px', mixBlendMode: 'screen' }}>
+            <div className="flex items-center gap-3">
+              <div className="relative w-8 h-8 flex-shrink-0">
                 <Image src="/overtake-logo.png" alt="Overtake" fill className="object-contain" />
               </div>
-              <div className="relative flex-shrink-0" style={{ width: '160px', height: '36px', mixBlendMode: 'screen' }}>
-                <Image src="/overtake-wordmark-new.png" alt="OVERTAKE" fill className="object-contain object-left" />
+              <div className="relative h-7 w-36 flex-shrink-0">
+                <Image src="/overtake-wordmark-new.png" alt="OVERTAKE" fill className="object-contain object-left"
+                  style={{ mixBlendMode: 'screen' }} />
               </div>
             </div>
             <button onClick={() => setMenuOpen(false)} className="text-[#F2F2F2]/40 hover:text-[#F2F2F2]">
