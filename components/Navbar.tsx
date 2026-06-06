@@ -37,7 +37,7 @@ export default function Navbar() {
           {/* ── Logo ── */}
           <Link href="/" className="flex items-center group">
             <img
-              src="https://imgur.com/ekFkWc4"
+              src="/overtake-wordmark.png"
               alt="OVERTAKE"
               style={{ height: '52px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen' }}
             />
@@ -81,7 +81,7 @@ export default function Navbar() {
         }`}>
           <div className="flex items-center justify-between p-6 border-b border-white/5">
             <img
-              src="https://imgur.com/ekFkWc4"
+              src="/overtake-wordmark.png"
               alt="OVERTAKE"
               style={{ height: '36px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen' }}
             />
