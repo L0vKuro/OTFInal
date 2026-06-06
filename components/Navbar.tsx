@@ -39,7 +39,7 @@ export default function Navbar() {
             <img
               src="/wordmark.png"
               alt="OVERTAKE"
-              style={{ height: '52px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen' }}
+              style={{ height: '152px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen' }}
             />
           </Link>
 
