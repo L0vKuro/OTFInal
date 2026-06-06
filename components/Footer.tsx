@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import { Twitter, Youtube, Instagram, Twitch, MessageCircle, ChevronRight } from 'lucide-react'
 
 const socialLinks = [
@@ -38,16 +37,15 @@ export default function Footer() {
 
       <div className="relative max-w-7xl mx-auto px-6">
         <div className="py-16 grid grid-cols-1 lg:grid-cols-5 gap-12">
+
           {/* Brand */}
           <div className="lg:col-span-2">
-            <Link href="/" className="inline-flex items-center gap-3 mb-6 group">
-              <div className="relative w-10 h-10 flex-shrink-0 group-hover:drop-shadow-[0_0_8px_rgba(232,25,26,0.6)] transition-all duration-300">
-                <Image src="/overtake-logo.png" alt="Overtake" fill className="object-contain" />
-              </div>
-              <div className="relative h-8 w-40 flex-shrink-0">
-                <Image src="/overtake-wordmark-new.png" alt="OVERTAKE" fill className="object-contain object-left"
-                  style={{ mixBlendMode: 'screen' }} />
-              </div>
+            <Link href="/" className="inline-flex items-center mb-6">
+              <img
+                src="https://i.imgur.com/j8SWrYB.png"
+                alt="OVERTAKE"
+                style={{ height: '48px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen' }}
+              />
             </Link>
             <p className="text-[#F2F2F2]/35 text-sm leading-relaxed max-w-xs mb-6">
               Overtake is a premier competitive esports organization building the next generation of champions in & out of the game.
