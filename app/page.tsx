@@ -36,19 +36,22 @@ export default function HomePage() {
         <div className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#0D0D0D] transition-opacity duration-700 ${fadeOut ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
           <div className="absolute inset-0 bg-grid opacity-20" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-[#E8191A]/12 blur-[160px] rounded-full animate-pulse" />
-          <div className="relative z-10 flex flex-col items-center text-center px-6">
-            <div className="relative mb-10" style={{ width: '600px', height: '180px', mixBlendMode: 'screen', filter: 'drop-shadow(0 0 40px rgba(232,25,26,0.5))' }}>
+          <div className="relative z-10 flex flex-col items-center text-center px-6 w-full">
+            {/* Wordmark — responsive size */}
+            <div className="relative mb-8" style={{ width: 'min(600px, 90vw)', height: 'min(180px, 27vw)', mixBlendMode: 'screen', filter: 'drop-shadow(0 0 40px rgba(232,25,26,0.5))' }}>
               <Image src="/wordmark.png" alt="Overtake" fill className="object-contain" priority />
             </div>
-            <h1 className="font-display font-black text-4xl md:text-6xl uppercase text-[#F2F2F2] mb-2 leading-tight"
+            {/* Question — responsive text */}
+            <h1 className="font-display font-black text-3xl md:text-6xl uppercase text-[#F2F2F2] mb-2 leading-tight"
               style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
               ARE YOU READY TO
             </h1>
-            <h2 className="font-display font-black text-5xl md:text-7xl uppercase leading-tight mb-14"
+            <h2 className="font-display font-black text-4xl md:text-7xl uppercase leading-tight mb-10"
               style={{ fontFamily: 'Barlow Condensed, sans-serif', background: 'linear-gradient(135deg, #FF3334, #E8191A)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
               OVERTAKE YOUR LIMITS?
             </h2>
-            <div className="flex items-center gap-5">
+            {/* Buttons — stack on mobile */}
+            <div className="flex flex-col sm:flex-row items-center gap-5">
               <button onClick={handleYes}
                 className="group flex items-center justify-center gap-3 bg-[#E8191A] hover:bg-[#B81011] font-black tracking-widest uppercase text-xl transition-all hover:shadow-[0_0_40px_rgba(232,25,26,0.6)] text-[#F2F2F2]"
                 style={{ fontFamily: 'Barlow Condensed, sans-serif', width: '200px', height: '64px', clipPath: 'polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%)' }}>
