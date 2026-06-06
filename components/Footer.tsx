@@ -42,7 +42,7 @@ export default function Footer() {
           <div className="lg:col-span-2">
             <Link href="/" className="inline-flex items-center mb-6">
               <img
-                src="https://i.imgur.com/j8SWrYB.png"
+                src="/wordmark.png"
                 alt="OVERTAKE"
                 style={{ height: '48px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen' }}
               />
