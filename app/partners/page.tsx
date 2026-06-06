@@ -47,7 +47,6 @@ export default function PartnersPage() {
           const config = TIER_CONFIG[tier]
           return (
             <div key={tier}>
-              {/* Tier header */}
               <div className="flex items-center gap-4 mb-10">
                 <span
                   className="text-xs font-mono font-bold px-3 py-1.5 uppercase tracking-widest"
@@ -60,9 +59,12 @@ export default function PartnersPage() {
 
               <div className={`grid gap-4 ${tier === 'Founding' ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'}`}>
                 {tierPartners.map((partner) => (
-                  <div
+                  
                     key={partner.name}
-                    className="group relative bg-[#0D0D0D] border border-white/5 hover:border-white/10 overflow-hidden card-hover p-6"
+                    href={partner.link || '#'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group relative bg-[#0D0D0D] border border-white/5 hover:border-white/20 overflow-hidden card-hover p-6 block"
                     style={{ borderTopColor: config.color + '40' }}
                   >
                     <div className="h-px w-full mb-6" style={{ background: `linear-gradient(90deg, ${config.color}, transparent)` }} />
@@ -75,8 +77,22 @@ export default function PartnersPage() {
                       {partner.category}
                     </span>
 
-                    {/* Logo placeholder */}
-                    <div className="mb-4">
+                    {/* Logo image if available, otherwise show name */}
+                    <div className="mb-4 flex items-center gap-4">
+                      {partner.logo && (
+                        <img
+                          src={partner.logo}
+                          alt={partner.name}
+                          style={{
+                            width: '64px',
+                            height: '64px',
+                            objectFit: 'contain',
+                            borderRadius: '8px',
+                            background: '#fff',
+                            padding: '6px',
+                          }}
+                        />
+                      )}
                       <h3
                         className={`font-display font-black uppercase text-white ${tier === 'Founding' ? 'text-5xl' : 'text-3xl'}`}
                         style={{ fontFamily: 'Barlow Condensed, sans-serif' }}
@@ -87,15 +103,13 @@ export default function PartnersPage() {
 
                     <p className="text-white/40 text-sm leading-relaxed">{partner.desc}</p>
 
-                    {tier === 'Founding' && (
-                      <div
-                        className="mt-6 flex items-center gap-2 text-sm font-medium"
-                        style={{ color: config.color }}
-                      >
-                        View Partnership <ChevronRight size={14} />
-                      </div>
-                    )}
-                  </div>
+                    <div
+                      className="mt-6 flex items-center gap-2 text-sm font-medium group-hover:gap-3 transition-all"
+                      style={{ color: config.color }}
+                    >
+                      Visit Website <ChevronRight size={14} />
+                    </div>
+                  </a>
                 ))}
               </div>
             </div>
@@ -119,9 +133,9 @@ export default function PartnersPage() {
                 We work with brands that share our values — high performance, authenticity, and a deep connection to gaming culture. Reach out to our partnerships team.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <a
+                
                   href="mailto:partnerships@overtakegg.com"
-                  className="flex items-center gap-3 bg-[#E8191A] hover:bg-[#B81011] px-8 py-4 font-bold tracking-widest uppercase text-sm transition-all hover:shadow-[0_0_30px_rgba(232,25,26,0.4)] clip-corner"
+                  className="flex items-center gap-3 bg-[#E8191A] hover:bg-[#B81011] px-8 py-4 font-bold tracking-widest uppercase text-sm transition-all hover:shadow-[0_0_30px_rgba(232,25,26,0.4)] clip-corner text-white"
                   style={{ fontFamily: 'Barlow Condensed, sans-serif' }}
                 >
                   <Mail size={16} />
