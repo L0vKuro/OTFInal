@@ -39,15 +39,15 @@ const milestones = [
 ]
 
 const leadership = [
-  { name: 'Lazur', role: 'CEO / Founder', bio: 'Visionary behind Overtake Sector. Building the org from the ground up with passion and purpose.' },
-  { name: 'Kuro', role: 'COO', bio: 'Oversees day-to-day operations and keeps the organization running at its best.' },
-  { name: 'Ghxst', role: 'General Manager', bio: 'Manages the overall direction of teams and ensures competitive excellence across all titles.' },
-  { name: 'Ghost', role: 'Project Manager', bio: 'Coordinates projects and initiatives across the organization to keep everything on track.' },
-  { name: 'Dynasty', role: 'Content Manager', bio: 'Leads the content strategy and creative direction for Overtake across all platforms.' },
-  { name: 'Chunk', role: 'Discord Manager', bio: 'Manages and grows the Overtake community on Discord, keeping members engaged.' },
-  { name: 'Jxe', role: 'Social Media Manager', bio: 'Drives Overtake\'s social presence and keeps fans connected with the latest updates.' },
-  { name: 'Visionz', role: 'CoD Manager', bio: 'Oversees the Call of Duty roster and competitive strategy.' },
-  { name: 'Zap', role: 'Fortnite Manager', bio: 'Manages the Fortnite division and competitive operations.' },
+  { name: 'Lazur', role: 'CEO / Founder', bio: 'Visionary behind Overtake Sector. Building the org from the ground up with passion and purpose.', twitter: 'wydlazur' },
+  { name: 'Kuro', role: 'COO', bio: 'Oversees day-to-day operations and keeps the organization running at its best.', twitter: 'L0vKuro' },
+  { name: 'Ghxst', role: 'General Manager', bio: 'Manages the overall direction of teams and ensures competitive excellence across all titles.', twitter: 'JohnWickFPS' },
+  { name: 'Ghost', role: 'Project Manager', bio: 'Coordinates projects and initiatives across the organization to keep everything on track.', twitter: 'GraveGhost_1' },
+  { name: 'Dynasty', role: 'Content Manager', bio: 'Leads the content strategy and creative direction for Overtake across all platforms.', twitter: 'DynastyK1NG' },
+  { name: 'Chunk', role: 'Discord Manager', bio: 'Manages and grows the Overtake community on Discord, keeping members engaged.', twitter: 'OTC_Chunk' },
+  { name: 'Jxe', role: 'Social Media Manager', bio: "Drives Overtake's social presence and keeps fans connected with the latest updates.", twitter: 'OfficialJxe5_' },
+  { name: 'Visionz', role: 'CoD Manager', bio: 'Oversees the Call of Duty roster and competitive strategy.', twitter: 'Visionzuh' },
+  { name: 'Zap', role: 'Fortnite Manager', bio: 'Manages the Fortnite division and competitive operations.', twitter: 'zapticalggs' },
 ]
 
 export default function AboutPage() {
@@ -60,17 +60,10 @@ export default function AboutPage() {
         <div className="absolute inset-0 bg-gradient-to-b from-[#E8191A]/5 to-transparent" />
         <div className="relative max-w-7xl mx-auto px-6">
           <p className="text-[#E8191A] text-xs font-mono tracking-widest uppercase mb-4">// Our Story</p>
-          <h1
-            className="font-display font-black text-7xl md:text-9xl uppercase leading-none"
-            style={{ fontFamily: 'Barlow Condensed, sans-serif' }}
-          >
+          <h1 className="font-display font-black text-7xl md:text-9xl uppercase leading-none"
+            style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
             <span className="text-white">WHO</span><br />
-            <span style={{
-              background: 'linear-gradient(135deg, #FF3334 0%, #E8191A 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}>WE ARE</span>
+            <span style={{ background: 'linear-gradient(135deg, #FF3334 0%, #E8191A 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>WE ARE</span>
           </h1>
           <p className="text-white/40 text-xl mt-8 max-w-2xl leading-relaxed">
             Driven by Passion, Overtake is backed by Members who believe in doing more than just playing video games. In and out of the game we support each other for who we are. 1 Goal, 1 Mission, we are Overtake.
@@ -89,10 +82,8 @@ export default function AboutPage() {
             <div className="absolute top-0 left-0 h-8 w-px bg-[#E8191A]" />
             <div className="absolute bottom-0 right-0 w-8 h-px bg-[#E8191A]" />
             <div className="absolute bottom-0 right-0 h-8 w-px bg-[#E8191A]" />
-            <p
-              className="font-display font-black text-3xl md:text-4xl text-white uppercase leading-tight"
-              style={{ fontFamily: 'Barlow Condensed, sans-serif' }}
-            >
+            <p className="font-display font-black text-3xl md:text-4xl text-white uppercase leading-tight"
+              style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
               "To build the most competitive and culturally relevant esports organization in the world — one player, one creator, one community at a time."
             </p>
             <p className="text-[#E8191A] text-sm font-mono mt-6 tracking-widest uppercase">— Lazur, CEO & Founder</p>
@@ -105,10 +96,8 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <p className="text-[#E8191A] text-xs font-mono tracking-widest uppercase mb-4">// What We Stand For</p>
-            <h2
-              className="font-display font-black text-5xl md:text-7xl uppercase text-white"
-              style={{ fontFamily: 'Barlow Condensed, sans-serif' }}
-            >
+            <h2 className="font-display font-black text-5xl md:text-7xl uppercase text-white"
+              style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
               OUR VALUES
             </h2>
           </div>
@@ -117,10 +106,8 @@ export default function AboutPage() {
               <div key={title} className="relative bg-[#141414] border border-white/5 hover:border-[#E8191A]/20 p-8 group card-hover">
                 <div className="h-px w-full mb-8 bg-gradient-to-r from-[#E8191A] to-transparent" />
                 <Icon size={28} className="text-[#E8191A] mb-4" />
-                <h3
-                  className="font-display font-black text-2xl text-white uppercase mb-3"
-                  style={{ fontFamily: 'Barlow Condensed, sans-serif' }}
-                >
+                <h3 className="font-display font-black text-2xl text-white uppercase mb-3"
+                  style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
                   {title}
                 </h3>
                 <p className="text-white/40 text-sm leading-relaxed">{desc}</p>
@@ -134,10 +121,8 @@ export default function AboutPage() {
       <div className="py-24 max-w-7xl mx-auto px-6">
         <div className="mb-16">
           <p className="text-[#E8191A] text-xs font-mono tracking-widest uppercase mb-4">// History</p>
-          <h2
-            className="font-display font-black text-5xl md:text-7xl uppercase text-white"
-            style={{ fontFamily: 'Barlow Condensed, sans-serif' }}
-          >
+          <h2 className="font-display font-black text-5xl md:text-7xl uppercase text-white"
+            style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
             THE JOURNEY
           </h2>
         </div>
@@ -145,21 +130,15 @@ export default function AboutPage() {
           <div className="absolute left-0 md:left-1/2 top-0 bottom-0 w-px bg-white/8 hidden md:block" />
           <div className="space-y-0">
             {milestones.map((m, i) => (
-              <div
-                key={`${m.year}-${i}`}
-                className={`relative flex flex-col md:flex-row gap-8 md:gap-0 pb-12 ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}
-              >
+              <div key={`${m.year}-${i}`}
+                className={`relative flex flex-col md:flex-row gap-8 md:gap-0 pb-12 ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
                 <div className={`md:w-1/2 ${i % 2 === 0 ? 'md:pr-16 md:text-right' : 'md:pl-16'}`}>
-                  <div
-                    className="inline-block font-display font-black text-5xl text-[#E8191A] mb-2"
-                    style={{ fontFamily: 'Barlow Condensed, sans-serif' }}
-                  >
+                  <div className="inline-block font-display font-black text-5xl text-[#E8191A] mb-2"
+                    style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
                     {m.year}
                   </div>
-                  <h3
-                    className="font-display font-bold text-2xl text-white uppercase mb-2"
-                    style={{ fontFamily: 'Barlow Condensed, sans-serif' }}
-                  >
+                  <h3 className="font-display font-bold text-2xl text-white uppercase mb-2"
+                    style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
                     {m.title}
                   </h3>
                   <p className="text-white/40 text-sm leading-relaxed">{m.desc}</p>
@@ -177,33 +156,39 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="mb-14">
             <p className="text-[#E8191A] text-xs font-mono tracking-widest uppercase mb-4">// The Team</p>
-            <h2
-              className="font-display font-black text-5xl md:text-7xl uppercase text-white"
-              style={{ fontFamily: 'Barlow Condensed, sans-serif' }}
-            >
+            <h2 className="font-display font-black text-5xl md:text-7xl uppercase text-white"
+              style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
               LEADERSHIP
             </h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {leadership.map((person) => (
-              <div key={person.name} className="bg-[#141414] border border-white/5 hover:border-white/10 p-6 card-hover">
-                <div className="w-12 h-12 rounded-full bg-[#E8191A]/10 border border-[#E8191A]/20 flex items-center justify-center mb-4">
-                  <span
-                    className="font-display font-black text-xl text-[#E8191A]"
-                    style={{ fontFamily: 'Barlow Condensed, sans-serif' }}
-                  >
-                    {person.name.slice(0, 2).toUpperCase()}
-                  </span>
+              <a key={person.name}
+                href={`https://x.com/${person.twitter}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-[#141414] border border-white/5 hover:border-[#E8191A]/30 p-6 card-hover block group">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 rounded-full bg-[#E8191A]/10 border border-[#E8191A]/20 flex items-center justify-center">
+                    <span className="font-display font-black text-xl text-[#E8191A]"
+                      style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                      {person.name.slice(0, 2).toUpperCase()}
+                    </span>
+                  </div>
+                  <div className="w-7 h-7 flex items-center justify-center text-white/20 group-hover:text-white/60 transition-colors">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                  </div>
                 </div>
-                <h3
-                  className="font-display font-bold text-xl text-white uppercase mb-1"
-                  style={{ fontFamily: 'Barlow Condensed, sans-serif' }}
-                >
+                <h3 className="font-display font-bold text-xl text-white uppercase mb-1 group-hover:text-[#E8191A] transition-colors"
+                  style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
                   {person.name}
                 </h3>
                 <p className="text-[#E8191A] text-xs font-mono tracking-wider uppercase mb-3">{person.role}</p>
-                <p className="text-white/40 text-sm leading-relaxed">{person.bio}</p>
-              </div>
+                <p className="text-white/40 text-sm leading-relaxed mb-3">{person.bio}</p>
+                <p className="text-white/25 text-xs font-mono">@{person.twitter}</p>
+              </a>
             ))}
           </div>
         </div>
@@ -212,26 +197,20 @@ export default function AboutPage() {
       {/* CTA */}
       <div className="py-24 text-center">
         <div className="max-w-3xl mx-auto px-6">
-          <h2
-            className="font-display font-black text-5xl md:text-7xl uppercase text-white mb-4"
-            style={{ fontFamily: 'Barlow Condensed, sans-serif' }}
-          >
+          <h2 className="font-display font-black text-5xl md:text-7xl uppercase text-white mb-4"
+            style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
             BE PART OF THE STORY
           </h2>
           <p className="text-white/40 mb-10">Whether you play, create, or watch — there is a place for you in Overtake.</p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Link
-              href="/join"
+            <Link href="/join"
               className="flex items-center gap-2 bg-[#E8191A] hover:bg-[#B81011] px-8 py-4 font-bold tracking-widest uppercase text-sm transition-all clip-corner text-white"
-              style={{ fontFamily: 'Barlow Condensed, sans-serif' }}
-            >
+              style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
               Join Overtake <ChevronRight size={14} />
             </Link>
-            <Link
-              href="/contact"
+            <Link href="/contact"
               className="flex items-center gap-2 border border-white/10 hover:border-white/30 px-8 py-4 text-white/60 hover:text-white font-medium tracking-wider uppercase text-sm transition-all"
-              style={{ fontFamily: 'Barlow Condensed, sans-serif' }}
-            >
+              style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
               Get in Touch
             </Link>
           </div>
