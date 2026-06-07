@@ -10,39 +10,44 @@ const values = [
   {
     icon: Trophy,
     title: 'Excellence',
-    desc: 'We hold every player, creator, and staff member to the highest standard. Good enough never is.',
+    desc: 'We set high standards for every player, creator, and staff member. Every detail matters.',
   },
   {
     icon: Users,
     title: 'Community',
-    desc: 'Our fans aren\'t just spectators. They\'re the backbone of everything we build.',
+    desc: 'Our supporters are the foundation of what we build. We grow stronger together.',
   },
   {
     icon: Globe,
     title: 'Inclusion',
-    desc: 'Esports has no borders. We recruit globally and celebrate every background.',
+    desc: 'Esports is global. We welcome talent from every background and create opportunities for all.',
   },
   {
     icon: Zap,
     title: 'Innovation',
-    desc: 'We push beyond traditional structures — from content creation to athlete development.',
+    desc: 'We challenge the standard approach to esports through smarter content, development, and team structure.',
   },
 ]
 
 const milestones = [
-  { year: '2020', title: 'Overtake Founded', desc: 'Started as a scrappy Valorant team of five. First regional win in three months.' },
-  { year: '2021', title: 'First Major Title', desc: 'Claimed the Challengers NA trophy, putting Overtake on the national map.' },
-  { year: '2022', title: 'Expansion to 3 Titles', desc: 'Launched Apex Legends and Call of Duty rosters. Creator program launched.' },
-  { year: '2023', title: 'International Debut', desc: 'Rocket League team competes globally. First EU presence established.' },
-  { year: '2024', title: 'Landmark Partnerships', desc: 'Signed founding partnerships with NVIDIA and SteelSeries. Creator roster triples.' },
-  { year: '2025', title: 'LA Training Facility', desc: 'Opening a 12,000 sq ft performance center — Overtake HQ in Los Angeles.' },
+  { year: '2024', title: 'Foundation Begins', desc: 'Overtake Sector begins building its identity on X, laying the groundwork for a competitive esports brand focused on players, creators, and community.' },
+  { year: '2025', title: 'Official Expansion', desc: 'Overtake grows into a recognized esports organization, expanding into multiple titles and developing its roster, content, and brand presence.' },
+  { year: '2025', title: 'Competitive Growth', desc: 'Overtake enters the competitive scene with active teams and creators, pushing the organization into larger esports spaces while building its public reputation.' },
+  { year: '2025', title: 'Brand Development', desc: 'Overtake continues strengthening its image through social media, community engagement, official jerseys, and the #OvertakeYourLimits identity.' },
+  { year: '2026', title: 'New Level of Competition', desc: 'Overtake steps further into competitive esports with appearances across titles such as VALORANT and Counter-Strike, continuing to build results and visibility.' },
+  { year: '2026', title: 'The Next Chapter', desc: 'Overtake focuses on long-term growth through stronger rosters, better content structure, creator development, and a larger community-driven presence.' },
 ]
 
 const leadership = [
-  { name: 'Jordan Lee', role: 'Founder & CEO', bio: 'Former pro turned org builder. 8 years in competitive esports.' },
-  { name: 'Mia Kovacs', role: 'Head of Esports', bio: 'Former team manager for two top-tier NA organizations.' },
-  { name: 'Darius Webb', role: 'Head of Content', bio: 'Built creator programs reaching 30M+ monthly views.' },
-  { name: 'Samantha Rojas', role: 'Head of Partnerships', bio: '10+ years in brand marketing and sponsorship activation.' },
+  { name: 'Lazur', role: 'CEO / Founder', bio: 'Visionary behind Overtake Sector. Building the org from the ground up with passion and purpose.' },
+  { name: 'Kuro', role: 'COO', bio: 'Oversees day-to-day operations and keeps the organization running at its best.' },
+  { name: 'Ghxst', role: 'General Manager', bio: 'Manages the overall direction of teams and ensures competitive excellence across all titles.' },
+  { name: 'Ghost', role: 'Project Manager', bio: 'Coordinates projects and initiatives across the organization to keep everything on track.' },
+  { name: 'Dynasty', role: 'Content Manager', bio: 'Leads the content strategy and creative direction for Overtake across all platforms.' },
+  { name: 'Chunk', role: 'Discord Manager', bio: 'Manages and grows the Overtake community on Discord, keeping members engaged.' },
+  { name: 'Jxe', role: 'Social Media Manager', bio: 'Drives Overtake\'s social presence and keeps fans connected with the latest updates.' },
+  { name: 'Visionz', role: 'CoD Manager', bio: 'Oversees the Call of Duty roster and competitive strategy.' },
+  { name: 'Zap', role: 'Fortnite Manager', bio: 'Manages the Fortnite division and competitive operations.' },
 ]
 
 export default function AboutPage() {
@@ -68,7 +73,7 @@ export default function AboutPage() {
             }}>WE ARE</span>
           </h1>
           <p className="text-white/40 text-xl mt-8 max-w-2xl leading-relaxed">
-            Overtake was born from a simple idea: esports deserves an organization built on genuine passion, performance, and people. We started with five players and a shared Google Doc. Five years later, we're a multi-title org competing globally — and we're just getting started.
+            Driven by Passion, Overtake is backed by Members who believe in doing more than just playing video games. In and out of the game we support each other for who we are. 1 Goal, 1 Mission, we are Overtake.
           </p>
         </div>
       </div>
@@ -90,7 +95,7 @@ export default function AboutPage() {
             >
               "To build the most competitive and culturally relevant esports organization in the world — one player, one creator, one community at a time."
             </p>
-            <p className="text-[#E8191A] text-sm font-mono mt-6 tracking-widest uppercase">— Jordan Lee, Founder</p>
+            <p className="text-[#E8191A] text-sm font-mono mt-6 tracking-widest uppercase">— Lazur, CEO & Founder</p>
           </div>
         </div>
       </div>
@@ -136,16 +141,14 @@ export default function AboutPage() {
             THE JOURNEY
           </h2>
         </div>
-
         <div className="relative">
           <div className="absolute left-0 md:left-1/2 top-0 bottom-0 w-px bg-white/8 hidden md:block" />
           <div className="space-y-0">
             {milestones.map((m, i) => (
               <div
-                key={m.year}
+                key={`${m.year}-${i}`}
                 className={`relative flex flex-col md:flex-row gap-8 md:gap-0 pb-12 ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}
               >
-                {/* Content */}
                 <div className={`md:w-1/2 ${i % 2 === 0 ? 'md:pr-16 md:text-right' : 'md:pl-16'}`}>
                   <div
                     className="inline-block font-display font-black text-5xl text-[#E8191A] mb-2"
@@ -161,11 +164,7 @@ export default function AboutPage() {
                   </h3>
                   <p className="text-white/40 text-sm leading-relaxed">{m.desc}</p>
                 </div>
-
-                {/* Dot */}
                 <div className="absolute left-0 md:left-1/2 top-2 w-3 h-3 bg-[#E8191A] rounded-full -translate-x-1/2 border-2 border-[#0D0D0D] hidden md:block" />
-
-                {/* Spacer */}
                 <div className="md:w-1/2" />
               </div>
             ))}
@@ -185,7 +184,7 @@ export default function AboutPage() {
               LEADERSHIP
             </h2>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {leadership.map((person) => (
               <div key={person.name} className="bg-[#141414] border border-white/5 hover:border-white/10 p-6 card-hover">
                 <div className="w-12 h-12 rounded-full bg-[#E8191A]/10 border border-[#E8191A]/20 flex items-center justify-center mb-4">
@@ -193,7 +192,7 @@ export default function AboutPage() {
                     className="font-display font-black text-xl text-[#E8191A]"
                     style={{ fontFamily: 'Barlow Condensed, sans-serif' }}
                   >
-                    {person.name.split(' ').map(n => n[0]).join('')}
+                    {person.name.slice(0, 2).toUpperCase()}
                   </span>
                 </div>
                 <h3
@@ -219,11 +218,11 @@ export default function AboutPage() {
           >
             BE PART OF THE STORY
           </h2>
-          <p className="text-white/40 mb-10">Whether you play, create, or watch — there's a place for you in Overtake.</p>
+          <p className="text-white/40 mb-10">Whether you play, create, or watch — there is a place for you in Overtake.</p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link
               href="/join"
-              className="flex items-center gap-2 bg-[#E8191A] hover:bg-[#B81011] px-8 py-4 font-bold tracking-widest uppercase text-sm transition-all clip-corner"
+              className="flex items-center gap-2 bg-[#E8191A] hover:bg-[#B81011] px-8 py-4 font-bold tracking-widest uppercase text-sm transition-all clip-corner text-white"
               style={{ fontFamily: 'Barlow Condensed, sans-serif' }}
             >
               Join Overtake <ChevronRight size={14} />
