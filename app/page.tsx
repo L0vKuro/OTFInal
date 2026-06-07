@@ -115,14 +115,14 @@ export default function HomePage() {
         </section>
 
         {/* ─── MARQUEE BAR ─── */}
-        <div className="relative bg-[#141414] border-y border-white/5 py-4 overflow-hidden">
+        <div className="relative bg-[#141414] border-y border-white/5 py-5 overflow-hidden w-full">
           <div className="flex items-center"
             style={{ animation: 'marquee 25s linear infinite', whiteSpace: 'nowrap', width: 'max-content' }}>
-            {[...Array(12)].map((_, i) => (
-              <div key={i} className="flex items-center gap-8 mx-8">
+            {[...Array(16)].map((_, i) => (
+              <div key={i} className="flex items-center gap-10 mx-10">
                 <img src="/wordmark.png" alt="OVERTAKE"
-                  style={{ height: '48px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen', opacity: 0.5 }} />
-                <span className="text-[#E8191A] text-lg">✦</span>
+                  style={{ height: '48px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen', opacity: 0.6 }} />
+                <span className="text-[#E8191A] text-2xl">✦</span>
               </div>
             ))}
           </div>
