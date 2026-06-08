@@ -5,20 +5,28 @@ import { ChevronRight, Gamepad2, Camera, Check } from 'lucide-react'
 
 type FormType = 'player' | 'creator'
 
-const GAMES = ['VALORANT', 'Apex Legends', 'Call of Duty', 'Rocket League', 'Other']
+const GAMES = ['VALORANT', 'Apex Legends', 'Call of Duty', 'Rocket League', 'Rainbow 6', 'Deadlock', 'Clash Royale', 'iRacing', 'Other']
 const RANKS: Record<string, string[]> = {
   VALORANT: ['Iron', 'Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Ascendant', 'Immortal', 'Radiant'],
   'Apex Legends': ['Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Master', 'Predator'],
   'Call of Duty': ['Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Crimson', 'Iridescent', 'Top 250'],
   'Rocket League': ['Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Champion', 'Grand Champion', 'Supersonic Legend'],
+  'Rainbow 6': ['Copper', 'Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Champion'],
+  'Deadlock': ['Obscurus', 'Seeker', 'Alchemist', 'Arcanist', 'Ritualist', 'Emissary', 'Phantom', 'Ascendant'],
+  'Clash Royale': ['Arena 1-15', 'Legendary Arena', 'Champion', 'Grand Champion', 'Ultimate Champion', 'Master'],
+  'iRacing': ['Rookie', 'Class D', 'Class C', 'Class B', 'Class A', 'Pro'],
   Other: ['Regional', 'National', 'Professional'],
 }
 
 const PLATFORMS = ['Twitch', 'YouTube', 'TikTok', 'Twitter/X', 'Instagram', 'Multiple']
 
+const FORMSPREE_PLAYER = 'https://formspree.io/f/xkoaryvd'
+const FORMSPREE_CREATOR = 'https://formspree.io/f/xwvjoyrk'
+
 export default function JoinPage() {
   const [formType, setFormType] = useState<FormType>('player')
   const [submitted, setSubmitted] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const [playerForm, setPlayerForm] = useState({
     name: '', ign: '', email: '', game: '', rank: '', region: '', age: '', socials: '', clips: '', why: '',
@@ -28,14 +36,42 @@ export default function JoinPage() {
     name: '', handle: '', email: '', platform: '', followers: '', content: '', socials: '', why: '', samples: '',
   })
 
-  const handlePlayerSubmit = (e: React.FormEvent) => {
+  const handlePlayerSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setSubmitted(true)
+    setLoading(true)
+    try {
+      await fetch(FORMSPREE_PLAYER, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          _subject: `[PLAYER APPLICATION] ${playerForm.name} — ${playerForm.game}`,
+          Type: 'Player Application',
+          ...playerForm,
+        }),
+      })
+      setSubmitted(true)
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const handleCreatorSubmit = (e: React.FormEvent) => {
+  const handleCreatorSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setSubmitted(true)
+    setLoading(true)
+    try {
+      await fetch(FORMSPREE_CREATOR, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          _subject: `[CREATOR APPLICATION] ${creatorForm.name} — ${creatorForm.platform}`,
+          Type: 'Creator Application',
+          ...creatorForm,
+        }),
+      })
+      setSubmitted(true)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -82,7 +118,7 @@ export default function JoinPage() {
         <div className="flex gap-3 mb-12" id="player">
           {[
             { type: 'player' as FormType, icon: Gamepad2, label: 'Player Application', desc: 'Compete on an Overtake roster' },
-            { type: 'creator' as FormType, icon: Camera, label: 'Creator Application', desc: 'Join the content division', id: 'creator' },
+            { type: 'creator' as FormType, icon: Camera, label: 'Creator Application', desc: 'Join the content division' },
           ].map(({ type, icon: Icon, label, desc }) => (
             <button
               key={type}
@@ -215,11 +251,12 @@ export default function JoinPage() {
 
                 <button
                   type="submit"
-                  className="flex items-center gap-3 bg-[#E8191A] hover:bg-[#B81011] px-10 py-4 font-black tracking-widest uppercase text-sm transition-all hover:shadow-[0_0_30px_rgba(232,25,26,0.4)] clip-corner group"
+                  disabled={loading}
+                  className="flex items-center gap-3 bg-[#E8191A] hover:bg-[#B81011] disabled:opacity-50 px-10 py-4 font-black tracking-widest uppercase text-sm transition-all hover:shadow-[0_0_30px_rgba(232,25,26,0.4)] clip-corner group text-white"
                   style={{ fontFamily: 'Barlow Condensed, sans-serif' }}
                 >
-                  Submit Application
-                  <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                  {loading ? 'Submitting...' : 'Submit Application'}
+                  {!loading && <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />}
                 </button>
               </form>
             )}
@@ -292,11 +329,12 @@ export default function JoinPage() {
 
                 <button
                   type="submit"
-                  className="flex items-center gap-3 bg-[#E8191A] hover:bg-[#B81011] px-10 py-4 font-black tracking-widest uppercase text-sm transition-all hover:shadow-[0_0_30px_rgba(232,25,26,0.4)] clip-corner group"
+                  disabled={loading}
+                  className="flex items-center gap-3 bg-[#E8191A] hover:bg-[#B81011] disabled:opacity-50 px-10 py-4 font-black tracking-widest uppercase text-sm transition-all hover:shadow-[0_0_30px_rgba(232,25,26,0.4)] clip-corner group text-white"
                   style={{ fontFamily: 'Barlow Condensed, sans-serif' }}
                 >
-                  Submit Application
-                  <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                  {loading ? 'Submitting...' : 'Submit Application'}
+                  {!loading && <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />}
                 </button>
               </form>
             )}
