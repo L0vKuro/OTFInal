@@ -14,6 +14,19 @@ const GAME_ICONS: Record<string, string> = {
   'DEADLOCK': '💀',
 }
 
+// Custom photo filenames for players with special cases
+const PLAYER_PHOTOS: Record<string, string> = {
+  'ein': 'player-e-in.png',
+  'vcipher': 'player-vcipher.png',
+  'megahitidee': 'player-megahitIdee.jpg',
+  'kiingkooopa': 'player-kiinkooopa.jpg',
+}
+
+function getPlayerPhoto(name: string): string {
+  const key = name.toLowerCase().replace(/[^a-z0-9]/g, '')
+  return PLAYER_PHOTOS[key] || `player-${key}.jpg`
+}
+
 export default function TeamsPage() {
   return (
     <div className="relative min-h-screen">
@@ -71,7 +84,7 @@ export default function TeamsPage() {
             {/* Roster Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
               {team.roster.map((player, pi) => {
-                const photoName = `player-${player.name.toLowerCase().replace(/[^a-z0-9]/g, '')}.jpg`
+                const photo = getPlayerPhoto(player.name)
                 return (
                   <div key={pi} className="group relative bg-[#141414] border border-white/5 hover:border-opacity-40 overflow-hidden card-hover">
                     <div className="h-px w-full" style={{ background: `linear-gradient(90deg, ${team.color}, transparent)` }} />
@@ -79,7 +92,7 @@ export default function TeamsPage() {
                     {/* Player photo */}
                     <div className="h-40 relative overflow-hidden bg-[#0D0D0D]">
                       <img
-                        src={`/${photoName}`}
+                        src={`/${photo}`}
                         alt={player.name}
                         style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', opacity: 0.85 }}
                         onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
