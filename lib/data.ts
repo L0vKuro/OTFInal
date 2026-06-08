@@ -88,7 +88,7 @@ export const teams = [
   },
   {
     id: 'cod',
-    game: 'CALL OF DUTY',
+    game: 'CALL OF DUTY ACADEMY',
     tag: 'OT',
     color: '#00A878',
     region: 'NA',
