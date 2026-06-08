@@ -1,10 +1,8 @@
+'use client'
+
+import { useState, useEffect } from 'react'
 import { Trophy, Users, Globe, Zap, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
-
-export const metadata = {
-  title: 'About — Overtake Esports',
-  description: 'Learn about Overtake Esports — our story, mission, and the team behind the organization.',
-}
 
 const values = [
   {
@@ -50,7 +48,41 @@ const leadership = [
   { name: 'Zap', role: 'Fortnite Manager', bio: 'Manages the Fortnite division and competitive operations.', twitter: 'zapticalggs' },
 ]
 
+const quotes = [
+  { name: 'Lazur', role: 'CEO / Founder', quote: "Don't worry about failure; you only have to be right once." },
+  { name: 'Kuro', role: 'COO', quote: 'Doubt kills more dreams than failure ever will.' },
+  { name: 'Ghxst', role: 'General Manager', quote: 'To be a goat, you must learn and overcome the failures and struggles that go along with the dreams you foresee.' },
+  { name: 'Ghost', role: 'Project Manager', quote: 'It is during our darkest moments that we must focus to see the light.' },
+  { name: 'Dynasty', role: 'Content Manager', quote: 'Life is like a video game, it gets hard because you leveled up.' },
+  { name: 'Chunk', role: 'Discord Manager', quote: "Things go wrong, you can't explain it, can't predict it. You gotta move on. Stop living in the past and look what you got right in front of you." },
+  { name: 'Jxe', role: 'Social Media Manager', quote: 'In order to be successful at what you\'re doing, you have to be obsessed with change.' },
+  { name: 'Visionz', role: 'CoD Manager', quote: 'Success is focusing the full power of all you are on what you have a burning desire to achieve.' },
+  { name: 'Zap', role: 'Fortnite Manager', quote: 'Learn as if you will live forever, live like you will die tomorrow.' },
+]
+
 export default function AboutPage() {
+  const [current, setCurrent] = useState(0)
+  const [fade, setFade] = useState(true)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFade(false)
+      setTimeout(() => {
+        setCurrent(prev => (prev + 1) % quotes.length)
+        setFade(true)
+      }, 400)
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const goTo = (i: number) => {
+    setFade(false)
+    setTimeout(() => {
+      setCurrent(i)
+      setFade(true)
+    }, 400)
+  }
+
   return (
     <div className="relative min-h-screen">
       <div className="absolute inset-0 bg-grid opacity-20 pointer-events-none" />
@@ -71,22 +103,44 @@ export default function AboutPage() {
         </div>
       </div>
 
-      {/* Mission Statement */}
+      {/* Quote Slideshow */}
       <div className="relative py-28 overflow-hidden">
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="w-[600px] h-[200px] bg-[#E8191A]/6 blur-[120px]" />
         </div>
         <div className="relative max-w-4xl mx-auto px-6 text-center">
-          <div className="border border-[#E8191A]/20 p-12 bg-[#E8191A]/3 relative">
+          <div className="border border-[#E8191A]/20 p-12 relative" style={{ background: 'rgba(232,25,26,0.03)' }}>
             <div className="absolute top-0 left-0 w-8 h-px bg-[#E8191A]" />
             <div className="absolute top-0 left-0 h-8 w-px bg-[#E8191A]" />
             <div className="absolute bottom-0 right-0 w-8 h-px bg-[#E8191A]" />
             <div className="absolute bottom-0 right-0 h-8 w-px bg-[#E8191A]" />
-            <p className="font-display font-black text-3xl md:text-4xl text-white uppercase leading-tight"
-              style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-              "To build the most competitive and culturally relevant esports organization in the world — one player, one creator, one community at a time."
-            </p>
-            <p className="text-[#E8191A] text-sm font-mono mt-6 tracking-widest uppercase">— Lazur, CEO & Founder</p>
+
+            {/* Quote content */}
+            <div style={{ opacity: fade ? 1 : 0, transition: 'opacity 0.4s ease' }}>
+              <p className="font-display font-black text-2xl md:text-3xl text-white uppercase leading-tight mb-6"
+                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                &ldquo;{quotes[current].quote}&rdquo;
+              </p>
+              <p className="text-[#E8191A] text-sm font-mono tracking-widest uppercase">
+                — {quotes[current].name}, {quotes[current].role}
+              </p>
+            </div>
+
+            {/* Dots */}
+            <div className="flex items-center justify-center gap-2 mt-8">
+              {quotes.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => goTo(i)}
+                  className="transition-all duration-300 rounded-full"
+                  style={{
+                    width: i === current ? '24px' : '8px',
+                    height: '8px',
+                    background: i === current ? '#E8191A' : 'rgba(255,255,255,0.2)',
+                  }}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>
