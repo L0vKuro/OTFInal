@@ -14,7 +14,6 @@ const GAME_ICONS: Record<string, string> = {
   'DEADLOCK': '💀',
 }
 
-// Custom photo filenames for players with special cases
 const PLAYER_PHOTOS: Record<string, string> = {
   'ein': 'player-e-in.png',
   'vcipher': 'player-vcipher.png',
@@ -83,13 +82,16 @@ export default function TeamsPage() {
 
             {/* Roster Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
-              {team.roster.map((player, pi) => {
+              {team.roster.map((player: any, pi: number) => {
                 const photo = getPlayerPhoto(player.name)
-                return (
-                  <div key={pi} className="group relative bg-[#141414] border border-white/5 hover:border-opacity-40 overflow-hidden card-hover">
-                    <div className="h-px w-full" style={{ background: `linear-gradient(90deg, ${team.color}, transparent)` }} />
+                const isFemaleTeam = team.id === 'r6-FEMALE'
+                const isGhuud = player.name === 'GHUUD'
+                const cardColor = isGhuud ? '#E8191A' : isFemaleTeam ? '#FF69B4' : team.color
+                const hasTwitter = player.twitter && player.twitter !== ''
 
-                    {/* Player photo */}
+                const cardContent = (
+                  <>
+                    <div className="h-px w-full" style={{ background: `linear-gradient(90deg, ${cardColor}, transparent)` }} />
                     <div className="h-40 relative overflow-hidden bg-[#0D0D0D]">
                       <img
                         src={`/${photo}`}
@@ -97,28 +99,49 @@ export default function TeamsPage() {
                         style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', opacity: 0.85 }}
                         onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
                       />
-                      <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${team.color}30, transparent)` }} />
+                      <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${cardColor}30, transparent)` }} />
                       <div className="absolute bottom-2 left-3">
                         <span className="font-display font-black text-3xl opacity-20"
-                          style={{ fontFamily: 'Barlow Condensed, sans-serif', color: team.color }}>
+                          style={{ fontFamily: 'Barlow Condensed, sans-serif', color: cardColor }}>
                           {pi + 1 < 10 ? `0${pi + 1}` : pi + 1}
                         </span>
                       </div>
                       <div className="absolute top-2 right-2">
                         <span className="text-[10px] font-mono px-1.5 py-0.5 uppercase tracking-wider"
-                          style={{ color: team.color, background: `${team.color}15`, border: `1px solid ${team.color}30` }}>
+                          style={{ color: cardColor, background: `${cardColor}15`, border: `1px solid ${cardColor}30` }}>
                           {player.role}
                         </span>
                       </div>
                     </div>
-
                     <div className="p-3">
-                      <h3 className="font-display font-black text-lg text-[#F2F2F2] uppercase"
+                      <h3 className="font-display font-black text-lg text-[#F2F2F2] uppercase group-hover:text-white transition-colors"
                         style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
                         {player.name}
                       </h3>
-                      <p className="text-[#F2F2F2]/30 text-xs mt-0.5 font-mono">{player.real}</p>
+                      <p className="text-xs mt-0.5 font-mono transition-colors"
+                        style={{ color: cardColor }}>
+                        {player.real}
+                      </p>
                     </div>
+                  </>
+                )
+
+                return hasTwitter ? (
+                  
+                    key={pi}
+                    href={player.twitter}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group relative bg-[#141414] border border-white/5 hover:border-white/20 overflow-hidden card-hover block"
+                  >
+                    {cardContent}
+                  </a>
+                ) : (
+                  <div
+                    key={pi}
+                    className="group relative bg-[#141414] border border-white/5 overflow-hidden card-hover"
+                  >
+                    {cardContent}
                   </div>
                 )
               })}
