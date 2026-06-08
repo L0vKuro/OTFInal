@@ -166,7 +166,7 @@ export default function HomePage() {
                   <div className="mb-4">
                     <span className="text-xs font-mono px-2 py-0.5 mb-1 inline-block"
                       style={{ color: team.color, background: `${team.color}15`, border: `1px solid ${team.color}30` }}>{team.region}</span>
-                    <h3 className="font-display font-black text-3xl text-[#F2F2F2] uppercase" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>OT {team.game}</h3>
+                    <h3 className="font-display font-black text-3xl text-[#F2F2F2] uppercase" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{team.game}</h3>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {team.roster.map((player, pi) => (
