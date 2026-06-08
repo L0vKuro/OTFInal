@@ -3,11 +3,6 @@
 import { teams } from '@/lib/data'
 import { ChevronRight } from 'lucide-react'
 
-export const metadata = {
-  title: 'Teams — Overtake Esports',
-  description: 'Meet the Overtake rosters competing across multiple titles.',
-}
-
 const GAME_ICONS: Record<string, string> = {
   'VALORANT': '⚡',
   'COUNTER-STRIKE': '🎯',
