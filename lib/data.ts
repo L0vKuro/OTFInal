@@ -42,6 +42,20 @@ export const teams = [
     ],
   },
   {
+    id: 'r6-academy',
+    game: 'RAINBOW 6 — ACADEMY',
+    tag: 'OT',
+    color: '#0077B6',
+    region: 'NA',
+    roster: [
+      { name: 'KEO', role: 'PLAYER', country: '🇺🇸', real: 'Keo', age: 0 },
+      { name: 'TBA', role: 'PLAYER', country: '🇺🇸', real: 'Coming Soon', age: 0 },
+      { name: 'TBA', role: 'PLAYER', country: '🇺🇸', real: 'Coming Soon', age: 0 },
+      { name: 'TBA', role: 'PLAYER', country: '🇺🇸', real: 'Coming Soon', age: 0 },
+      { name: 'TBA', role: 'PLAYER', country: '🇺🇸', real: 'Coming Soon', age: 0 },
+    ],
+  },
+  {
     id: 'r6-FEMALE',
     game: 'RAINBOW 6 — FEMALE',
     tag: 'OT',
