@@ -36,8 +36,8 @@ export const teams = [
     roster: [
       { name: 'SNEKY', role: 'PLAYER', country: '🇺🇸', real: '@SnekyFPS', twitter: 'https://x.com/SnekyFPS' },
       { name: 'BRADY', role: 'PLAYER', country: '🇺🇸', real: '@braydenvalen', twitter: 'https://x.com/braydenvalen' },
-      { name: 'TEAK', role: 'PLAYER', country: '🇺🇸', real: 'TEAK', twitter: '' },
-      { name: 'ZMAN', role: 'PLAYER', country: '🇺🇸', real: 'ZMAN', twitter: '' },
+      { name: 'TEAK', role: 'PLAYER', country: '🇺🇸', real: '@TeakR6', twitter: 'https://x.com/TeakR6' },
+      { name: 'ZMAN', role: 'PLAYER', country: '🇺🇸', real: '@ZmanFPS', twitter: 'https://x.com/ZmanFPS' },
       { name: 'HEKTIK', role: 'PLAYER', country: '🇺🇸', real: '@ripHektik', twitter: 'https://x.com/ripHektik' },
     ],
   },
