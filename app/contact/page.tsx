@@ -128,14 +128,15 @@ export default function ContactPage() {
                     <label className="block text-xs font-mono text-white/30 uppercase tracking-widest mb-2">Subject *</label>
                     <select required name="subject" value={form.subject}
                       onChange={e => setForm(f => ({ ...f, subject: e.target.value }))}
-                      className="input-dark w-full px-4 py-3 rounded-sm text-sm appearance-none">
-                      <option value="" disabled>Select a subject</option>
-                      <option value="general">General Inquiry</option>
-                      <option value="partnership">Partnership Opportunity</option>
-                      <option value="media">Media & Press</option>
-                      <option value="player">Player Inquiry</option>
-                      <option value="creator">Creator Inquiry</option>
-                      <option value="other">Other</option>
+                      className="w-full px-4 py-3 rounded-sm text-sm appearance-none"
+                      style={{ background: '#141414', color: '#F2F2F2', border: '1px solid rgba(242,242,242,0.08)' }}>
+                      <option value="" disabled style={{ background: '#141414', color: '#F2F2F2' }}>Select a subject</option>
+                      <option value="general" style={{ background: '#141414', color: '#F2F2F2' }}>General Inquiry</option>
+                      <option value="partnership" style={{ background: '#141414', color: '#F2F2F2' }}>Partnership Opportunity</option>
+                      <option value="media" style={{ background: '#141414', color: '#F2F2F2' }}>Media & Press</option>
+                      <option value="player" style={{ background: '#141414', color: '#F2F2F2' }}>Player Inquiry</option>
+                      <option value="creator" style={{ background: '#141414', color: '#F2F2F2' }}>Creator Inquiry</option>
+                      <option value="other" style={{ background: '#141414', color: '#F2F2F2' }}>Other</option>
                     </select>
                   </div>
 
