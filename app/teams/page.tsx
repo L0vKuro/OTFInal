@@ -73,34 +73,45 @@ export default function TeamsPage() {
 
             {/* Roster Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
-              {team.roster.map((player, pi) => (
-                <div key={pi} className="group relative bg-[#141414] border border-white/5 hover:border-opacity-40 overflow-hidden card-hover">
-                  <div className="h-px w-full" style={{ background: `linear-gradient(90deg, ${team.color}, transparent)` }} />
-                  <div className="h-24 relative overflow-hidden"
-                    style={{ background: `linear-gradient(135deg, ${team.color}10, transparent)` }}>
-                    <div className="absolute inset-0 bg-grid opacity-20" />
-                    <div className="absolute bottom-2 left-3">
-                      <span className="font-display font-black text-3xl opacity-15"
-                        style={{ fontFamily: 'Barlow Condensed, sans-serif', color: team.color }}>
-                        {pi + 1 < 10 ? `0${pi + 1}` : pi + 1}
-                      </span>
+              {team.roster.map((player, pi) => {
+                const photoName = `player-${player.name.toLowerCase().replace(/[^a-z0-9]/g, '')}.jpg`
+                return (
+                  <div key={pi} className="group relative bg-[#141414] border border-white/5 hover:border-opacity-40 overflow-hidden card-hover">
+                    <div className="h-px w-full" style={{ background: `linear-gradient(90deg, ${team.color}, transparent)` }} />
+
+                    {/* Player photo */}
+                    <div className="h-40 relative overflow-hidden bg-[#0D0D0D]">
+                      <img
+                        src={`/${photoName}`}
+                        alt={player.name}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', opacity: 0.85 }}
+                        onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
+                      />
+                      <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${team.color}30, transparent)` }} />
+                      <div className="absolute bottom-2 left-3">
+                        <span className="font-display font-black text-3xl opacity-20"
+                          style={{ fontFamily: 'Barlow Condensed, sans-serif', color: team.color }}>
+                          {pi + 1 < 10 ? `0${pi + 1}` : pi + 1}
+                        </span>
+                      </div>
+                      <div className="absolute top-2 right-2">
+                        <span className="text-[10px] font-mono px-1.5 py-0.5 uppercase tracking-wider"
+                          style={{ color: team.color, background: `${team.color}15`, border: `1px solid ${team.color}30` }}>
+                          {player.role}
+                        </span>
+                      </div>
                     </div>
-                    <div className="absolute top-2 right-2">
-                      <span className="text-[10px] font-mono px-1.5 py-0.5 uppercase tracking-wider"
-                        style={{ color: team.color, background: `${team.color}15`, border: `1px solid ${team.color}30` }}>
-                        {player.role}
-                      </span>
+
+                    <div className="p-3">
+                      <h3 className="font-display font-black text-lg text-[#F2F2F2] uppercase"
+                        style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                        {player.name}
+                      </h3>
+                      <p className="text-[#F2F2F2]/30 text-xs mt-0.5 font-mono">{player.real}</p>
                     </div>
                   </div>
-                  <div className="p-3">
-                    <h3 className="font-display font-black text-lg text-[#F2F2F2] uppercase"
-                      style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-                      {player.name}
-                    </h3>
-                    <p className="text-[#F2F2F2]/30 text-xs mt-0.5 font-mono">{player.real}</p>
-                  </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
 
             {idx < teams.length - 1 && (
