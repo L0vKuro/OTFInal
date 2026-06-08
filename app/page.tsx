@@ -121,7 +121,7 @@ export default function HomePage() {
             {[...Array(16)].map((_, i) => (
               <div key={i} className="flex items-center gap-10 mx-10">
                 <img src="/wordmark.png" alt="OVERTAKE"
-                  style={{ height: '48px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen', opacity: 0.6 }} />
+                  style={{ height: '80px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen', opacity: 0.6 }} />
                 <span className="text-[#E8191A] text-2xl">✦</span>
               </div>
             ))}
