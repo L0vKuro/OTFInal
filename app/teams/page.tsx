@@ -66,7 +66,7 @@ export default function TeamsPage() {
                 </div>
                 <h2 className="font-display font-black text-5xl md:text-6xl uppercase"
                   style={{ fontFamily: 'Barlow Condensed, sans-serif', color: team.color }}>
-                  OT {team.game}
+                  {team.game}
                 </h2>
               </div>
             </div>
