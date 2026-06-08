@@ -28,6 +28,21 @@ export const teams = [
     ],
   },
   {
+    id: 'deadlock',
+    game: 'DEADLOCK',
+    tag: 'OT',
+    color: '#E8191A',
+    region: 'NA',
+    roster: [
+      { name: 'SHEEP', role: 'PLAYER', country: '🇺🇸', real: '@SheepDL', twitter: 'https://x.com/SheepDL' },
+      { name: 'VCIPHER', role: 'PLAYER', country: '🇺🇸', real: 'vCipher', twitter: '' },
+      { name: 'E-IN', role: 'PLAYER', country: '🇺🇸', real: 'E-in', twitter: '' },
+      { name: 'KIINGKOOOPA', role: 'PLAYER', country: '🇺🇸', real: '@KiiingKooopa', twitter: 'https://x.com/KiiingKooopa' },
+      { name: 'DELINQUENT', role: 'PLAYER', country: '🇺🇸', real: '@delinquentFps', twitter: 'https://x.com/delinquentFps' },
+      { name: 'MAXX', role: 'PLAYER', country: '🇺🇸', real: '@MaxxTF2', twitter: 'https://x.com/MaxxTF2' },
+    ],
+  },
+  {
     id: 'r6-main',
     game: 'RAINBOW 6 — MAIN',
     tag: 'OT',
@@ -69,21 +84,6 @@ export const teams = [
       { name: 'JAGERCLUTCH', role: 'SUB', country: '🇺🇸', real: '@JagerClutch', twitter: 'https://x.com/JagerClutch' },
       { name: 'ATHENA', role: 'SUB', country: '🇺🇸', real: '@AthenasEgo', twitter: 'https://x.com/AthenasEgo' },
       { name: 'GHUUD', role: 'COACH', country: '🇺🇸', real: '@Ghuud_', twitter: 'https://x.com/Ghuud_', color: '#E8191A' },
-    ],
-  },
-  {
-    id: 'deadlock',
-    game: 'DEADLOCK',
-    tag: 'OT',
-    color: '#E8191A',
-    region: 'NA',
-    roster: [
-      { name: 'SHEEP', role: 'PLAYER', country: '🇺🇸', real: '@SheepDL', twitter: 'https://x.com/SheepDL' },
-      { name: 'VCIPHER', role: 'PLAYER', country: '🇺🇸', real: 'vCipher', twitter: '' },
-      { name: 'E-IN', role: 'PLAYER', country: '🇺🇸', real: 'E-in', twitter: '' },
-      { name: 'KIINGKOOOPA', role: 'PLAYER', country: '🇺🇸', real: '@KiiingKooopa', twitter: 'https://x.com/KiiingKooopa' },
-      { name: 'DELINQUENT', role: 'PLAYER', country: '🇺🇸', real: '@delinquentFps', twitter: 'https://x.com/delinquentFps' },
-      { name: 'MAXX', role: 'PLAYER', country: '🇺🇸', real: '@MaxxTF2', twitter: 'https://x.com/MaxxTF2' },
     ],
   },
   {
