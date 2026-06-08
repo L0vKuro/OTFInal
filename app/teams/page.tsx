@@ -1,3 +1,5 @@
+'use client'
+
 import { teams } from '@/lib/data'
 import { ChevronRight } from 'lucide-react'
 
