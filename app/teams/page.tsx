@@ -63,7 +63,6 @@ export default function TeamsPage() {
       <div className="max-w-7xl mx-auto px-6 py-16 space-y-16">
         {teams.map((team, idx) => (
           <div key={team.id} id={team.id} className="scroll-mt-24">
-            {/* Team Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
               <div>
                 <div className="flex items-center gap-3 mb-2">
@@ -80,7 +79,6 @@ export default function TeamsPage() {
               </div>
             </div>
 
-            {/* Roster Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
               {team.roster.map((player: any, pi: number) => {
                 const photo = getPlayerPhoto(player.name)
@@ -89,7 +87,7 @@ export default function TeamsPage() {
                 const cardColor = isGhuud ? '#E8191A' : isFemaleTeam ? '#FF69B4' : team.color
                 const hasTwitter = player.twitter && player.twitter !== ''
 
-                const cardContent = (
+                const inner = (
                   <>
                     <div className="h-px w-full" style={{ background: `linear-gradient(90deg, ${cardColor}, transparent)` }} />
                     <div className="h-40 relative overflow-hidden bg-[#0D0D0D]">
@@ -114,12 +112,11 @@ export default function TeamsPage() {
                       </div>
                     </div>
                     <div className="p-3">
-                      <h3 className="font-display font-black text-lg text-[#F2F2F2] uppercase group-hover:text-white transition-colors"
+                      <h3 className="font-display font-black text-lg text-[#F2F2F2] uppercase"
                         style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
                         {player.name}
                       </h3>
-                      <p className="text-xs mt-0.5 font-mono transition-colors"
-                        style={{ color: cardColor }}>
+                      <p className="text-xs mt-0.5 font-mono" style={{ color: cardColor }}>
                         {player.real}
                       </p>
                     </div>
@@ -127,21 +124,13 @@ export default function TeamsPage() {
                 )
 
                 return hasTwitter ? (
-                  
-                    key={pi}
-                    href={player.twitter}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group relative bg-[#141414] border border-white/5 hover:border-white/20 overflow-hidden card-hover block"
-                  >
-                    {cardContent}
+                  <a key={pi} href={player.twitter} target="_blank" rel="noopener noreferrer"
+                    className="group relative bg-[#141414] border border-white/5 hover:border-white/20 overflow-hidden card-hover block">
+                    {inner}
                   </a>
                 ) : (
-                  <div
-                    key={pi}
-                    className="group relative bg-[#141414] border border-white/5 overflow-hidden card-hover"
-                  >
-                    {cardContent}
+                  <div key={pi} className="group relative bg-[#141414] border border-white/5 overflow-hidden card-hover">
+                    {inner}
                   </div>
                 )
               })}
