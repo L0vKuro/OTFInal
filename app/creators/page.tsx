@@ -3,11 +3,6 @@
 import { creators } from '@/lib/data'
 import { Twitter, Youtube, Twitch, Users, TrendingUp } from 'lucide-react'
 
-export const metadata = {
-  title: 'Creators — Overtake Esports',
-  description: 'Meet the Overtake creator roster — streamers, YouTubers, and content creators redefining gaming culture.',
-}
-
 const PLATFORM_COLORS: Record<string, string> = {
   Twitch: '#9146FF',
   YouTube: '#FF0000',
@@ -71,7 +66,6 @@ export default function CreatorsPage() {
                 style={{ background: `linear-gradient(135deg, ${PLATFORM_COLORS[creator.platform] || '#E8191A'}15, transparent 60%)` }}>
                 <div className="absolute inset-0 bg-grid opacity-20" />
 
-                {/* Photo */}
                 <img
                   src={`/${creator.photo}`}
                   alt={creator.handle}
@@ -80,7 +74,6 @@ export default function CreatorsPage() {
                 />
                 <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, #0D0D0D 10%, transparent 60%)' }} />
 
-                {/* Followers badge */}
                 <div className="absolute top-4 right-4">
                   <div className="flex items-center gap-1.5 bg-black/60 backdrop-blur border border-white/10 px-3 py-1.5 rounded-sm">
                     <Users size={11} className="text-white/50" />
@@ -88,7 +81,6 @@ export default function CreatorsPage() {
                   </div>
                 </div>
 
-                {/* Platform badge */}
                 <div className="absolute top-4 left-4">
                   <div className="text-[10px] font-mono font-bold px-2 py-1 uppercase tracking-widest"
                     style={{ color: PLATFORM_COLORS[creator.platform] || '#E8191A', background: `${PLATFORM_COLORS[creator.platform] || '#E8191A'}20`, border: `1px solid ${PLATFORM_COLORS[creator.platform] || '#E8191A'}40` }}>
@@ -97,7 +89,6 @@ export default function CreatorsPage() {
                 </div>
               </div>
 
-              {/* Content */}
               <div className="p-6">
                 <div className="flex items-start justify-between mb-3">
                   <div>
@@ -117,7 +108,6 @@ export default function CreatorsPage() {
 
                 <p className="text-white/40 text-sm leading-relaxed mb-5">{creator.bio}</p>
 
-                {/* Socials */}
                 <div className="flex items-center gap-2 pt-4 border-t border-white/5">
                   <span className="text-white/20 text-xs font-mono mr-1">FOLLOW:</span>
                   {creator.socials.twitch && (
