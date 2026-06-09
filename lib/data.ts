@@ -100,6 +100,23 @@ export const teams = [
     ],
   },
   {
+    id: 'warzone',
+    game: 'WARZONE',
+    tag: 'OT',
+    color: '#FF6B00',
+    region: 'NA',
+    roster: [
+      { name: 'DEASELLS', role: 'PLAYER', country: '🇺🇸', real: '@deasells', twitter: 'https://x.com/deasells' },
+      { name: 'FAVOR8', role: 'PLAYER', country: '🇺🇸', real: '@Favor8_', twitter: 'https://x.com/Favor8_' },
+      { name: 'GODCOOKIE', role: 'PLAYER', country: '🇺🇸', real: '@godcookie_2', twitter: 'https://x.com/godcookie_2' },
+      { name: 'KONTROL', role: 'PLAYER', country: '🇺🇸', real: '@SynKontrol', twitter: 'https://x.com/SynKontrol' },
+      { name: 'DANNY', role: 'PLAYER', country: '🇺🇸', real: '@Dannyvsu', twitter: 'https://x.com/Dannyvsu' },
+      { name: 'XIMMY', role: 'PLAYER', country: '🇺🇸', real: '@ximmywz', twitter: 'https://x.com/ximmywz' },
+      { name: 'LUKA', role: 'PLAYER', country: '🇺🇸', real: '@xLuka_77', twitter: 'https://x.com/xLuka_77' },
+      { name: 'YESYERT', role: 'PLAYER', country: '🇺🇸', real: '@yesyert', twitter: 'https://x.com/yesyert' },
+    ],
+  },
+  {
     id: 'clashroyale',
     game: 'CLASH ROYALE',
     tag: 'OT',
