@@ -8,10 +8,12 @@ const GAME_ICONS: Record<string, string> = {
   'COUNTER-STRIKE': '🎯',
   'RAINBOW 6 — MAIN': '🛡️',
   'RAINBOW 6 — ACADEMY': '🛡️',
+  'RAINBOW 6 — FEMALE': '🛡️',
   'iRACING': '🏎️',
   'CLASH ROYALE': '👑',
-  'CALL OF DUTY': '🎯',
+  'CALL OF DUTY ACADEMY': '🎯',
   'DEADLOCK': '💀',
+  'WARZONE': '🔫',
 }
 
 const PLAYER_PHOTOS: Record<string, string> = {
@@ -41,13 +43,13 @@ export default function TeamsPage() {
             OUR<br />TEAMS
           </h1>
           <p className="text-[#F2F2F2]/40 text-lg mt-6 max-w-lg">
-            Eight rosters. Eight disciplines. One standard of excellence.
+            Ten rosters. Ten disciplines. One standard of excellence.
           </p>
           <div className="flex flex-wrap gap-4 mt-8">
             {[
-              { label: 'Active Rosters', value: '8' },
+              { label: 'Active Rosters', value: '10' },
               { label: 'Tournament Wins', value: '20+' },
-              { label: 'Active Players', value: '30+' },
+              { label: 'Active Players', value: '40+' },
             ].map(({ label, value }) => (
               <div key={label} className="flex items-center gap-3 border border-white/8 px-5 py-3 bg-white/2">
                 <span className="text-[#F2F2F2]/40 text-sm">{label}</span>
