@@ -1,5 +1,4 @@
 'use client'
-
 import { creators } from '@/lib/data'
 import { Twitter, Youtube, Twitch, Users, TrendingUp } from 'lucide-react'
 
