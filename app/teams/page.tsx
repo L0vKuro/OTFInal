@@ -23,6 +23,10 @@ const PLAYER_PHOTOS: Record<string, string> = {
   'kiingkooopa': 'player-kiinkooopa.jpg',
   'godcookie': 'player-cookie.webp',
   'kontrol': 'player-kontrol.jpeg',
+  'ximmy': 'player-ximmy.png',
+  'yesyert': 'player-yesyert.png',
+  'deasells': 'player-deasells.png',
+  'favor8': 'player-favor8.png',
 }
 
 function getPlayerPhoto(name: string): string {
