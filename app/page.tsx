@@ -7,7 +7,7 @@ import { ChevronRight, MessageCircle, ArrowRight } from 'lucide-react'
 import { teams, news } from '@/lib/data'
 
 const stats = [
-  { label: 'Active Rosters', value: '8', unit: '' },
+  { label: 'Active Rosters', value: '10', unit: '' },
   { label: 'Tournament Wins', value: '20', unit: '+' },
   { label: 'Followers', value: '5K', unit: '+' },
   { label: 'Engagements', value: '3M', unit: '+' },
