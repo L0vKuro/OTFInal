@@ -21,6 +21,8 @@ const PLAYER_PHOTOS: Record<string, string> = {
   'vcipher': 'player-vcipher.png',
   'megahitidee': 'player-megahitIdee.jpg',
   'kiingkooopa': 'player-kiinkooopa.jpg',
+  'godcookie': 'player-cookie.webp',
+  'kontrol': 'player-kontrol.jpeg',
 }
 
 function getPlayerPhoto(name: string): string {
