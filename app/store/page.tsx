@@ -11,7 +11,7 @@ const products = [
     tag: 'NEW DROP',
     description: 'The official Overtake 2026 Polo — built for competitors who refuse to blend in. Dark navy performance fabric with red dragon-art sleeves, a custom crosshair chest emblem, and the Overtake wordmark front and center. This is what it looks like to represent.',
     details: ['Premium performance fabric', 'Custom dragon art sleeve graphics', 'Overtake crosshair emblem', 'Personalized nickname on back', 'Available via RepulseCo'],
-    images: ['/Front.png', '/Rear.png', '/Review.jpg'],
+    images: ['/Front.png', '/Rear.png'],
     available: false,
   },
 ]
