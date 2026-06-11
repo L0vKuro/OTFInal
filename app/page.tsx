@@ -260,32 +260,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ─── FOLLOW US ─── */}
-        <section className="relative py-16 bg-[#141414] border-y border-white/5 overflow-hidden">
-          <div className="absolute inset-0 bg-grid opacity-10" />
-          <div className="relative max-w-7xl mx-auto px-6 text-center">
-            <p className="text-[#E8191A] text-xs font-mono tracking-widest uppercase mb-4">// Stay Connected</p>
-            <h2 className="font-display font-black text-4xl md:text-5xl uppercase text-[#F2F2F2] mb-8"
-              style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-              FOLLOW THE MOVEMENT
-            </h2>
-            <div className="flex flex-wrap items-center justify-center gap-4">
-              <a href="https://www.youtube.com/@OVERTAKESECTOR" target="_blank" rel="noopener noreferrer"
-                className="flex items-center gap-3 bg-[#0D0D0D] border border-white/10 hover:border-red-500/50 hover:bg-red-500/5 px-8 py-4 transition-all group"
-                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="#FF0000"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-                <span className="font-black text-sm uppercase tracking-widest text-[#F2F2F2] group-hover:text-red-400 transition-colors">YouTube</span>
-              </a>
-              <a href="https://www.twitch.tv/OVERTAKESECTOR" target="_blank" rel="noopener noreferrer"
-                className="flex items-center gap-3 bg-[#0D0D0D] border border-white/10 hover:border-[#9146FF]/50 hover:bg-[#9146FF]/5 px-8 py-4 transition-all group"
-                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="#9146FF"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/></svg>
-                <span className="font-black text-sm uppercase tracking-widest text-[#F2F2F2] group-hover:text-[#9146FF] transition-colors">Twitch</span>
-              </a>
-            </div>
-          </div>
-        </section>
-
         {/* ─── DISCORD CTA ─── */}
         <section className="relative py-28 overflow-hidden">
           <div className="absolute inset-0 bg-grid opacity-20" />
@@ -302,11 +276,25 @@ export default function HomePage() {
               <span style={{ background: 'linear-gradient(135deg, #FF3334, #E8191A)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>COMMUNITY</span>
             </h2>
             <p className="text-[#F2F2F2]/40 text-lg mb-10 max-w-lg mx-auto">Connect with Overtake fans, get exclusive updates, and be first in line for tryouts.</p>
-            <a href="https://discord.com/invite/OvertakeSector" target="_blank" rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 bg-[#E8191A] hover:bg-[#B81011] px-10 py-5 font-bold tracking-widest uppercase text-base transition-all hover:shadow-[0_0_40px_rgba(232,25,26,0.5)] text-[#F2F2F2]"
-              style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-              <MessageCircle size={18} /> Join Discord — Free
-            </a>
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              <a href="https://discord.com/invite/OvertakeSector" target="_blank" rel="noopener noreferrer"
+                className="inline-flex items-center gap-3 bg-[#E8191A] hover:bg-[#B81011] px-10 py-5 font-bold tracking-widest uppercase text-base transition-all hover:shadow-[0_0_40px_rgba(232,25,26,0.5)] text-[#F2F2F2]"
+                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                <MessageCircle size={18} /> Join Discord — Free
+              </a>
+              <a href="https://www.youtube.com/@OVERTAKESECTOR" target="_blank" rel="noopener noreferrer"
+                className="inline-flex items-center gap-3 bg-[#0D0D0D] border border-white/10 hover:border-red-500/50 hover:bg-red-500/5 px-10 py-5 font-bold tracking-widest uppercase text-base transition-all text-[#F2F2F2]"
+                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="#FF0000"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                YouTube
+              </a>
+              <a href="https://www.twitch.tv/OVERTAKESECTOR" target="_blank" rel="noopener noreferrer"
+                className="inline-flex items-center gap-3 bg-[#0D0D0D] border border-white/10 hover:border-[#9146FF]/50 hover:bg-[#9146FF]/5 px-10 py-5 font-bold tracking-widest uppercase text-base transition-all text-[#F2F2F2]"
+                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="#9146FF"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/></svg>
+                Twitch
+              </a>
+            </div>
           </div>
         </section>
 
