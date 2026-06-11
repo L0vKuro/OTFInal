@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ChevronRight, MessageCircle, ArrowRight } from 'lucide-react'
@@ -12,6 +12,41 @@ const stats = [
   { label: 'Followers', value: '5K', unit: '+' },
   { label: 'Engagements', value: '3M', unit: '+' },
 ]
+
+function LiveButton() {
+  const [liveCount, setLiveCount] = useState(0)
+
+  useEffect(() => {
+    const check = async () => {
+      try {
+        const res = await fetch('/api/twitch-live')
+        const data = await res.json()
+        setLiveCount(data.streams?.length || 0)
+      } catch {}
+    }
+    check()
+    const interval = setInterval(check, 60000)
+    return () => clearInterval(interval)
+  }, [])
+
+  if (liveCount === 0) return null
+
+  return (
+    <Link href="/creators"
+      className="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-[#0D0D0D] border border-[#E8191A]/60 px-5 py-3 shadow-[0_0_30px_rgba(232,25,26,0.5)] hover:shadow-[0_0_50px_rgba(232,25,26,0.8)] transition-all group"
+      style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+      <div className="relative flex items-center justify-center">
+        <div className="w-3 h-3 bg-[#E8191A] rounded-full animate-pulse" />
+        <div className="absolute w-3 h-3 bg-[#E8191A] rounded-full animate-ping opacity-60" />
+      </div>
+      <div>
+        <p className="font-black text-sm uppercase tracking-widest text-[#F2F2F2]">LIVE NOW</p>
+        <p className="text-[10px] font-mono text-[#E8191A]">{liveCount} creator{liveCount > 1 ? 's' : ''} streaming</p>
+      </div>
+      <ChevronRight size={16} className="text-[#E8191A] group-hover:translate-x-1 transition-transform" />
+    </Link>
+  )
+}
 
 export default function HomePage() {
   const [splashDone, setSplashDone] = useState(false)
@@ -266,6 +301,9 @@ export default function HomePage() {
         </div>
 
       </div>
+
+      {/* ─── FLOATING LIVE BUTTON ─── */}
+      <LiveButton />
     </>
   )
 }
