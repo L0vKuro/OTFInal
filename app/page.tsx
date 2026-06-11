@@ -33,7 +33,7 @@ function LiveButton() {
 
   return (
     <Link href="/creators"
-      className="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-[#0D0D0D] border border-[#E8191A]/60 px-5 py-3 shadow-[0_0_30px_rgba(232,25,26,0.5)] hover:shadow-[0_0_50px_rgba(232,25,26,0.8)] transition-all group"
+      className="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-[#0D0D0D] border border-[#E8191A]/60 px-8 py-5 shadow-[0_0_30px_rgba(232,25,26,0.5)] hover:shadow-[0_0_50px_rgba(232,25,26,0.8)] transition-all group"
       style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
       <div className="relative flex items-center justify-center">
         <div className="w-3 h-3 bg-[#E8191A] rounded-full animate-pulse" />
