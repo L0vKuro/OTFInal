@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { creators } from '@/lib/data'
 import { Twitter, Youtube, Twitch, Users, TrendingUp } from 'lucide-react'
 
@@ -7,6 +8,73 @@ const PLATFORM_COLORS: Record<string, string> = {
   Twitch: '#9146FF',
   YouTube: '#FF0000',
   TikTok: '#010101',
+}
+
+function LiveSection() {
+  const [streams, setStreams] = useState<any[]>([])
+
+  useEffect(() => {
+    const check = async () => {
+      try {
+        const res = await fetch('/api/twitch-live')
+        const data = await res.json()
+        setStreams(data.streams || [])
+      } catch {}
+    }
+    check()
+    const interval = setInterval(check, 60000)
+    return () => clearInterval(interval)
+  }, [])
+
+  if (streams.length === 0) return null
+
+  return (
+    <div className="border-b border-white/5 bg-[#0D0D0D]">
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        <div className="flex items-center gap-3 mb-8">
+          <div className="relative flex items-center justify-center">
+            <div className="w-3 h-3 bg-[#E8191A] rounded-full animate-pulse" />
+            <div className="absolute w-3 h-3 bg-[#E8191A] rounded-full animate-ping opacity-60" />
+          </div>
+          <p className="text-[#E8191A] text-xs font-mono tracking-widest uppercase">// Live Right Now</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {streams.map((stream: any) => {
+            return (
+              <a key={stream.id} href={`https://twitch.tv/${stream.user_login}`} target="_blank" rel="noopener noreferrer"
+                className="group relative bg-[#141414] border border-[#E8191A]/20 hover:border-[#E8191A]/50 overflow-hidden transition-all hover:shadow-[0_0_30px_rgba(232,25,26,0.15)]">
+                <div className="h-px w-full bg-gradient-to-r from-[#E8191A] to-transparent" />
+                <div className="h-40 relative overflow-hidden bg-[#0D0D0D]">
+                  <img
+                    src={stream.thumbnail_url?.replace('{width}', '440').replace('{height}', '248')}
+                    alt={stream.title}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }}
+                    onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-transparent to-transparent" />
+                  <div className="absolute top-3 left-3 flex items-center gap-2 bg-[#E8191A] px-2 py-1">
+                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+                    <span className="text-[10px] font-mono font-black text-white uppercase tracking-widest">Live</span>
+                  </div>
+                  <div className="absolute top-3 right-3 bg-black/70 px-2 py-1">
+                    <span className="text-[10px] font-mono text-white">{stream.viewer_count?.toLocaleString()} viewers</span>
+                  </div>
+                </div>
+                <div className="p-4">
+                  <h3 className="font-display font-black text-xl text-[#F2F2F2] uppercase mb-1"
+                    style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                    {stream.user_name}
+                  </h3>
+                  <p className="text-[#F2F2F2]/40 text-xs font-mono line-clamp-1">{stream.title}</p>
+                  <p className="text-[#9146FF] text-xs font-mono mt-1">{stream.game_name}</p>
+                </div>
+              </a>
+            )
+          })}
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default function CreatorsPage() {
@@ -46,6 +114,10 @@ export default function CreatorsPage() {
           </div>
         </div>
       </div>
+
+      {/* Live Section */}
+      <LiveSection />
+
       <div className="max-w-7xl mx-auto px-6 py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {creators.map((creator) => {
