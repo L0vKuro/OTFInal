@@ -95,8 +95,8 @@ export default function TeamsPage() {
               {team.roster.map((player: any, pi: number) => {
                 const photo = getPlayerPhoto(player.name)
                 const isFemaleTeam = team.id === 'r6-FEMALE'
-                const isGhuud = player.name === 'GHUUD'
-                const cardColor = isGhuud ? '#E8191A' : isFemaleTeam ? '#FF69B4' : team.color
+                const isRedCard = ['NATHAN', 'SHIYO', 'ABYCES'].includes(player.name)
+                const cardColor = isGhuud || isRedCard ? '#E8191A' : isFemaleTeam ? '#FF69B4' : team.color
                 const hasTwitter = player.twitter && player.twitter !== ''
 
                 const inner = (
