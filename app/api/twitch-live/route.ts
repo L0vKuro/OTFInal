@@ -10,6 +10,7 @@ const CREATOR_LOGINS = [
   'oficr',
   'lordrogue22',
   'depmonk',
+  'ikillshott',
 ]
 
 async function getToken() {
