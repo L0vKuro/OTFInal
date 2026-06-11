@@ -10,6 +10,7 @@ const TIER_CONFIG: Record<string, { label: string; color: string; bg: string; bo
   Founding: { label: 'FOUNDING PARTNER', color: '#E8191A', bg: '#E8191A15', border: '#E8191A30' },
   Premier: { label: 'PREMIER PARTNER', color: '#FFB800', bg: '#FFB80015', border: '#FFB80030' },
   Official: { label: 'OFFICIAL PARTNER', color: '#ffffff', bg: '#ffffff08', border: '#ffffff15' },
+  Partner: { label: 'PARTNER', color: '#A855F7', bg: '#A855F715', border: '#A855F730' },
 }
 
 export default function PartnersPage() {
@@ -17,6 +18,7 @@ export default function PartnersPage() {
     Founding: partners.filter(p => p.tier === 'Founding'),
     Premier: partners.filter(p => p.tier === 'Premier'),
     Official: partners.filter(p => p.tier === 'Official'),
+    Partner: partners.filter(p => p.tier === 'Partner'),
   }
 
   return (
@@ -106,7 +108,7 @@ export default function PartnersPage() {
               <p className="text-white/40 leading-relaxed mb-8">
                 We work with brands that share our values — high performance, authenticity, and a deep connection to gaming culture. Reach out to our partnerships team.
               </p>
-              <a href="mailto:partnerships@overtakegg.com"
+              <a href="mailto:here@overtakegg.com"
                 className="flex items-center gap-3 bg-[#E8191A] hover:bg-[#B81011] px-8 py-4 font-bold tracking-widest uppercase text-sm transition-all hover:shadow-[0_0_30px_rgba(232,25,26,0.4)] clip-corner text-white w-fit"
                 style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
                 <Mail size={16} />
