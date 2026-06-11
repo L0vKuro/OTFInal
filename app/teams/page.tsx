@@ -96,8 +96,7 @@ export default function TeamsPage() {
                 const photo = getPlayerPhoto(player.name)
                 const isFemaleTeam = team.id === 'r6-FEMALE'
                 const isRedCard = ['NATHAN', 'SHIYO', 'ABYCES'].includes(player.name)
-                const cardColor = isGhuud || isRedCard ? '#E8191A' : isFemaleTeam ? '#FF69B4' : team.color
-                const hasTwitter = player.twitter && player.twitter !== ''
+                const cardColor = isRedCard ? '#E8191A' : isFemaleTeam ? '#FF69B4' : team.color
 
                 const inner = (
                   <>
