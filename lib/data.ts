@@ -238,7 +238,7 @@ export const partners = [
   {
     name: 'Ink3D',
     category: '3D Printed Designs',
-    tier: 'Partner',
+    tier: 'Official',
     desc: 'The leading 3D design shop in esports. Ink3D brings your team\'s vision to life — custom logos, apparel, accessories, and collectibles crafted with precision for orgs, streamers, and fans who refuse to blend in.',
     logo: '/Ink3d.png',
     link: 'https://ink3dshop.com/',
