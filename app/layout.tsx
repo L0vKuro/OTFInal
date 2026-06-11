@@ -10,8 +10,8 @@ export const metadata: Metadata = {
   description: 'Overtake is a premier esports organization competing at the highest level across multiple titles. Join the movement.',
   keywords: 'esports, gaming, competitive, overtake, team, fps, moba',
   openGraph: {
-    title: 'OVERTAKE Esports',
-    description: 'Compete. Create. Dominate.',
+    title: 'OVERTAKE SECTOR',
+    description: '#OvertakeYourLimits',
     type: 'website',
   },
 }
