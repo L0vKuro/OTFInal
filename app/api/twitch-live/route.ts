@@ -19,11 +19,8 @@ const CREATOR_LOGINS = [
   'jahwci',
   'keotaress',
   'kiiiingkooopa',
-  's3ann_',
-  'siiimaoOT',
   'soto_on_tt',
   'trapzfv',
-  'ttvpicozzi',
   'xlluka',
   'otcchunk',
 ]
