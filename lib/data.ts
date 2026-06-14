@@ -100,8 +100,8 @@ export const teams = [
       { name: 'JAGERCLUTCH', role: 'SUB', country: '🇺🇸', real: '@JagerClutch', twitter: 'https://x.com/JagerClutch' },
       { name: 'ATHENA', role: 'SUB', country: '🇺🇸', real: '@AthenasEgo', twitter: 'https://x.com/AthenasEgo' },
       { name: 'NATHAN', role: 'COACH', country: '🇺🇸', real: '@NShiftR6', twitter: 'https://x.com/NShiftR6' },
-      { name: 'SHIYO', role: 'ASST COACH', country: '🇺🇸', real: '@Shiyo_23', twitter: 'https://x.com/Shiyo_23' },
-      { name: 'ABYCES', role: 'ANALYST', country: '🇺🇸', real: '@Brilliabyce', twitter: 'https://x.com/Brilliabyce' },
+      { name: 'SHIYO', role: 'ANALYST', country: '🇺🇸', real: '@Shiyo_23', twitter: 'https://x.com/Shiyo_23' },
+      { name: 'ABYCE', role: 'ASST COACH', country: '🇺🇸', real: '@Brilliabyce', twitter: 'https://x.com/Brilliabyce' },
     ],
   },
   {
