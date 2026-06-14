@@ -53,7 +53,6 @@ export const teams = [
       { name: 'FAVOR8', role: 'PLAYER', country: '🇺🇸', real: '@Favor8_', twitter: 'https://x.com/Favor8_' },
       { name: 'GODCOOKIE', role: 'PLAYER', country: '🇺🇸', real: '@godcookie_2', twitter: 'https://x.com/godcookie_2' },
       { name: 'KONTROL', role: 'PLAYER', country: '🇺🇸', real: '@SynKontrol', twitter: 'https://x.com/SynKontrol' },
-      { name: 'DANNY', role: 'PLAYER', country: '🇺🇸', real: '@Dannyvsu', twitter: 'https://x.com/Dannyvsu' },
       { name: 'XIMMY', role: 'PLAYER', country: '🇺🇸', real: '@ximmywz', twitter: 'https://x.com/ximmywz' },
       { name: 'LUKA', role: 'PLAYER', country: '🇺🇸', real: '@xLuka_77', twitter: 'https://x.com/xLuka_77' },
       { name: 'ADLIBB', role: 'PLAYER', country: '🇺🇸', real: '@libFPS', twitter: 'https://x.com/libFPS' },
