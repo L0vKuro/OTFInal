@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ChevronRight, Calendar, Clock, Trophy, Users, Tv, ChevronDown } from 'lucide-react'
+import { ChevronRight, Calendar, Clock, Trophy, Users, Tv, ChevronDown, MapPin } from 'lucide-react'
 
 const CATEGORY_COLORS: Record<string, string> = {
   'TOURNAMENT': '#FF4655',
@@ -10,18 +10,96 @@ const CATEGORY_COLORS: Record<string, string> = {
   'CREATOR STREAM': '#9146FF',
   'WATCH PARTY': '#F0A500',
   'PARTNER EVENT': '#A855F7',
+  'LAN': '#F0A500',
 }
+
+const upcomingEvents = [
+  {
+    id: 1,
+    title: 'FRAG MIDWEST: ST. LOUIS',
+    category: 'LAN',
+    game: 'COUNTER-STRIKE',
+    featured: true,
+    date: 'August 29–30, 2026',
+    location: 'Impact Gaming Center — Fairview Heights, IL',
+    link: 'https://x.com/fragadelphia',
+    prizePool: 'Up to $10,000',
+    description: 'Overtake Counter-Strike heads to St. Louis for FRAG Midwest — a 32-team LAN event hosted by FRAG at Impact Gaming Center. Up to $10,000 on the line with VRS eligible matches.',
+    details: [
+      'Prize Pool scales up to $10,000 at full tournament (32 teams)',
+      '1st: $5,500 | 2nd: $2,500 | 3rd: $1,300 | 4th: $700',
+      'No refunds or ticket transfers',
+      'VRS Eligible',
+      'Hosted by @fragadelphia',
+    ],
+    days: [
+      {
+        day: 'DAY 1 — FRIDAY, AUG 29TH',
+        subtitle: 'GROUPS',
+        schedule: [
+          { time: 'TBA', event: 'Check-in & Setup' },
+          { time: 'TBA', event: 'Group Stage Begins' },
+        ],
+      },
+      {
+        day: 'DAY 2 — SATURDAY, AUG 30TH',
+        subtitle: 'PLAYOFFS',
+        schedule: [
+          { time: 'TBA', event: 'Playoff Bracket' },
+          { time: 'TBA', event: 'Grand Finals' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 2,
+    title: 'R6 NA OPEN CUP LAN — ST. LOUIS',
+    category: 'LAN',
+    game: 'RAINBOW 6',
+    featured: false,
+    date: 'August 21–23, 2026',
+    location: 'St. Louis, MO',
+    link: 'https://x.com/R6esportsNA',
+    prizePool: 'TBA',
+    description: 'Overtake Rainbow 6 competes in the NA Open Cup LAN series, heading to St. Louis for the third stop of the season. Hosted by Rainbow Six Esports NA.',
+    details: [
+      'Part of the NA Open Cup LAN series',
+      'Previous stops: Philadelphia PA (Jun 12–14), Windsor ON (Jul 17–19)',
+      'Upcoming: Palmetto Bay FL (Sept 25–27)',
+      'Finals: Salt Lake City UT (Oct 23–25)',
+      'Hosted by @R6esportsNA',
+    ],
+    days: [
+      {
+        day: 'DAY 1 — THURSDAY, AUG 21ST',
+        subtitle: 'GROUPS',
+        schedule: [{ time: 'TBA', event: 'Group Stage' }],
+      },
+      {
+        day: 'DAY 2 — FRIDAY, AUG 22ND',
+        subtitle: 'GROUPS',
+        schedule: [{ time: 'TBA', event: 'Group Stage Continues' }],
+      },
+      {
+        day: 'DAY 3 — SATURDAY, AUG 23RD',
+        subtitle: 'PLAYOFFS',
+        schedule: [{ time: 'TBA', event: 'Playoff Bracket & Finals' }],
+      },
+    ],
+  },
+]
 
 const archivedEvents = [
   {
-    id: 1,
+    id: 10,
     title: 'WILD//WEST STAGE 2 — QUALIFIER 6',
     category: 'TOURNAMENT',
     game: 'VALORANT',
     date: 'June 13–15, 2026',
-    platform: 'funhaver.gg',
+    location: 'Online',
     link: 'https://funhaver.gg/',
     description: 'Overtake Valorant competed in the Wild//West Stage 2 Qualifier 6, a GSL group format tournament with playoffs spanning three days.',
+    details: [],
     days: [
       {
         day: 'DAY 1 — FRIDAY, JUNE 13TH',
@@ -57,14 +135,16 @@ const archivedEvents = [
       },
     ],
   },
-  { id: 2, title: 'Overtake Wins Denver LAN', category: 'TOURNAMENT', game: 'Call of Duty', date: 'April 5, 2026', link: 'https://x.com/OvertakeSector/status/2041028971186516153?s=20', description: 'Overtake took home the trophy at the Denver LAN, proving dominance in competitive Call of Duty on the big stage.', days: [] },
-  { id: 3, title: 'Overtake Wins Vintage SoCal LAN', category: 'TOURNAMENT', game: 'Call of Duty', date: 'March 30, 2026', link: 'https://x.com/OvertakeSector/status/2038578890751558141/photo/1', description: 'Overtake dominated the Vintage SoCal LAN tournament, cementing their reputation as one of the top CoD teams in the region.', days: [] },
-  { id: 4, title: 'NAL Challengers Series Qualification', category: 'TOURNAMENT', game: 'Rainbow 6', date: 'March 1, 2026', link: 'https://x.com/OvertakeSector/status/2028306360925138995?s=20', description: 'Overtake qualified for the NAL Challengers Series with Lunar, Sneky, Valen, Tweedy, and Ayex leading the charge.', days: [] },
-  { id: 5, title: 'DivineCorp Proving Grounds Championship', category: 'TOURNAMENT', game: 'Rainbow 6', date: 'January 18, 2026', link: 'https://x.com/OvertakeSector/status/2013103219547779326?s=20', description: 'Overtake claimed the DivineCorp Proving Grounds championship with Valen, Ayex, Tweedy, Sneky, Lunar, and Enoa.', days: [] },
+  { id: 11, title: 'Overtake Wins Denver LAN', category: 'TOURNAMENT', game: 'Call of Duty', date: 'April 5, 2026', location: 'Denver, CO', link: 'https://x.com/OvertakeSector/status/2041028971186516153?s=20', description: 'Overtake took home the trophy at the Denver LAN, proving dominance in competitive Call of Duty on the big stage.', details: [], days: [] },
+  { id: 12, title: 'Overtake Wins Vintage SoCal LAN', category: 'TOURNAMENT', game: 'Call of Duty', date: 'March 30, 2026', location: 'Southern California', link: 'https://x.com/OvertakeSector/status/2038578890751558141/photo/1', description: 'Overtake dominated the Vintage SoCal LAN tournament, cementing their reputation as one of the top CoD teams in the region.', details: [], days: [] },
+  { id: 13, title: 'NAL Challengers Series Qualification', category: 'TOURNAMENT', game: 'Rainbow 6', date: 'March 1, 2026', location: 'Online', link: 'https://x.com/OvertakeSector/status/2028306360925138995?s=20', description: 'Overtake qualified for the NAL Challengers Series with Lunar, Sneky, Valen, Tweedy, and Ayex leading the charge.', details: [], days: [] },
+  { id: 14, title: 'DivineCorp Proving Grounds Championship', category: 'TOURNAMENT', game: 'Rainbow 6', date: 'January 18, 2026', location: 'Online', link: 'https://x.com/OvertakeSector/status/2013103219547779326?s=20', description: 'Overtake claimed the DivineCorp Proving Grounds championship with Valen, Ayex, Tweedy, Sneky, Lunar, and Enoa.', details: [], days: [] },
 ]
 
 export default function EventsPage() {
   const [expandedId, setExpandedId] = useState<number | null>(null)
+  const featured = upcomingEvents.find(e => e.featured)
+  const otherUpcoming = upcomingEvents.filter(e => !e.featured)
 
   return (
     <div className="relative min-h-screen">
@@ -91,7 +171,7 @@ export default function EventsPage() {
           </p>
           <div className="flex flex-wrap gap-4 mt-8">
             {[
-              { label: 'Upcoming Events', value: '0' },
+              { label: 'Upcoming Events', value: '2' },
               { label: 'Active Teams', value: '10' },
               { label: 'Tournament Wins', value: '20+' },
             ].map(({ label, value }) => (
@@ -108,25 +188,138 @@ export default function EventsPage() {
 
       <div className="max-w-7xl mx-auto px-6 py-20 space-y-20">
 
-        {/* No Upcoming Events */}
-        <div>
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-2 h-2 bg-white/20 rounded-full" />
-            <p className="text-[#F2F2F2]/40 text-xs font-mono tracking-widest uppercase">// Upcoming Events</p>
+        {/* Featured Event */}
+        {featured && (
+          <div>
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-2 h-2 bg-[#E8191A] rounded-full animate-pulse" />
+              <p className="text-[#E8191A] text-xs font-mono tracking-widest uppercase">// Featured Upcoming Event</p>
+            </div>
+            <div className="bg-[#141414] border border-[#E8191A]/20 overflow-hidden">
+              <div className="h-px w-full bg-gradient-to-r from-[#E8191A] to-transparent" />
+              <div className="p-8 md:p-10">
+                <div className="flex flex-wrap items-center gap-3 mb-6">
+                  <span className="text-[10px] font-mono font-black px-3 py-1.5 uppercase tracking-widest"
+                    style={{ color: CATEGORY_COLORS[featured.category] || '#E8191A', background: `${CATEGORY_COLORS[featured.category] || '#E8191A'}15`, border: `1px solid ${CATEGORY_COLORS[featured.category] || '#E8191A'}30` }}>
+                    {featured.category}
+                  </span>
+                  <span className="text-[10px] font-mono px-3 py-1.5 bg-white/5 border border-white/10 text-[#F2F2F2]/60 uppercase tracking-widest">
+                    {featured.game}
+                  </span>
+                  <span className="text-[10px] font-mono px-3 py-1.5 bg-[#E8191A]/10 border border-[#E8191A]/20 text-[#E8191A] uppercase tracking-widest">
+                    {featured.prizePool} PRIZE POOL
+                  </span>
+                </div>
+                <h2 className="font-display font-black text-4xl md:text-6xl uppercase text-[#F2F2F2] mb-3"
+                  style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                  {featured.title}
+                </h2>
+                <div className="flex flex-wrap gap-4 mb-6">
+                  <div className="flex items-center gap-2 text-[#F2F2F2]/40 text-sm">
+                    <Calendar size={14} className="text-[#E8191A]" />
+                    {featured.date}
+                  </div>
+                  <div className="flex items-center gap-2 text-[#F2F2F2]/40 text-sm">
+                    <MapPin size={14} className="text-[#E8191A]" />
+                    {featured.location}
+                  </div>
+                </div>
+                <p className="text-[#F2F2F2]/50 text-base leading-relaxed mb-6 max-w-2xl">{featured.description}</p>
+                <div className="space-y-2 mb-8">
+                  {featured.details.map((d, i) => (
+                    <div key={i} className="flex items-start gap-2">
+                      <div className="w-1 h-1 bg-[#E8191A] rounded-full mt-2 flex-shrink-0" />
+                      <span className="text-[#F2F2F2]/40 text-sm font-mono">{d}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                  {featured.days.map((day, di) => (
+                    <div key={di} className="bg-[#0D0D0D] border border-white/5 p-5">
+                      <div className="h-px w-full bg-gradient-to-r from-[#E8191A] to-transparent mb-4" />
+                      <p className="font-display font-black text-sm text-[#F2F2F2] uppercase mb-1"
+                        style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{day.day}</p>
+                      <p className="text-[#E8191A] text-xs font-mono tracking-widest uppercase mb-4">{day.subtitle}</p>
+                      <div className="space-y-2">
+                        {day.schedule.map((item, si) => (
+                          <div key={si} className="flex items-start gap-3">
+                            <span className="text-[#E8191A] font-mono text-xs whitespace-nowrap mt-0.5">{item.time}</span>
+                            <span className="text-[#F2F2F2]/50 text-xs">{item.event}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <a href={featured.link} target="_blank" rel="noopener noreferrer"
+                  className="inline-flex items-center gap-3 bg-[#E8191A] hover:bg-[#B81011] px-8 py-4 font-black tracking-widest uppercase text-sm transition-all hover:shadow-[0_0_30px_rgba(232,25,26,0.4)] clip-corner text-white"
+                  style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                  View Event <ChevronRight size={14} />
+                </a>
+              </div>
+            </div>
           </div>
-          <div className="bg-[#141414] border border-white/5 p-10 text-center">
-            <Calendar size={32} className="text-[#F2F2F2]/20 mx-auto mb-4" />
-            <h3 className="font-display font-black text-2xl text-[#F2F2F2]/40 uppercase mb-2"
-              style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>No Upcoming Events</h3>
-            <p className="text-[#F2F2F2]/20 text-sm font-mono">Check back soon or join the Discord for announcements.</p>
-          </div>
-        </div>
+        )}
 
-        {/* More Coming Soon */}
+        {/* Other Upcoming */}
+        {otherUpcoming.length > 0 && (
+          <div>
+            <div className="flex items-center gap-3 mb-8">
+              <Calendar size={14} className="text-[#E8191A]" />
+              <p className="text-[#E8191A] text-xs font-mono tracking-widest uppercase">// Also Coming Up</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {otherUpcoming.map((event) => {
+                const color = CATEGORY_COLORS[event.category] || '#E8191A'
+                return (
+                  <div key={event.id} className="bg-[#141414] border border-white/5 hover:border-white/10 overflow-hidden transition-all">
+                    <div className="h-px w-full" style={{ background: `linear-gradient(90deg, ${color}, transparent)` }} />
+                    <div className="p-6">
+                      <div className="flex flex-wrap items-center gap-2 mb-4">
+                        <span className="text-[10px] font-mono font-black px-2 py-1 uppercase tracking-widest"
+                          style={{ color, background: `${color}15`, border: `1px solid ${color}30` }}>
+                          {event.category}
+                        </span>
+                        <span className="text-[10px] font-mono px-2 py-1 bg-white/5 border border-white/10 text-[#F2F2F2]/40 uppercase tracking-widest">
+                          {event.game}
+                        </span>
+                      </div>
+                      <h3 className="font-display font-black text-2xl text-[#F2F2F2] uppercase mb-3"
+                        style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{event.title}</h3>
+                      <div className="flex flex-wrap gap-4 mb-3">
+                        <div className="flex items-center gap-2 text-[#F2F2F2]/40 text-xs font-mono">
+                          <Calendar size={12} style={{ color }} />{event.date}
+                        </div>
+                        <div className="flex items-center gap-2 text-[#F2F2F2]/40 text-xs font-mono">
+                          <MapPin size={12} style={{ color }} />{event.location}
+                        </div>
+                      </div>
+                      <p className="text-[#F2F2F2]/40 text-sm leading-relaxed mb-4">{event.description}</p>
+                      <div className="space-y-1 mb-5">
+                        {event.details.map((d, i) => (
+                          <div key={i} className="flex items-start gap-2">
+                            <div className="w-1 h-1 rounded-full mt-2 flex-shrink-0" style={{ background: color }} />
+                            <span className="text-[#F2F2F2]/30 text-xs font-mono">{d}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <a href={event.link} target="_blank" rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 border border-white/10 hover:border-[#E8191A]/50 px-5 py-2.5 text-xs font-mono uppercase tracking-widest text-[#F2F2F2]/50 hover:text-[#E8191A] transition-all">
+                        View Event <ChevronRight size={12} />
+                      </a>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Coming Soon Placeholders */}
         <div>
           <div className="flex items-center gap-3 mb-8">
-            <Calendar size={14} className="text-[#E8191A]" />
-            <p className="text-[#E8191A] text-xs font-mono tracking-widest uppercase">// More Coming Soon</p>
+            <Clock size={14} className="text-[#F2F2F2]/30" />
+            <p className="text-[#F2F2F2]/30 text-xs font-mono tracking-widest uppercase">// More Coming Soon</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
@@ -194,7 +387,6 @@ export default function EventsPage() {
                       <ChevronDown size={16} className={`text-[#F2F2F2]/40 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                     </div>
                   </button>
-
                   {isOpen && (
                     <div className="px-5 pb-6 border-t border-white/5">
                       <p className="text-[#F2F2F2]/50 text-sm leading-relaxed mt-4 mb-4">{event.description}</p>
