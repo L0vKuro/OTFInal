@@ -225,6 +225,20 @@ export const creators = [
     photo: 'creator-Depmonk.jpg',
     socials: { twitch: 'depmonk', twitter: 'https://x.com/Gtiansd', youtube: '' },
   },
+  {
+    id: 'soto',
+    handle: 'SOTO',
+    real: 'OT_Soto_On_TT',
+    platform: 'TikTok',
+    followers: '200',
+    content: 'Rocket League',
+    country: '🇺🇸',
+    specialty: 'ROCKET LEAGUE',
+    bio: 'Soto brings the heat from the pitch to your feed. Rocket League clips, clean plays, and content that hits different — one post at a time.',
+    link: 'https://www.tiktok.com/@soto_on_tt',
+    photo: 'creator-soto.jpg',
+    socials: { twitch: '', twitter: 'https://x.com/OT_Soto_On_TT', youtube: '' },
+  },
 ]
 
 export const partners = [
