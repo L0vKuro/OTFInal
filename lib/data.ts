@@ -128,6 +128,15 @@ export const teams = [
     ],
   },
   {
+    id: 'fortnite',
+    game: 'FORTNITE',
+    tag: 'OT',
+    color: '#00D4FF',
+    region: 'NA',
+    fortniteSpecial: true,
+    roster: [],
+  },
+  {
     id: 'iracing',
     game: 'iRACING',
     tag: 'OT',
