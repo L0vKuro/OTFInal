@@ -133,7 +133,6 @@ export const teams = [
     tag: 'OT',
     color: '#00D4FF',
     region: 'NA',
-    fortniteSpecial: true,
     roster: [],
   },
   {
