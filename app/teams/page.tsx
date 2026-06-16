@@ -55,8 +55,14 @@ export default function TeamsPage() {
               OUR<br />TEAMS
             </h1>
             <a href="/fortnite"
-              className="flex-shrink-0 flex items-center gap-2 border border-[#00D4FF]/30 bg-[#00D4FF]/10 hover:bg-[#00D4FF]/20 px-6 py-3 font-black tracking-widest uppercase text-sm transition-all mt-6 group"
-              style={{ fontFamily: 'Barlow Condensed, sans-serif', color: '#00D4FF' }}>
+              className="flex-shrink-0 flex items-center gap-2 px-6 py-3 font-black tracking-widest uppercase text-sm transition-all duration-300 mt-6 group animate-pulse hover:animate-none hover:shadow-[0_0_30px_rgba(0,212,255,0.6),0_0_60px_rgba(0,212,255,0.3)]"
+              style={{
+                fontFamily: 'Barlow Condensed, sans-serif',
+                color: '#00D4FF',
+                border: '1px solid rgba(0,212,255,0.4)',
+                background: 'rgba(0,212,255,0.08)',
+                clipPath: 'polygon(0 0, 100% 0, 100% 60%, 92% 100%, 0 100%)',
+              }}>
               🎯 Fortnite Division <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
             </a>
           </div>
