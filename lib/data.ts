@@ -79,7 +79,7 @@ export const teams = [
     region: 'NA',
     roster: [
       { name: 'KEO', role: 'PLAYER', country: '🇺🇸', real: '@keo197', twitter: 'https://x.com/keo197' },
-      { name: 'TBA', role: 'PLAYER', country: '🇺🇸', real: 'Coming Soon', twitter: '' },
+      { name: 'FINAL', role: 'PLAYER', country: '🇺🇸', real: '@finalkiss_', twitter: 'https://x.com/finalkiss_' },
       { name: 'TBA', role: 'PLAYER', country: '🇺🇸', real: 'Coming Soon', twitter: '' },
       { name: 'TBA', role: 'PLAYER', country: '🇺🇸', real: 'Coming Soon', twitter: '' },
       { name: 'TBA', role: 'PLAYER', country: '🇺🇸', real: 'Coming Soon', twitter: '' },
