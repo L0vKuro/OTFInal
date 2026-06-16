@@ -49,10 +49,17 @@ export default function TeamsPage() {
         <div className="absolute inset-0 bg-gradient-to-b from-[#E8191A]/5 to-transparent" />
         <div className="relative max-w-7xl mx-auto px-6">
           <p className="text-[#E8191A] text-xs font-mono tracking-widest uppercase mb-4">// Competitive Rosters</p>
-          <h1 className="font-display font-black text-7xl md:text-9xl uppercase text-[#F2F2F2] leading-none"
-            style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-            OUR<br />TEAMS
-          </h1>
+          <div className="flex items-start justify-between gap-4">
+            <h1 className="font-display font-black text-7xl md:text-9xl uppercase text-[#F2F2F2] leading-none"
+              style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+              OUR<br />TEAMS
+            </h1>
+            <a href="/fortnite"
+              className="flex-shrink-0 flex items-center gap-2 border border-[#00D4FF]/30 bg-[#00D4FF]/10 hover:bg-[#00D4FF]/20 px-6 py-3 font-black tracking-widest uppercase text-sm transition-all mt-6 group"
+              style={{ fontFamily: 'Barlow Condensed, sans-serif', color: '#00D4FF' }}>
+              🎯 Fortnite Division <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
+            </a>
+          </div>
           <p className="text-[#F2F2F2]/40 text-lg mt-6 max-w-lg">
             Eleven rosters. Eleven disciplines. One standard of excellence.
           </p>
@@ -75,58 +82,7 @@ export default function TeamsPage() {
       {/* Teams */}
       <div className="max-w-7xl mx-auto px-6 py-16 space-y-16">
         {teams.map((team: any, idx: number) => {
-          const isForniteTeam = team.id === 'fortnite'
-
-          if (isForniteTeam) {
-            return (
-              <div key={team.id} id={team.id} className="scroll-mt-24">
-                <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
-                  <div>
-                    <div className="flex items-center gap-3 mb-2">
-                      <span className="text-2xl">🎯</span>
-                      <span className="text-xs font-mono px-2 py-1 font-bold uppercase tracking-widest"
-                        style={{ color: team.color, background: `${team.color}15`, border: `1px solid ${team.color}30` }}>
-                        {team.region}
-                      </span>
-                    </div>
-                    <h2 className="font-display font-black text-5xl md:text-6xl uppercase"
-                      style={{ fontFamily: 'Barlow Condensed, sans-serif', color: team.color }}>
-                      {team.game}
-                    </h2>
-                  </div>
-                  <a href="/fortnite"
-                    className="flex items-center gap-3 px-8 py-4 font-black tracking-widest uppercase text-sm transition-all border hover:shadow-[0_0_20px_rgba(0,212,255,0.3)] group"
-                    style={{
-                      fontFamily: 'Barlow Condensed, sans-serif',
-                      color: team.color,
-                      borderColor: `${team.color}40`,
-                      background: `${team.color}10`,
-                    }}>
-                    View Fortnite Page <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                  </a>
-                </div>
-                <div className="bg-[#141414] border p-8 text-center"
-                  style={{ borderColor: `${team.color}20` }}>
-                  <div className="h-px w-full mb-8" style={{ background: `linear-gradient(90deg, ${team.color}, transparent)` }} />
-                  <p className="font-display font-black text-3xl uppercase mb-3"
-                    style={{ fontFamily: 'Barlow Condensed, sans-serif', color: team.color }}>
-                    Roster Announcement Coming Soon
-                  </p>
-                  <p className="text-[#F2F2F2]/30 text-sm font-mono mb-6">
-                    Follow @OvertakeSector on X for the official announcement.
-                  </p>
-                  <a href="/fortnite"
-                    className="inline-flex items-center gap-2 px-6 py-3 font-black tracking-widest uppercase text-sm transition-all"
-                    style={{ fontFamily: 'Barlow Condensed, sans-serif', background: `${team.color}15`, color: team.color, border: `1px solid ${team.color}30` }}>
-                    Explore Our Fortnite Division <ChevronRight size={14} />
-                  </a>
-                </div>
-                {idx < teams.length - 1 && (
-                  <div className="mt-16 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-                )}
-              </div>
-            )
-          }
+          if (team.id === 'fortnite') return null
 
           return (
             <div key={team.id} id={team.id} className="scroll-mt-24">
