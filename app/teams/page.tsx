@@ -33,6 +33,10 @@ const PLAYER_PHOTOS: Record<string, string> = {
   'shiyo': 'coach-Shiyo.jpg',
   'abyce': 'coach-Abyce.jpg',
   'final': 'player-finalkiss.jpg',
+  'gingy': 'coach-gingy.jpg',
+  'jogorku': 'coach-jogorku.jpg',
+  'emma': 'player-emma.jpg',
+  'azzyriax': 'player-azzy.jpg',
 }
 
 function getPlayerPhoto(name: string): string {
@@ -114,7 +118,8 @@ export default function TeamsPage() {
                   const photo = getPlayerPhoto(player.name)
                   const isFemaleTeam = team.id === 'r6-FEMALE'
                   const isRedCard = ['NATHAN', 'SHIYO', 'ABYCE'].includes(player.name)
-                  const cardColor = isRedCard ? '#E8191A' : isFemaleTeam ? '#FF69B4' : team.color
+                  const isFemaleCoach = ['GINGY', 'JOGORKU'].includes(player.name)
+                  const cardColor = isRedCard || isFemaleCoach ? '#E8191A' : isFemaleTeam ? '#FF69B4' : team.color
                   const hasTwitter = player.twitter && player.twitter !== ''
 
                   const inner = (
