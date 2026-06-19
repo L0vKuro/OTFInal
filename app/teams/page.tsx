@@ -37,6 +37,9 @@ const PLAYER_PHOTOS: Record<string, string> = {
   'jogorku': 'coach-jogorku.jpg',
   'emma': 'player-emma.jpg',
   'azzyriax': 'player-azzy.jpg',
+  'flip': 'player-flip.jpg',
+  'swisz': 'player-Swisz.jpg',
+  
 }
 
 function getPlayerPhoto(name: string): string {
