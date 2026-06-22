@@ -46,6 +46,7 @@ const leadership = [
   { name: 'Jxe', role: 'Social Media Manager', bio: "Drives Overtake's social presence and keeps fans connected with the latest updates.", twitter: 'OfficialJxe5_' },
   { name: 'Visionz', role: 'CoD Manager', bio: 'Oversees the Call of Duty roster and competitive strategy.', twitter: 'Visionzuh' },
   { name: 'Zap', role: 'Fortnite Manager', bio: 'Manages the Fortnite division and competitive operations.', twitter: 'zapticalggs' },
+  { name: 'Javsr', role: 'Fortnite Talent Manager', bio: 'Oversees Fortnite talent acquisition and player development within the Overtake division.', twitter: 'javsrtalent' },
 ]
 
 const quotes = [
@@ -58,6 +59,7 @@ const quotes = [
   { name: 'Jxe', role: 'Social Media Manager', quote: 'In order to be successful at what you\'re doing, you have to be obsessed with change.' },
   { name: 'Visionz', role: 'CoD Manager', quote: 'Success is focusing the full power of all you are on what you have a burning desire to achieve.' },
   { name: 'Zap', role: 'Fortnite Manager', quote: 'Learn as if you will live forever, live like you will die tomorrow.' },
+  { name: 'Javsr', role: 'Fortnite Talent Manager', quote: 'Talent wins games, but teamwork and intelligence win championships.' },
 ]
 
 export default function AboutPage() {
@@ -114,8 +116,6 @@ export default function AboutPage() {
             <div className="absolute top-0 left-0 h-8 w-px bg-[#E8191A]" />
             <div className="absolute bottom-0 right-0 w-8 h-px bg-[#E8191A]" />
             <div className="absolute bottom-0 right-0 h-8 w-px bg-[#E8191A]" />
-
-            {/* Quote content */}
             <div style={{ opacity: fade ? 1 : 0, transition: 'opacity 0.4s ease' }}>
               <p className="font-display font-black text-2xl md:text-3xl text-white uppercase leading-tight mb-6"
                 style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
@@ -125,8 +125,6 @@ export default function AboutPage() {
                 — {quotes[current].name}, {quotes[current].role}
               </p>
             </div>
-
-            {/* Dots */}
             <div className="flex items-center justify-center gap-2 mt-8">
               {quotes.map((_, i) => (
                 <button
