@@ -115,16 +115,6 @@ export const teams = [
     ],
   },
   {
-    id: 'clashroyale',
-    game: 'CLASH ROYALE',
-    tag: 'OT',
-    color: '#A855F7',
-    region: 'NA',
-    roster: [
-      { name: 'MEGAHITIDEE', role: 'PLAYER', country: '🇺🇸', real: '@MegaHitIDEE', twitter: 'https://x.com/MegaHitIDEE' },
-    ],
-  },
-  {
     id: 'fortnite',
     game: 'FORTNITE',
     tag: 'OT',
