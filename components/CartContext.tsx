@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useState, ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 
 export type CartItem = {
   id: string
@@ -33,6 +33,22 @@ const CartContext = createContext<CartContextType>({
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([])
+  const [loaded, setLoaded] = useState(false)
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('ot-cart')
+      if (saved) setItems(JSON.parse(saved))
+    } catch {}
+    setLoaded(true)
+  }, [])
+
+  useEffect(() => {
+    if (!loaded) return
+    try {
+      localStorage.setItem('ot-cart', JSON.stringify(items))
+    } catch {}
+  }, [items, loaded])
 
   const addItem = (item: CartItem) => setItems(prev => [...prev, item])
   const removeItem = (index: number) => setItems(prev => prev.filter((_, i) => i !== index))
