@@ -3,7 +3,7 @@
 import { useState, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
 import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js'
-import { ChevronRight, Lock, ShoppingBag, Trash2 } from 'lucide-react'
+import { ChevronRight, Lock, ShoppingBag, Trash2, Tag, Check } from 'lucide-react'
 import { useCart } from '@/components/CartContext'
 
 function CheckoutContent() {
@@ -22,6 +22,42 @@ function CheckoutContent() {
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(false)
+  const [discountCode, setDiscountCode] = useState('')
+  const [discountPercent, setDiscountPercent] = useState(0)
+  const [discountError, setDiscountError] = useState('')
+  const [discountApplied, setDiscountApplied] = useState(false)
+  const [discountLoading, setDiscountLoading] = useState(false)
+
+  const discountedTotal = Math.round(total * (1 - discountPercent / 100) * 100) / 100
+  const savings = Math.round((total - discountedTotal) * 100) / 100
+  const finalTotal = discountPercent > 0 ? discountedTotal : total
+
+  const applyDiscount = async () => {
+    if (!discountCode.trim()) return
+    setDiscountLoading(true)
+    setDiscountError('')
+    try {
+      const res = await fetch('/api/discount', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: discountCode }),
+      })
+      const data = await res.json()
+      if (data.valid) {
+        setDiscountPercent(data.percent)
+        setDiscountApplied(true)
+        setDiscountError('')
+      } else {
+        setDiscountError(data.message)
+        setDiscountPercent(0)
+        setDiscountApplied(false)
+      }
+    } catch {
+      setDiscountError('Failed to apply code')
+    } finally {
+      setDiscountLoading(false)
+    }
+  }
 
   const validate = () => {
     const e: Record<string, string> = {}
@@ -54,6 +90,8 @@ function CheckoutContent() {
             nameOnBack: item.nameOnBack,
             numberOnBack: item.numberOnBack,
             price: `$${item.price}.00`,
+            discount: discountPercent > 0 ? `${discountPercent}% off (${discountCode})` : 'None',
+            finalTotal: `$${finalTotal.toFixed(2)}`,
             paypalOrderId,
           }),
         })
@@ -201,6 +239,39 @@ function CheckoutContent() {
                     </div>
                   </div>
 
+                  {/* Discount Code */}
+                  <div className="bg-[#141414] border border-white/5 p-6">
+                    <div className="h-px w-full bg-gradient-to-r from-[#E8191A] to-transparent mb-6" />
+                    <h3 className="font-display font-black text-xl uppercase text-[#F2F2F2] mb-4"
+                      style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>Discount Code</h3>
+                    <div className="flex gap-2">
+                      <input
+                        value={discountCode}
+                        onChange={e => setDiscountCode(e.target.value.toUpperCase())}
+                        placeholder="Enter code"
+                        disabled={discountApplied}
+                        className="flex-1 bg-[#0D0D0D] border border-white/10 px-4 py-3 text-[#F2F2F2] text-sm font-mono focus:outline-none focus:border-[#E8191A]/60 transition-colors disabled:opacity-50"
+                      />
+                      <button
+                        onClick={applyDiscount}
+                        disabled={discountApplied || discountLoading}
+                        className="px-5 py-3 font-black tracking-widest uppercase text-sm transition-all disabled:opacity-50 flex items-center gap-2"
+                        style={{
+                          fontFamily: 'Barlow Condensed, sans-serif',
+                          background: discountApplied ? '#00A878' : '#E8191A',
+                          color: 'white',
+                        }}>
+                        {discountApplied ? <><Check size={14} /> Applied</> : discountLoading ? 'Checking...' : 'Apply'}
+                      </button>
+                    </div>
+                    {discountError && <p className="text-[#E8191A] text-xs font-mono mt-2">{discountError}</p>}
+                    {discountApplied && (
+                      <p className="text-[#00A878] text-xs font-mono mt-2">
+                        ✓ {discountPercent}% discount applied — you save ${savings.toFixed(2)}!
+                      </p>
+                    )}
+                  </div>
+
                   <button onClick={handleContinue}
                     className="w-full flex items-center justify-center gap-3 bg-[#E8191A] hover:bg-[#B81011] px-10 py-5 font-black tracking-widest uppercase text-base transition-all hover:shadow-[0_0_40px_rgba(232,25,26,0.4)] clip-corner text-white"
                     style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
@@ -233,7 +304,7 @@ function CheckoutContent() {
                           purchase_units: [{
                             amount: {
                               currency_code: 'USD',
-                              value: total.toString(),
+                              value: finalTotal.toFixed(2),
                             },
                             description: items.map(i => `${i.name} (${i.size})`).join(', '),
                           }],
@@ -281,10 +352,24 @@ function CheckoutContent() {
                     </div>
                   ))}
                 </div>
-                <div className="border-t border-white/5 pt-4 flex items-center justify-between">
-                  <span className="text-[#F2F2F2]/40 text-sm font-mono uppercase">Total</span>
-                  <span className="font-display font-black text-2xl text-[#E8191A]"
-                    style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>${total}.00</span>
+                <div className="border-t border-white/5 pt-4 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[#F2F2F2]/40 text-sm font-mono uppercase">Subtotal</span>
+                    <span className="text-[#F2F2F2] text-sm font-mono">${total}.00</span>
+                  </div>
+                  {discountApplied && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-[#00A878] text-sm font-mono uppercase flex items-center gap-1">
+                        <Tag size={10} /> {discountPercent}% Off
+                      </span>
+                      <span className="text-[#00A878] text-sm font-mono">-${savings.toFixed(2)}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center justify-between border-t border-white/5 pt-2">
+                    <span className="text-[#F2F2F2]/40 text-sm font-mono uppercase">Total</span>
+                    <span className="font-display font-black text-2xl text-[#E8191A]"
+                      style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>${finalTotal.toFixed(2)}</span>
+                  </div>
                 </div>
                 <div className="flex items-center gap-2 mt-4 text-[#F2F2F2]/20 text-xs font-mono">
                   <Lock size={10} /> Secured by PayPal
