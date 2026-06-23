@@ -49,7 +49,6 @@ export const teams = [
     color: '#FF6B00',
     region: 'NA',
     roster: [
-      { name: 'DEASELLS', role: 'PLAYER', country: '🇺🇸', real: '@deasells', twitter: 'https://x.com/deasells' },
       { name: 'FAVOR8', role: 'PLAYER', country: '🇺🇸', real: '@Favor8_', twitter: 'https://x.com/Favor8_' },
       { name: 'GODCOOKIE', role: 'PLAYER', country: '🇺🇸', real: '@godcookie_2', twitter: 'https://x.com/godcookie_2' },
       { name: 'KONTROL', role: 'PLAYER', country: '🇺🇸', real: '@SynKontrol', twitter: 'https://x.com/SynKontrol' },
