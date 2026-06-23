@@ -121,17 +121,7 @@ export const teams = [
     region: 'NA',
     roster: [],
   },
-  {
-    id: 'iracing',
-    game: 'iRACING',
-    tag: 'OT',
-    color: '#00C853',
-    region: 'NA',
-    roster: [
-      { name: 'FASTNAUGHT', role: 'Driver', country: '🇺🇸', real: '@MFastnaught', twitter: 'https://x.com/MFastnaught' },
-      { name: 'FUSION', role: 'Driver', country: '🇺🇸', real: '@FusionRacing24', twitter: 'https://x.com/FusionRacing24' },
-    ],
-  },
+  
 ]
 
 export const creators = [
