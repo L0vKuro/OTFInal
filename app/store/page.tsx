@@ -12,7 +12,7 @@ const products = [
     description: 'The official Overtake 2026 Polo — built for competitors who refuse to blend in. Dark navy performance fabric with red dragon-art sleeves, a custom crosshair chest emblem, and the Overtake wordmark front and center. This is what it looks like to represent.',
     details: ['Premium performance fabric', 'Custom dragon art sleeve graphics', 'Overtake crosshair emblem', 'Personalized nickname on back', 'Available via RepulseCo'],
     images: ['/Front.png', '/Rear.png'],
-    available: false,
+    buyLink: 'https://www.repulseco.com',
   },
   {
     id: 'vneck-jersey-2026',
@@ -22,7 +22,7 @@ const products = [
     description: 'The Overtake 2026 V-Neck Jersey — clean, sharp, and built to rep the org on and off the server. Featuring a modern V-neck collar, subtle Overtake crosshair branding, and a sleek black and white colorway with red accents. Customized with your name and number on the back.',
     details: ['Premium performance jersey fabric', 'V-neck collar with crosshair detail', 'Black & white colorway with red accents', 'Custom name & number on back', 'Available via RepulseCo'],
     images: ['/FRONT-JERSEY.png', '/BACK-JERSEY.png'],
-    available: false,
+    buyLink: 'https://www.repulseco.com',
   },
 ]
 
@@ -58,7 +58,7 @@ export default function StorePage() {
             {[
               { label: 'Products', value: '2' },
               { label: 'Partner', value: 'RepulseCo' },
-              { label: 'Status', value: 'Coming Soon' },
+              { label: 'Status', value: 'Available Now' },
             ].map(({ label, value }) => (
               <div key={label} className="flex items-center gap-3 border border-white/8 px-5 py-3 bg-white/2">
                 <ShoppingBag size={14} className="text-[#E8191A]" />
@@ -71,12 +71,12 @@ export default function StorePage() {
         </div>
       </div>
 
-      {/* Coming Soon Banner */}
-      <div className="bg-[#E8191A]/10 border-y border-[#E8191A]/20 py-4">
+      {/* Available Now Banner */}
+      <div className="bg-[#00A878]/10 border-y border-[#00A878]/20 py-4">
         <div className="max-w-7xl mx-auto px-6 flex items-center gap-3">
-          <div className="w-2 h-2 bg-[#E8191A] rounded-full animate-pulse" />
-          <p className="text-[#E8191A] text-sm font-mono tracking-widest uppercase">
-            Store launching soon — powered by RepulseCo. Orders will open when the store goes live.
+          <div className="w-2 h-2 bg-[#00A878] rounded-full animate-pulse" />
+          <p className="text-[#00A878] text-sm font-mono tracking-widest uppercase">
+            Store is live — powered by RepulseCo. Order your gear now.
           </p>
         </div>
       </div>
@@ -109,13 +109,11 @@ export default function StorePage() {
                     </span>
                   </div>
                 )}
-                {!product.available && (
-                  <div className="absolute top-4 right-4">
-                    <span className="text-[10px] font-mono font-black px-3 py-1.5 bg-black/80 border border-white/10 text-white/60 uppercase tracking-widest">
-                      Coming Soon
-                    </span>
-                  </div>
-                )}
+                <div className="absolute top-4 right-4">
+                  <span className="text-[10px] font-mono font-black px-3 py-1.5 bg-[#00A878] text-white uppercase tracking-widest">
+                    Available Now
+                  </span>
+                </div>
               </div>
 
               {/* Thumbnails */}
@@ -164,19 +162,16 @@ export default function StorePage() {
 
               <div className="space-y-3 pt-2">
                 <div className="flex items-center gap-3 bg-[#141414] border border-white/5 px-5 py-4">
-                  <Package size={16} className="text-[#E8191A]" />
+                  <Package size={16} className="text-[#00A878]" />
                   <p className="text-[#F2F2F2]/40 text-sm font-mono">
-                    Available through <span className="text-[#F2F2F2]">RepulseCo</span> when the store launches
+                    <span className="text-[#00A878] font-black">Available Now</span>
                   </p>
                 </div>
-                <a href="https://www.repulseco.com" target="_blank" rel="noopener noreferrer"
+                <a href={product.buyLink} target="_blank" rel="noopener noreferrer"
                   className="flex items-center justify-center gap-3 bg-[#E8191A] hover:bg-[#B81011] px-10 py-5 font-black tracking-widest uppercase text-base transition-all hover:shadow-[0_0_40px_rgba(232,25,26,0.4)] clip-corner text-white w-full"
                   style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-                  Visit RepulseCo <ChevronRight size={18} />
+                  Buy Now <ChevronRight size={18} />
                 </a>
-                <p className="text-[#F2F2F2]/20 text-xs font-mono text-center">
-                  Store not yet live — check back soon for ordering details
-                </p>
               </div>
             </div>
           </div>
