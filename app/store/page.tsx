@@ -14,6 +14,16 @@ const products = [
     images: ['/Front.png', '/Rear.png'],
     available: false,
   },
+  {
+    id: 'vneck-jersey-2026',
+    name: 'OFFICIAL 2026 V-NECK POLO',
+    price: '$60.00',
+    tag: 'NEW DROP',
+    description: 'The Overtake 2026 V-Neck Jersey — clean, sharp, and built to rep the org on and off the server. Featuring a modern V-neck collar, subtle Overtake crosshair branding, and a sleek black and white colorway with red accents. Customized with your name and number on the back.',
+    details: ['Premium performance jersey fabric', 'V-neck collar with crosshair detail', 'Black & white colorway with red accents', 'Custom name & number on back', 'Available via RepulseCo'],
+    images: ['/FRONT-JERSEY.png', '/BACK-JERSEY.png'],
+    available: false,
+  },
 ]
 
 export default function StorePage() {
@@ -46,7 +56,7 @@ export default function StorePage() {
           </p>
           <div className="flex flex-wrap gap-4 mt-8">
             {[
-              { label: 'Products', value: '1' },
+              { label: 'Products', value: '2' },
               { label: 'Partner', value: 'RepulseCo' },
               { label: 'Status', value: 'Coming Soon' },
             ].map(({ label, value }) => (
@@ -72,18 +82,25 @@ export default function StorePage() {
       </div>
 
       {/* Products */}
-      <div className="max-w-7xl mx-auto px-6 py-20">
-        {products.map((product) => (
-          <div key={product.id} className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+      <div className="max-w-7xl mx-auto px-6 py-20 space-y-28">
+        {products.map((product, idx) => (
+          <div key={product.id} className={`grid grid-cols-1 lg:grid-cols-2 gap-12 items-start ${idx % 2 === 1 ? 'lg:grid-flow-dense' : ''}`}>
 
             {/* Image Gallery */}
-            <div className="space-y-4">
-              <div className="relative bg-[#141414] border border-white/5 overflow-hidden aspect-square">
+            <div className={`space-y-4 ${idx % 2 === 1 ? 'lg:col-start-2' : ''}`}>
+              <div className="relative bg-[#141414] border border-white/5 overflow-hidden aspect-square"
+                style={{ borderRadius: '12px' }}>
                 <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-[#E8191A] to-transparent" />
                 <img
                   src={product.images[getImage(product.id)]}
                   alt={product.name}
-                  style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '24px' }}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain',
+                    padding: '32px',
+                    borderRadius: '12px',
+                  }}
                 />
                 {product.tag && (
                   <div className="absolute top-4 left-4">
@@ -107,15 +124,16 @@ export default function StorePage() {
                   <button key={i} onClick={() => setActiveImage(prev => ({ ...prev, [product.id]: i }))}
                     className={`w-20 h-20 border overflow-hidden transition-all ${
                       getImage(product.id) === i ? 'border-[#E8191A]' : 'border-white/10 hover:border-white/30'
-                    }`}>
-                    <img src={img} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '4px' }} />
+                    }`}
+                    style={{ borderRadius: '6px' }}>
+                    <img src={img} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '4px', borderRadius: '6px' }} />
                   </button>
                 ))}
               </div>
             </div>
 
             {/* Product Info */}
-            <div className="space-y-6 pt-4">
+            <div className={`space-y-6 pt-4 ${idx % 2 === 1 ? 'lg:col-start-1 lg:row-start-1' : ''}`}>
               <div>
                 <div className="flex items-center gap-2 mb-3">
                   <Tag size={12} className="text-[#E8191A]" />
@@ -135,7 +153,6 @@ export default function StorePage() {
                 {product.description}
               </p>
 
-              {/* Details */}
               <div className="space-y-2">
                 {product.details.map((detail, i) => (
                   <div key={i} className="flex items-center gap-3">
@@ -145,7 +162,6 @@ export default function StorePage() {
                 ))}
               </div>
 
-              {/* CTA */}
               <div className="space-y-3 pt-2">
                 <div className="flex items-center gap-3 bg-[#141414] border border-white/5 px-5 py-4">
                   <Package size={16} className="text-[#E8191A]" />
