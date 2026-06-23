@@ -4,6 +4,7 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import Cursor from '@/components/Cursor'
 import { Analytics } from '@vercel/analytics/react'
+import { CartProvider } from '@/components/CartContext'
 
 export const metadata: Metadata = {
   title: 'OVERTAKE — Competitive Esports Organization',
@@ -32,12 +33,14 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-[#0D0D0D] text-[#F2F2F2] min-h-screen flex flex-col">
-        <Cursor />
-        <Navbar />
-        <main className="flex-1">
-          {children}
-        </main>
-        <Footer />
+        <CartProvider>
+          <Cursor />
+          <Navbar />
+          <main className="flex-1">
+            {children}
+          </main>
+          <Footer />
+        </CartProvider>
         <Analytics />
       </body>
     </html>
