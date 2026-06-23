@@ -12,7 +12,7 @@ const products = [
     description: 'The official Overtake 2026 Polo — built for competitors who refuse to blend in. Dark navy performance fabric with red dragon-art sleeves, a custom crosshair chest emblem, and the Overtake wordmark front and center. This is what it looks like to represent.',
     details: ['Premium performance fabric', 'Custom dragon art sleeve graphics', 'Overtake crosshair emblem', 'Personalized nickname on back', 'Available via RepulseCo'],
     images: ['/Front.png', '/Rear.png'],
-    buyLink: 'https://www.repulseco.com',
+    buyLink: '/checkout?product=polo-2026',
   },
   {
     id: 'vneck-jersey-2026',
@@ -22,7 +22,7 @@ const products = [
     description: 'The Overtake 2026 V-Neck Jersey — clean, sharp, and built to rep the org on and off the server. Featuring a modern V-neck collar, subtle Overtake crosshair branding, and a sleek black and white colorway with red accents. Customized with your name and number on the back.',
     details: ['Premium performance jersey fabric', 'V-neck collar with crosshair detail', 'Black & white colorway with red accents', 'Custom name & number on back', 'Available via RepulseCo'],
     images: ['/FRONT-JERSEY.png', '/BACK-JERSEY.png'],
-    buyLink: 'https://www.repulseco.com',
+    buyLink: '/checkout?product=vneck-jersey-2026',
   },
 ]
 
@@ -94,13 +94,7 @@ export default function StorePage() {
                 <img
                   src={product.images[getImage(product.id)]}
                   alt={product.name}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'contain',
-                    padding: '32px',
-                    borderRadius: '12px',
-                  }}
+                  style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '32px', borderRadius: '12px' }}
                 />
                 {product.tag && (
                   <div className="absolute top-4 left-4">
@@ -167,7 +161,7 @@ export default function StorePage() {
                     <span className="text-[#00A878] font-black">Available Now</span>
                   </p>
                 </div>
-                <a href={product.buyLink} target="_blank" rel="noopener noreferrer"
+                <a href={product.buyLink}
                   className="flex items-center justify-center gap-3 bg-[#E8191A] hover:bg-[#B81011] px-10 py-5 font-black tracking-widest uppercase text-base transition-all hover:shadow-[0_0_40px_rgba(232,25,26,0.4)] clip-corner text-white w-full"
                   style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
                   Buy Now <ChevronRight size={18} />
