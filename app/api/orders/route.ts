@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+const resend = new Resend(process.env.RESEND_API_KEY ?? '')
 
 export async function POST(req: NextRequest) {
   try {
@@ -28,20 +28,14 @@ export async function POST(req: NextRequest) {
     const customerEmailHtml = `
       <!DOCTYPE html>
       <html>
-        <head>
-          <meta charset="utf-8">
-          <title>Order Confirmed — Overtake Sector</title>
-        </head>
         <body style="background:#0D0D0D;color:#F2F2F2;font-family:Arial,sans-serif;padding:40px 20px;margin:0;">
           <div style="max-width:600px;margin:0 auto;">
             <div style="border-bottom:2px solid #E8191A;padding-bottom:20px;margin-bottom:30px;">
               <h1 style="color:#E8191A;font-size:32px;margin:0;text-transform:uppercase;letter-spacing:2px;">OVERTAKE SECTOR</h1>
               <p style="color:#F2F2F2;opacity:0.4;margin:4px 0 0;font-size:12px;text-transform:uppercase;letter-spacing:2px;">Order Confirmation</p>
             </div>
-
             <h2 style="color:#F2F2F2;font-size:24px;text-transform:uppercase;">Your Order is Confirmed! 🎯</h2>
             <p style="color:#F2F2F2;opacity:0.6;line-height:1.6;">Hey ${customerName}, thanks for repping Overtake — your order is confirmed and we're on it.</p>
-
             <div style="background:#141414;border:1px solid rgba(255,255,255,0.1);border-left:3px solid #E8191A;padding:24px;margin:24px 0;">
               <h3 style="color:#E8191A;font-size:12px;text-transform:uppercase;letter-spacing:2px;margin:0 0 16px;">Order Summary</h3>
               <table style="width:100%;border-collapse:collapse;">
@@ -53,14 +47,11 @@ export async function POST(req: NextRequest) {
                 <tr><td style="color:#F2F2F2;opacity:0.4;font-size:12px;padding:6px 0;text-transform:uppercase;">Order ID</td><td style="color:#F2F2F2;opacity:0.6;font-size:12px;padding:6px 0;">${paypalOrderId}</td></tr>
               </table>
             </div>
-
             <div style="background:#141414;border:1px solid rgba(255,255,255,0.1);border-left:3px solid #E8191A;padding:24px;margin:24px 0;">
               <h3 style="color:#E8191A;font-size:12px;text-transform:uppercase;letter-spacing:2px;margin:0 0 16px;">Shipping To</h3>
               <p style="color:#F2F2F2;opacity:0.8;margin:0;line-height:1.8;">${customerName}<br>${address}<br>${city}, ${state} ${zip}<br>${country}</p>
             </div>
-
-            <p style="color:#F2F2F2;opacity:0.4;font-size:13px;line-height:1.6;">We'll reach out to <strong style="color:#F2F2F2;">${customerEmail}</strong> with updates as your order is processed. If you have any questions, contact us at <a href="mailto:overtakesect@gmail.com" style="color:#E8191A;">overtakesect@gmail.com</a></p>
-
+            <p style="color:#F2F2F2;opacity:0.4;font-size:13px;line-height:1.6;">Questions? Contact us at <a href="mailto:overtakesect@gmail.com" style="color:#E8191A;">overtakesect@gmail.com</a></p>
             <div style="border-top:1px solid rgba(255,255,255,0.1);margin-top:40px;padding-top:20px;text-align:center;">
               <p style="color:#E8191A;font-size:12px;text-transform:uppercase;letter-spacing:2px;margin:0;">#OvertakeYourLimits</p>
               <p style="color:#F2F2F2;opacity:0.2;font-size:11px;margin:8px 0 0;">Overtake Sector · overtakegg.com</p>
