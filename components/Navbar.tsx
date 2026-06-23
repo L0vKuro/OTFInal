@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X, ChevronRight } from 'lucide-react'
+import { Menu, X, ChevronRight, ShoppingBag } from 'lucide-react'
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -59,7 +59,12 @@ export default function Navbar() {
               </Link>
             ))}
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <Link href="/store"
+              className="hidden sm:flex items-center justify-center border border-white/10 hover:border-[#E8191A]/50 hover:text-[#E8191A] text-[#F2F2F2]/50 transition-all p-3"
+              title="Store">
+              <ShoppingBag size={16} />
+            </Link>
             <Link href="/join"
               className="hidden sm:flex items-center gap-2 bg-[#E8191A] hover:bg-[#B81011] px-6 py-3 text-sm font-bold tracking-widest uppercase transition-all hover:shadow-[0_0_20px_rgba(232,25,26,0.4)] clip-corner text-[#F2F2F2]"
               style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
