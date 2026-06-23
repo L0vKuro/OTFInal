@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { Menu, X, ChevronRight, ShoppingBag, Trash2 } from 'lucide-react'
 import { useCart } from '@/components/CartContext'
 
@@ -24,6 +24,7 @@ export default function Navbar() {
   const [cartOpen, setCartOpen] = useState(false)
   const lastScroll = useRef(0)
   const pathname = usePathname()
+  const router = useRouter()
   const { items, removeItem, total, count } = useCart()
 
   useEffect(() => {
@@ -38,6 +39,12 @@ export default function Navbar() {
   }, [])
 
   useEffect(() => { setMenuOpen(false); setCartOpen(false) }, [pathname])
+
+  const goToCheckout = () => {
+    setCartOpen(false)
+    setMenuOpen(false)
+    router.push('/checkout')
+  }
 
   return (
     <>
@@ -63,9 +70,9 @@ export default function Navbar() {
             ))}
           </div>
           <div className="flex items-center gap-3">
-            {/* Cart Button */}
+            {/* Cart Button — visible on all screen sizes */}
             <button onClick={() => setCartOpen(!cartOpen)}
-              className="relative hidden sm:flex items-center justify-center border border-white/10 hover:border-[#E8191A]/50 hover:text-[#E8191A] text-[#F2F2F2]/50 transition-all p-3">
+              className="relative flex items-center justify-center border border-white/10 hover:border-[#E8191A]/50 hover:text-[#E8191A] text-[#F2F2F2]/50 transition-all p-3">
               <ShoppingBag size={16} />
               {count > 0 && (
                 <span className="absolute -top-2 -right-2 w-5 h-5 bg-[#E8191A] text-white text-[10px] font-black flex items-center justify-center rounded-full">
@@ -86,7 +93,7 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Cart Dropdown */}
+      {/* Cart Drawer */}
       {cartOpen && (
         <div className="fixed top-0 right-0 h-full w-80 bg-[#141414] border-l border-white/5 z-50 flex flex-col shadow-2xl">
           <div className="flex items-center justify-between p-6 border-b border-white/5">
@@ -140,12 +147,12 @@ export default function Navbar() {
                 <span className="font-display font-black text-2xl text-[#E8191A]"
                   style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>${total}.00</span>
               </div>
-              <Link href="/checkout"
-                onClick={() => setCartOpen(false)}
+              <button
+                onClick={goToCheckout}
                 className="flex items-center justify-center gap-2 bg-[#E8191A] hover:bg-[#B81011] px-6 py-4 font-black tracking-widest uppercase text-sm transition-all text-white w-full clip-corner"
                 style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
                 Checkout <ChevronRight size={14} />
-              </Link>
+              </button>
             </div>
           )}
         </div>
@@ -186,12 +193,12 @@ export default function Navbar() {
             ))}
           </div>
           <div className="p-4 border-t border-white/5 space-y-3">
-            <Link href="/store"
-              onClick={() => setMenuOpen(false)}
+            <button
+              onClick={goToCheckout}
               className="flex items-center justify-center gap-2 border border-white/10 hover:border-[#E8191A]/50 px-5 py-3 text-sm font-bold tracking-widest uppercase transition-all w-full text-[#F2F2F2]/60 hover:text-[#F2F2F2]"
               style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
               <ShoppingBag size={14} /> Cart {count > 0 && `(${count})`}
-            </Link>
+            </button>
             <Link href="/join"
               className="flex items-center justify-center gap-2 bg-[#E8191A] hover:bg-[#B81011] px-5 py-3 text-sm font-bold tracking-widest uppercase transition-all w-full text-[#F2F2F2] clip-corner"
               style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
