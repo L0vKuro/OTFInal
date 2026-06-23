@@ -1,35 +1,84 @@
 'use client'
 
 import { useState } from 'react'
-import { ChevronRight, ShoppingBag, Tag, Package } from 'lucide-react'
+import { ChevronRight, ShoppingBag, Tag, Package, X, Check } from 'lucide-react'
+import { useCart } from '@/components/CartContext'
+
+const SIZES = ['S', 'M', 'L', 'XL', '2XL', '3XL']
 
 const products = [
   {
     id: 'polo-2026',
     name: 'OFFICIAL 2026 POLO',
-    price: '$65.00',
+    price: 65,
     tag: 'NEW DROP',
     description: 'The official Overtake 2026 Polo — built for competitors who refuse to blend in. Dark navy performance fabric with red dragon-art sleeves, a custom crosshair chest emblem, and the Overtake wordmark front and center. This is what it looks like to represent.',
     details: ['Premium performance fabric', 'Custom dragon art sleeve graphics', 'Overtake crosshair emblem', 'Personalized nickname on back', 'Available via RepulseCo'],
     images: ['/Front.png', '/Rear.png'],
-    buyLink: '/checkout?product=polo-2026',
+    isVNeck: false,
   },
   {
     id: 'vneck-jersey-2026',
     name: 'OFFICIAL 2026 V-NECK POLO',
-    price: '$60.00',
+    price: 60,
     tag: 'NEW DROP',
     description: 'The Overtake 2026 V-Neck Jersey — clean, sharp, and built to rep the org on and off the server. Featuring a modern V-neck collar, subtle Overtake crosshair branding, and a sleek black and white colorway with red accents. Customized with your name and number on the back.',
     details: ['Premium performance jersey fabric', 'V-neck collar with crosshair detail', 'Black & white colorway with red accents', 'Custom name & number on back', 'Available via RepulseCo'],
     images: ['/FRONT-JERSEY.png', '/BACK-JERSEY.png'],
-    buyLink: '/checkout?product=vneck-jersey-2026',
+    isVNeck: true,
   },
 ]
 
 export default function StorePage() {
   const [activeImage, setActiveImage] = useState<Record<string, number>>({})
+  const [modal, setModal] = useState<string | null>(null)
+  const [size, setSize] = useState('')
+  const [nameOnBack, setNameOnBack] = useState('')
+  const [numberOnBack, setNumberOnBack] = useState('')
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [added, setAdded] = useState(false)
+  const { addItem } = useCart()
 
   const getImage = (id: string) => activeImage[id] ?? 0
+
+  const openModal = (id: string) => {
+    setModal(id)
+    setSize('')
+    setNameOnBack('')
+    setNumberOnBack('')
+    setErrors({})
+    setAdded(false)
+  }
+
+  const closeModal = () => setModal(null)
+
+  const handleAddToCart = () => {
+    const product = products.find(p => p.id === modal)
+    if (!product) return
+
+    const e: Record<string, string> = {}
+    if (!size) e.size = 'Please select a size'
+    if (!nameOnBack) e.nameOnBack = 'Required'
+    if (product.isVNeck && !numberOnBack) e.numberOnBack = 'Required'
+    setErrors(e)
+    if (Object.keys(e).length > 0) return
+
+    addItem({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.images[0],
+      size,
+      nameOnBack,
+      numberOnBack,
+      isVNeck: product.isVNeck,
+    })
+
+    setAdded(true)
+    setTimeout(() => closeModal(), 1200)
+  }
+
+  const modalProduct = products.find(p => p.id === modal)
 
   return (
     <div className="relative min-h-screen">
@@ -109,8 +158,6 @@ export default function StorePage() {
                   </span>
                 </div>
               </div>
-
-              {/* Thumbnails */}
               <div className="flex gap-3">
                 {product.images.map((img, i) => (
                   <button key={i} onClick={() => setActiveImage(prev => ({ ...prev, [product.id]: i }))}
@@ -137,7 +184,7 @@ export default function StorePage() {
                 </h2>
                 <p className="font-display font-black text-4xl text-[#E8191A]"
                   style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-                  {product.price}
+                  ${product.price}.00
                 </p>
               </div>
 
@@ -161,11 +208,11 @@ export default function StorePage() {
                     <span className="text-[#00A878] font-black">Available Now</span>
                   </p>
                 </div>
-                <a href={product.buyLink}
+                <button onClick={() => openModal(product.id)}
                   className="flex items-center justify-center gap-3 bg-[#E8191A] hover:bg-[#B81011] px-10 py-5 font-black tracking-widest uppercase text-base transition-all hover:shadow-[0_0_40px_rgba(232,25,26,0.4)] clip-corner text-white w-full"
                   style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-                  Buy Now <ChevronRight size={18} />
-                </a>
+                  <ShoppingBag size={18} /> Add to Cart
+                </button>
               </div>
             </div>
           </div>
@@ -190,6 +237,72 @@ export default function StorePage() {
           </a>
         </div>
       </div>
+
+      {/* Add to Cart Modal */}
+      {modal && modalProduct && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={closeModal} />
+          <div className="relative bg-[#141414] border border-white/10 w-full max-w-md p-6 z-10">
+            <div className="h-px w-full bg-gradient-to-r from-[#E8191A] to-transparent mb-6" />
+            <div className="flex items-start justify-between mb-6">
+              <div>
+                <h3 className="font-display font-black text-2xl uppercase text-[#F2F2F2]"
+                  style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{modalProduct.name}</h3>
+                <p className="text-[#E8191A] font-black text-xl">${modalProduct.price}.00</p>
+              </div>
+              <button onClick={closeModal} className="text-[#F2F2F2]/40 hover:text-[#F2F2F2] transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Size */}
+            <div className="mb-4">
+              <label className="text-[#F2F2F2]/40 text-xs font-mono uppercase tracking-widest mb-2 block">Size *</label>
+              <div className="flex flex-wrap gap-2">
+                {SIZES.map(s => (
+                  <button key={s} onClick={() => setSize(s)}
+                    className={`px-4 py-2 text-sm font-mono font-black uppercase border transition-all ${
+                      size === s
+                        ? 'border-[#E8191A] bg-[#E8191A]/10 text-[#E8191A]'
+                        : 'border-white/10 text-[#F2F2F2]/50 hover:border-white/30'
+                    }`}>
+                    {s}
+                  </button>
+                ))}
+              </div>
+              {errors.size && <p className="text-[#E8191A] text-xs font-mono mt-1">{errors.size}</p>}
+            </div>
+
+            {/* Name on Back */}
+            <div className="mb-4">
+              <label className="text-[#F2F2F2]/40 text-xs font-mono uppercase tracking-widest mb-2 block">Name on Back *</label>
+              <input value={nameOnBack} onChange={e => setNameOnBack(e.target.value)}
+                placeholder="Your name or gamertag"
+                className="w-full bg-[#0D0D0D] border border-white/10 px-4 py-3 text-[#F2F2F2] text-sm font-mono focus:outline-none focus:border-[#E8191A]/60 transition-colors" />
+              {errors.nameOnBack && <p className="text-[#E8191A] text-xs font-mono mt-1">{errors.nameOnBack}</p>}
+            </div>
+
+            {/* Number on Back (V-neck only) */}
+            {modalProduct.isVNeck && (
+              <div className="mb-4">
+                <label className="text-[#F2F2F2]/40 text-xs font-mono uppercase tracking-widest mb-2 block">Number on Back *</label>
+                <input value={numberOnBack} onChange={e => setNumberOnBack(e.target.value)}
+                  placeholder="e.g. 24"
+                  className="w-full bg-[#0D0D0D] border border-white/10 px-4 py-3 text-[#F2F2F2] text-sm font-mono focus:outline-none focus:border-[#E8191A]/60 transition-colors" />
+                {errors.numberOnBack && <p className="text-[#E8191A] text-xs font-mono mt-1">{errors.numberOnBack}</p>}
+              </div>
+            )}
+
+            <button onClick={handleAddToCart}
+              className={`w-full flex items-center justify-center gap-3 px-10 py-4 font-black tracking-widest uppercase text-base transition-all clip-corner text-white ${
+                added ? 'bg-[#00A878]' : 'bg-[#E8191A] hover:bg-[#B81011] hover:shadow-[0_0_40px_rgba(232,25,26,0.4)]'
+              }`}
+              style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+              {added ? <><Check size={18} /> Added!</> : <><ShoppingBag size={18} /> Add to Cart</>}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
