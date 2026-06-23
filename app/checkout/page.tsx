@@ -8,7 +8,7 @@ import { useCart } from '@/components/CartContext'
 
 function CheckoutContent() {
   const router = useRouter()
-  const { items, removeItem, total, clearCart } = useCart()
+  const { items, removeItem, total, clearCart, loaded } = useCart()
 
   const [step, setStep] = useState<'info' | 'payment' | 'success'>('info')
   const [form, setForm] = useState({
@@ -90,6 +90,17 @@ function CheckoutContent() {
               Back to Store <ChevronRight size={14} />
             </button>
           </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (!loaded) {
+    return (
+      <div className="relative min-h-screen pt-36 pb-20 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-[#E8191A] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-[#F2F2F2]/30 font-mono text-sm">Loading your cart...</p>
         </div>
       </div>
     )
