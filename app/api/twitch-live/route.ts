@@ -11,7 +11,6 @@ const CREATOR_LOGINS = [
   'lordrogue22',
   'depmonk',
   '1umartv',
-  'deasells',
   'delinquentfps',
   'dynasty_k1ng',
   'godcookie_',
