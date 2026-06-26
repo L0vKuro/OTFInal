@@ -1,10 +1,9 @@
 import Link from 'next/link'
-import { Twitter, Youtube, Instagram, Twitch, MessageCircle, ChevronRight } from 'lucide-react'
+import { Twitter, Youtube, Twitch, MessageCircle, ChevronRight } from 'lucide-react'
 
 const socialLinks = [
   { icon: Twitter,       label: 'Twitter',   href: 'https://twitter.com/OvertakeSector' },
   { icon: Youtube,       label: 'YouTube',   href: 'https://youtube.com/@OvertakeSector' },
-  { icon: Instagram,     label: 'Instagram', href: 'https://instagram.com/OvertakeSector' },
   { icon: Twitch,        label: 'Twitch',    href: 'https://twitch.tv/OvertakeSector' },
   { icon: MessageCircle, label: 'Discord',   href: 'https://discord.com/invite/OvertakeSector' },
 ]
@@ -23,9 +22,9 @@ const footerLinks = {
     { href: 'https://discord.com/invite/OvertakeSector', label: 'Discord' },
   ],
   Legal: [
-    { href: '#', label: 'Privacy Policy' },
-    { href: '#', label: 'Terms of Service' },
-    { href: '#', label: 'Cookie Policy' },
+    { href: '/legal/privacy',  label: 'Privacy Policy' },
+    { href: '/legal/terms',    label: 'Terms of Service' },
+    { href: '/legal/cookies',  label: 'Cookie Policy' },
   ],
 }
 
@@ -82,7 +81,7 @@ export default function Footer() {
 
         <div className="py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-[#F2F2F2]/20 text-xs font-mono">
-            © {new Date().getFullYear()} OVERTAKE SECTOR. ALL RIGHTS RESERVED.
+            © {new Date().getFullYear()} OVERTAKE SECTOR LLC. ALL RIGHTS RESERVED.
           </p>
           <div className="flex items-center gap-3">
             {socialLinks.map(({ icon: Icon, label, href }) => (
