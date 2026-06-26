@@ -1,5 +1,4 @@
 'use client'
-
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 
 export type CartItem = {
@@ -21,6 +20,7 @@ type CartContextType = {
   total: number
   count: number
   loaded: boolean
+  lastAdded: CartItem | null
 }
 
 const CartContext = createContext<CartContextType>({
@@ -31,35 +31,42 @@ const CartContext = createContext<CartContextType>({
   total: 0,
   count: 0,
   loaded: false,
+  lastAdded: null,
 })
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([])
   const [loaded, setLoaded] = useState(false)
+  const [lastAdded, setLastAdded] = useState<CartItem | null>(null)
 
+  // Mark as loaded immediately — no localStorage read
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem('ot-cart')
-      if (saved) setItems(JSON.parse(saved))
-    } catch {}
+    // Clear any old saved cart from previous version
+    try { localStorage.removeItem('ot-cart') } catch {}
     setLoaded(true)
   }, [])
 
-  useEffect(() => {
-    if (!loaded) return
-    try {
-      localStorage.setItem('ot-cart', JSON.stringify(items))
-    } catch {}
-  }, [items, loaded])
+  const addItem = (item: CartItem) => {
+    setItems(prev => [...prev, item])
+    setLastAdded(item)
+    // Clear lastAdded after 3 seconds
+    setTimeout(() => setLastAdded(null), 3000)
+  }
 
-  const addItem = (item: CartItem) => setItems(prev => [...prev, item])
-  const removeItem = (index: number) => setItems(prev => prev.filter((_, i) => i !== index))
-  const clearCart = () => setItems([])
+  const removeItem = (index: number) => {
+    setItems(prev => prev.filter((_, i) => i !== index))
+  }
+
+  const clearCart = () => {
+    setItems([])
+    setLastAdded(null)
+  }
+
   const total = items.reduce((sum, item) => sum + item.price, 0)
   const count = items.length
 
- return (
-    <CartContext.Provider value={{ items, addItem, removeItem, clearCart, total, count, loaded }}>
+  return (
+    <CartContext.Provider value={{ items, addItem, removeItem, clearCart, total, count, loaded, lastAdded }}>
       {children}
     </CartContext.Provider>
   )
