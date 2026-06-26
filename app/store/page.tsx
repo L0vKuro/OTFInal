@@ -8,6 +8,16 @@ const SIZES = ['S', 'M', 'L', 'XL', '2XL', '3XL']
 
 const products = [
   {
+    id: 'test-item',
+    name: 'TEST ITEM — $1',
+    price: 1,
+    tag: 'TEST',
+    description: 'A $1 test item to verify the full checkout, payment, and email system works correctly. Remove after testing.',
+    details: ['Test purchase only', 'Real $1 charge', 'Emails will be sent', 'Remove after testing'],
+    images: ['/wordmark.png'],
+    isVNeck: false,
+  },
+  {
     id: 'polo-2026',
     name: 'OFFICIAL 2026 POLO',
     price: 65,
@@ -255,7 +265,6 @@ export default function StorePage() {
               </button>
             </div>
 
-            {/* Size */}
             <div className="mb-4">
               <label className="text-[#F2F2F2]/40 text-xs font-mono uppercase tracking-widest mb-2 block">Size *</label>
               <div className="flex flex-wrap gap-2">
@@ -273,7 +282,6 @@ export default function StorePage() {
               {errors.size && <p className="text-[#E8191A] text-xs font-mono mt-1">{errors.size}</p>}
             </div>
 
-            {/* Name on Back */}
             <div className="mb-4">
               <label className="text-[#F2F2F2]/40 text-xs font-mono uppercase tracking-widest mb-2 block">Name on Back *</label>
               <input value={nameOnBack} onChange={e => setNameOnBack(e.target.value)}
@@ -282,7 +290,6 @@ export default function StorePage() {
               {errors.nameOnBack && <p className="text-[#E8191A] text-xs font-mono mt-1">{errors.nameOnBack}</p>}
             </div>
 
-            {/* Number on Back (V-neck only) */}
             {modalProduct.isVNeck && (
               <div className="mb-4">
                 <label className="text-[#F2F2F2]/40 text-xs font-mono uppercase tracking-widest mb-2 block">Number on Back *</label>
