@@ -11,11 +11,11 @@ export async function POST(req: NextRequest) {
 
     const now = new Date()
 
-    if (code === 'OVER18TAKE') {
+    if (code === 'MEMBER15') {
       if (now > new Date('2027-01-01')) {
         return NextResponse.json({ valid: false, message: 'This discount code has expired' })
       }
-      return NextResponse.json({ valid: true, percent: 18 })
+      return NextResponse.json({ valid: true, percent: 15 })
     }
 
     if (code === 'DISCOUNT10') {
