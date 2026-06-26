@@ -58,7 +58,7 @@ export default function ContactPage() {
             {/* Contact channels */}
             <div className="space-y-3">
               {[
-                { icon: Mail, label: 'General Inquiries', value: 'hello@overtakegg.com', color: '#E8191A' },
+                { icon: Mail, label: 'General Inquiries', value: 'contact@overtakegg.com', color: '#E8191A' },
                 { icon: MapPin, label: 'Headquarters', value: 'Louisiana, USA', color: '#E8191A' },
               ].map(({ icon: Icon, label, value, color }) => (
                 <div key={label} className="flex items-start gap-4 bg-[#0D0D0D] border border-white/5 p-4">
