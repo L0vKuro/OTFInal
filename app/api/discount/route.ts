@@ -1,13 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const DISCOUNT_CODE = 'DISCOUNT10'
-const DISCOUNT_PERCENT = 10
-const DISCOUNT_EXPIRY = new Date('2026-07-01')
-
-const MEMBER_CODE = 'OVER18TAKE'
-const MEMBER_PERCENT = 18
-const MEMBER_EXPIRY = new Date('2027-01-01')
-
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
@@ -17,30 +9,33 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ valid: false, message: 'No code entered' })
     }
 
-    if (code === TEST_CODE) {
-      if (new Date() > TEST_EXPIRY) {
+    const now = new Date()
+
+    if (code === 'TEST90') {
+      if (now > new Date('2026-07-01')) {
         return NextResponse.json({ valid: false, message: 'This discount code has expired' })
       }
-      return NextResponse.json({ valid: true, percent: TEST_PERCENT })
+      return NextResponse.json({ valid: true, percent: 90 })
     }
 
-    if (code === MEMBER_CODE) {
-      if (new Date() > MEMBER_EXPIRY) {
+    if (code === 'OVER18TAKE') {
+      if (now > new Date('2027-01-01')) {
         return NextResponse.json({ valid: false, message: 'This discount code has expired' })
       }
-      return NextResponse.json({ valid: true, percent: MEMBER_PERCENT })
+      return NextResponse.json({ valid: true, percent: 18 })
     }
 
-    if (code === DISCOUNT_CODE) {
-      if (new Date() > DISCOUNT_EXPIRY) {
+    if (code === 'DISCOUNT10') {
+      if (now > new Date('2026-07-01')) {
         return NextResponse.json({ valid: false, message: 'This discount code has expired' })
       }
-      return NextResponse.json({ valid: true, percent: DISCOUNT_PERCENT })
+      return NextResponse.json({ valid: true, percent: 10 })
     }
 
     return NextResponse.json({ valid: false, message: 'Invalid discount code' })
 
-  } catch {
-    return NextResponse.json({ valid: false, message: 'Something went wrong' })
+  } catch (err) {
+    console.error('Discount API error:', err)
+    return NextResponse.json({ valid: false, message: 'Invalid discount code' })
   }
 }
