@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
     })
 
     await resend.emails.send({
-      from: 'Overtake Store <onboarding@resend.dev>',
+      from: 'Overtake Store <store@overtakegg.com>',
       to: ['dalmazank7@gmail.com', 'samuel.rojas504@gmail.com'],
       subject: `🛒 New Order: ${product} — ${customerName}`,
       html: ownerEmailHtml,
