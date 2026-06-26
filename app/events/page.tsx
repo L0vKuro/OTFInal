@@ -15,11 +15,60 @@ const CATEGORY_COLORS: Record<string, string> = {
 
 const upcomingEvents = [
   {
+    id: 3,
+    title: 'WILD//WEST: LAN',
+    category: 'LAN',
+    game: 'VALORANT',
+    featured: true,
+    date: 'July 23–26, 2026',
+    location: 'TBA',
+    link: 'https://wildwest.funhaver.gg/',
+    prizePool: '$10,000',
+    description: 'Overtake Valorant heads to the Wild//West LAN — a 4-day premier Valorant LAN event hosted by Funhaver.gg. $10,000 prize pool on the line with $575 entry fee per team. Signups close July 10th.',
+    details: [
+      '$10,000 Prize Pool',
+      '$575 Entry Fee per team',
+      'Signups close July 10th @ 9:00 AM PDT',
+      'Spectator passes purchased separately at store.funhaver.gg',
+      'Hosted by @funhaver_gg',
+    ],
+    days: [
+      {
+        day: 'DAY 1 — THURSDAY, JULY 23RD',
+        subtitle: 'DAY 1',
+        schedule: [
+          { time: '9:00 AM EDT', event: 'Doors Open' },
+        ],
+      },
+      {
+        day: 'DAY 2 — FRIDAY, JULY 24TH',
+        subtitle: 'DAY 2',
+        schedule: [
+          { time: '9:00 AM EDT', event: 'Doors Open' },
+        ],
+      },
+      {
+        day: 'DAY 3 — SATURDAY, JULY 25TH',
+        subtitle: 'DAY 3',
+        schedule: [
+          { time: '9:00 AM EDT', event: 'Doors Open' },
+        ],
+      },
+      {
+        day: 'DAY 4 — SUNDAY, JULY 26TH',
+        subtitle: 'FINALS',
+        schedule: [
+          { time: '9:00 AM EDT', event: 'Doors Open' },
+        ],
+      },
+    ],
+  },
+  {
     id: 1,
     title: 'FRAG MIDWEST: ST. LOUIS',
     category: 'LAN',
     game: 'COUNTER-STRIKE',
-    featured: true,
+    featured: false,
     date: 'August 29–30, 2026',
     location: 'Impact Gaming Center — Fairview Heights, IL',
     link: 'https://x.com/fragadelphia',
@@ -171,7 +220,7 @@ export default function EventsPage() {
           </p>
           <div className="flex flex-wrap gap-4 mt-8">
             {[
-              { label: 'Upcoming Events', value: '2' },
+              { label: 'Upcoming Events', value: '3' },
               { label: 'Active Teams', value: '10' },
               { label: 'Tournament Wins', value: '20+' },
             ].map(({ label, value }) => (
@@ -233,7 +282,7 @@ export default function EventsPage() {
                     </div>
                   ))}
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
                   {featured.days.map((day, di) => (
                     <div key={di} className="bg-[#0D0D0D] border border-white/5 p-5">
                       <div className="h-px w-full bg-gradient-to-r from-[#E8191A] to-transparent mb-4" />
