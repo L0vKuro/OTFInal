@@ -11,13 +11,6 @@ export async function POST(req: NextRequest) {
 
     const now = new Date()
 
-    if (code === 'TEST90') {
-      if (now > new Date('2026-07-01')) {
-        return NextResponse.json({ valid: false, message: 'This discount code has expired' })
-      }
-      return NextResponse.json({ valid: true, percent: 90 })
-    }
-
     if (code === 'OVER18TAKE') {
       if (now > new Date('2027-01-01')) {
         return NextResponse.json({ valid: false, message: 'This discount code has expired' })
