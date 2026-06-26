@@ -60,6 +60,7 @@ export default function ContactPage() {
               {[
                 { icon: Mail, label: 'General Inquiries', value: 'contact@overtakegg.com', color: '#E8191A' },
                 { icon: MapPin, label: 'Headquarters', value: 'Louisiana, USA', color: '#E8191A' },
+                { icon: MapPin, label: 'Headquarters', value: 'California, USA', color: '#E8191A' },
               ].map(({ icon: Icon, label, value, color }) => (
                 <div key={label} className="flex items-start gap-4 bg-[#0D0D0D] border border-white/5 p-4">
                   <div className="w-8 h-8 flex items-center justify-center border border-white/10 flex-shrink-0" style={{ color }}>
