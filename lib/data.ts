@@ -1,4 +1,4 @@
-export const teams = [
+  export const teams = [
   {
     id: 'valorant',
     game: 'VALORANT',
@@ -121,7 +121,6 @@ export const teams = [
     region: 'NA',
     roster: [],
   },
-  
 ]
 
 export const creators = [
@@ -259,6 +258,33 @@ export const partners = [
 ]
 
 export const news = [
+  {
+    id: 13,
+    title: 'OVERTAKE PARTNERS WITH INK3D',
+    date: 'June 24, 2026',
+    category: 'PARTNERSHIP',
+    excerpt: 'Overtake officially joins forces with Ink3D Studio, a premier 3D design shop bringing custom logos, apparel, and collectibles to the Overtake brand.',
+    link: 'https://x.com/OvertakeSector/status/2069903396019277912?s=20',
+    image: '/ink3dpartner.jpg',
+  },
+  {
+    id: 14,
+    title: 'OVERTAKE PARTNERS WITH REPULSECO',
+    date: 'June 24, 2026',
+    category: 'PARTNERSHIP',
+    excerpt: 'Overtake proudly announces its official partnership with RepulseCo, an apparel brand redefining esports fashion for competitors who refuse to blend in.',
+    link: 'https://x.com/OvertakeSector/status/2069848027066519908?s=20',
+    image: '/repulseco-partner.jpg',
+  },
+  {
+    id: 15,
+    title: 'OVERTAKE ANNOUNCES NEW JERSEY LINE',
+    date: 'June 24, 2026',
+    category: 'MERCH',
+    excerpt: 'Overtake drops its official 2026 jersey line — custom polos now available at overtakegg.com/store. Rep the org in style with personalized name and number.',
+    link: 'https://x.com/OvertakeSector/status/2069858096764330021?s=20',
+    image: '/jersey-announcement.jpg',
+  },
   {
     id: 1,
     title: 'OVERTAKE ACQUIRES NEW VALORANT TEAM',
