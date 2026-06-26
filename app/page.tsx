@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ChevronRight, MessageCircle, ArrowRight } from 'lucide-react'
+import { ChevronRight, MessageCircle, ArrowRight, X, ShoppingBag, Tag } from 'lucide-react'
 import { teams, news } from '@/lib/data'
 
 const stats = [
@@ -48,13 +48,121 @@ function LiveButton() {
   )
 }
 
+function JerseyPromo({ onClose }: { onClose: () => void }) {
+  const [copied, setCopied] = useState(false)
+
+  const copyCode = () => {
+    navigator.clipboard.writeText('DISCOUNT10').catch(() => {})
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  return (
+    <div className="fixed inset-0 z-[90] flex items-center justify-center p-4"
+      style={{ animation: 'fadeIn 0.4s ease-out' }}>
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative bg-[#141414] border border-white/10 w-full max-w-2xl overflow-hidden shadow-2xl"
+        style={{ animation: 'slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' }}>
+
+        {/* Top red accent line */}
+        <div className="h-1 w-full bg-gradient-to-r from-[#E8191A] via-[#FF3334] to-transparent" />
+
+        {/* Close button */}
+        <button onClick={onClose}
+          className="absolute top-4 right-4 z-10 text-[#F2F2F2]/40 hover:text-[#F2F2F2] transition-colors bg-black/40 rounded p-1">
+          <X size={18} />
+        </button>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2">
+          {/* Jersey Image */}
+          <div className="relative bg-[#0D0D0D] flex items-center justify-center p-8 min-h-[240px]">
+            <div className="absolute inset-0 bg-gradient-to-br from-[#E8191A]/10 to-transparent" />
+            <img
+              src="/Front.png"
+              alt="Overtake 2026 Jersey"
+              style={{ width: '100%', maxWidth: '200px', objectFit: 'contain', filter: 'drop-shadow(0 0 30px rgba(232,25,26,0.4))', position: 'relative', zIndex: 1 }}
+            />
+            <div className="absolute top-4 left-4">
+              <span className="text-[10px] font-mono font-black px-2 py-1 bg-[#E8191A] text-white uppercase tracking-widest">
+                NEW DROP
+              </span>
+            </div>
+          </div>
+
+          {/* Text Content */}
+          <div className="p-8 flex flex-col justify-center">
+            <div className="flex items-center gap-2 mb-3">
+              <ShoppingBag size={12} className="text-[#E8191A]" />
+              <span className="text-[#E8191A] text-xs font-mono tracking-widest uppercase">Official Merch</span>
+            </div>
+
+            <h2 className="font-black text-3xl uppercase text-[#F2F2F2] leading-tight mb-3"
+              style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+              2026 JERSEYS<br />ARE HERE
+            </h2>
+
+            <p className="text-[#F2F2F2]/50 text-sm leading-relaxed mb-6">
+              Rep the org in the official Overtake 2026 Polo. Built for competitors who refuse to blend in — now available at the store.
+            </p>
+
+            {/* Discount Code */}
+            <div className="bg-[#0D0D0D] border border-[#E8191A]/30 p-4 mb-6">
+              <div className="flex items-center gap-2 mb-2">
+                <Tag size={11} className="text-[#E8191A]" />
+                <span className="text-[#F2F2F2]/40 text-xs font-mono uppercase tracking-widest">Discount Code</span>
+              </div>
+              <div className="flex items-center justify-between gap-3">
+                <span className="font-black text-xl text-[#E8191A] tracking-widest"
+                  style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                  DISCOUNT10
+                </span>
+                <button onClick={copyCode}
+                  className="text-[10px] font-mono uppercase tracking-widest px-3 py-1.5 border transition-all"
+                  style={{
+                    borderColor: copied ? '#00A878' : 'rgba(255,255,255,0.1)',
+                    color: copied ? '#00A878' : 'rgba(242,242,242,0.4)',
+                  }}>
+                  {copied ? '✓ Copied!' : 'Copy'}
+                </button>
+              </div>
+              <p className="text-[#F2F2F2]/30 text-xs font-mono mt-2">10% off at checkout</p>
+            </div>
+
+            <Link href="/store" onClick={onClose}
+              className="flex items-center justify-center gap-3 bg-[#E8191A] hover:bg-[#B81011] px-6 py-4 font-black tracking-widest uppercase text-sm transition-all hover:shadow-[0_0_30px_rgba(232,25,26,0.4)] clip-corner text-white"
+              style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+              <ShoppingBag size={16} /> Shop Now <ChevronRight size={14} />
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes slideUp {
+          from { opacity: 0; transform: translateY(24px) scale(0.97); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+      `}</style>
+    </div>
+  )
+}
+
 export default function HomePage() {
   const [splashDone, setSplashDone] = useState(false)
   const [fadeOut, setFadeOut] = useState(false)
+  const [showPromo, setShowPromo] = useState(false)
 
   const handleYes = () => {
     setFadeOut(true)
-    setTimeout(() => setSplashDone(true), 700)
+    setTimeout(() => {
+      setSplashDone(true)
+      // Show promo 1 second after splash closes
+      setTimeout(() => setShowPromo(true), 1000)
+    }, 700)
   }
 
   const handleNo = () => {
@@ -95,6 +203,9 @@ export default function HomePage() {
           </div>
         </div>
       )}
+
+      {/* ─── JERSEY PROMO POPUP ─── */}
+      {showPromo && <JerseyPromo onClose={() => setShowPromo(false)} />}
 
       {/* ─── MAIN SITE ─── */}
       <div className={`transition-opacity duration-700 ${splashDone ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
