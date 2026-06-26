@@ -223,6 +223,20 @@ export const creators = [
     photo: 'creator-soto.jpg',
     socials: { twitch: '', twitter: 'https://x.com/OT_Soto_On_TT', youtube: '' },
   },
+  {
+    id: 'midis',
+    handle: 'MIDIS',
+    real: 'midis1029',
+    platform: 'TikTok',
+    followers: '100',
+    content: 'Call of Duty',
+    country: '🇺🇸',
+    specialty: 'CALL OF DUTY',
+    bio: 'Grinding every day. Midis brings the CoD content nonstop — clips, gameplay, and the grind never stops.',
+    link: 'https://www.tiktok.com/@midis1029',
+    photo: 'creator-midis.jpg',
+    socials: { twitch: '', twitter: '', youtube: '' },
+  },
 ]
 
 export const partners = [
