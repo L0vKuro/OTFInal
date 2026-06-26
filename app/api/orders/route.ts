@@ -10,6 +10,12 @@ const ratelimit = new Ratelimit({
 
 export async function POST(req: NextRequest) {
   try {
+    // Referrer check
+    const origin = req.headers.get('origin') ?? ''
+    if (!origin.includes('overtakegg.com') && !origin.includes('localhost')) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+
     // Rate limiting
     const ip = req.headers.get('x-forwarded-for') ?? 'anonymous'
     const { success } = await ratelimit.limit(ip)
