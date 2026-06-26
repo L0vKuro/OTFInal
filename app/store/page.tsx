@@ -8,6 +8,16 @@ const SIZES = ['S', 'M', 'L', 'XL', '2XL', '3XL']
 
 const products = [
   {
+    id: 'test-item',
+    name: 'TEST ITEM — DO NOT BUY',
+    price: 1,
+    tag: 'TEST',
+    description: 'Internal test item to verify checkout and payment flow. Do not purchase.',
+    details: ['Test purchase only', 'Will be removed after testing'],
+    images: ['/Front.png', '/Rear.png'],
+    isVNeck: false,
+  },
+  {
     id: 'polo-2026',
     name: 'OFFICIAL 2026 POLO',
     price: 65,
@@ -78,7 +88,6 @@ export default function StorePage() {
     })
 
     setAdded(true)
-    // Close modal after showing success
     setTimeout(() => closeModal(), 1500)
   }
 
@@ -265,7 +274,6 @@ export default function StorePage() {
               </button>
             </div>
 
-            {/* Size */}
             <div className="mb-5">
               <label className="text-[#F2F2F2]/40 text-xs font-mono uppercase tracking-widest mb-2 block">
                 Size * {size && <span className="text-[#E8191A] ml-2">— {size} selected</span>}
@@ -285,7 +293,6 @@ export default function StorePage() {
               {errors.size && <p className="text-[#E8191A] text-xs font-mono mt-1">{errors.size}</p>}
             </div>
 
-            {/* Name on Back */}
             <div className="mb-5">
               <label className="text-[#F2F2F2]/40 text-xs font-mono uppercase tracking-widest mb-2 block">Name on Back *</label>
               <input
@@ -303,7 +310,6 @@ export default function StorePage() {
               </div>
             </div>
 
-            {/* Number on Back (V-Neck only) */}
             {modalProduct.isVNeck && (
               <div className="mb-5">
                 <label className="text-[#F2F2F2]/40 text-xs font-mono uppercase tracking-widest mb-2 block">Number on Back *</label>
