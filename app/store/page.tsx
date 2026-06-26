@@ -37,7 +37,7 @@ export default function StorePage() {
   const [numberOnBack, setNumberOnBack] = useState('')
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [added, setAdded] = useState(false)
-  const { addItem } = useCart()
+  const { addItem, count } = useCart()
 
   const getImage = (id: string) => activeImage[id] ?? 0
 
@@ -50,7 +50,10 @@ export default function StorePage() {
     setAdded(false)
   }
 
-  const closeModal = () => setModal(null)
+  const closeModal = () => {
+    setModal(null)
+    setAdded(false)
+  }
 
   const handleAddToCart = () => {
     const product = products.find(p => p.id === modal)
@@ -58,8 +61,8 @@ export default function StorePage() {
 
     const e: Record<string, string> = {}
     if (!size) e.size = 'Please select a size'
-    if (!nameOnBack) e.nameOnBack = 'Required'
-    if (product.isVNeck && !numberOnBack) e.numberOnBack = 'Required'
+    if (!nameOnBack.trim()) e.nameOnBack = 'Required'
+    if (product.isVNeck && !numberOnBack.trim()) e.numberOnBack = 'Required'
     setErrors(e)
     if (Object.keys(e).length > 0) return
 
@@ -69,13 +72,14 @@ export default function StorePage() {
       price: product.price,
       image: product.images[0],
       size,
-      nameOnBack,
-      numberOnBack,
+      nameOnBack: nameOnBack.trim(),
+      numberOnBack: numberOnBack.trim(),
       isVNeck: product.isVNeck,
     })
 
     setAdded(true)
-    setTimeout(() => closeModal(), 1200)
+    // Close modal after showing success
+    setTimeout(() => closeModal(), 1500)
   }
 
   const modalProduct = products.find(p => p.id === modal)
@@ -143,7 +147,7 @@ export default function StorePage() {
                 <img
                   src={product.images[getImage(product.id)]}
                   alt={product.name}
-                  style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '32px', borderRadius: '12px' }}
+                  style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '32px', borderRadius: '12px', transition: 'opacity 0.2s' }}
                 />
                 {product.tag && (
                   <div className="absolute top-4 left-4">
@@ -213,6 +217,11 @@ export default function StorePage() {
                   style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
                   <ShoppingBag size={18} /> Add to Cart
                 </button>
+                {count > 0 && (
+                  <p className="text-center text-[#F2F2F2]/30 text-xs font-mono">
+                    {count} item{count > 1 ? 's' : ''} in cart
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -242,7 +251,8 @@ export default function StorePage() {
       {modal && modalProduct && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={closeModal} />
-          <div className="relative bg-[#141414] border border-white/10 w-full max-w-md p-6 z-10">
+          <div className="relative bg-[#141414] border border-white/10 w-full max-w-md p-6 z-10 shadow-2xl"
+            style={{ animation: 'fadeInUp 0.2s ease-out' }}>
             <div className="h-px w-full bg-gradient-to-r from-[#E8191A] to-transparent mb-6" />
             <div className="flex items-start justify-between mb-6">
               <div>
@@ -255,15 +265,18 @@ export default function StorePage() {
               </button>
             </div>
 
-            <div className="mb-4">
-              <label className="text-[#F2F2F2]/40 text-xs font-mono uppercase tracking-widest mb-2 block">Size *</label>
+            {/* Size */}
+            <div className="mb-5">
+              <label className="text-[#F2F2F2]/40 text-xs font-mono uppercase tracking-widest mb-2 block">
+                Size * {size && <span className="text-[#E8191A] ml-2">— {size} selected</span>}
+              </label>
               <div className="flex flex-wrap gap-2">
                 {SIZES.map(s => (
-                  <button key={s} onClick={() => setSize(s)}
+                  <button key={s} onClick={() => { setSize(s); setErrors(p => ({ ...p, size: '' })) }}
                     className={`px-4 py-2 text-sm font-mono font-black uppercase border transition-all ${
                       size === s
                         ? 'border-[#E8191A] bg-[#E8191A]/10 text-[#E8191A]'
-                        : 'border-white/10 text-[#F2F2F2]/50 hover:border-white/30'
+                        : 'border-white/10 text-[#F2F2F2]/50 hover:border-white/30 hover:text-[#F2F2F2]'
                     }`}>
                     {s}
                   </button>
@@ -272,34 +285,62 @@ export default function StorePage() {
               {errors.size && <p className="text-[#E8191A] text-xs font-mono mt-1">{errors.size}</p>}
             </div>
 
-            <div className="mb-4">
+            {/* Name on Back */}
+            <div className="mb-5">
               <label className="text-[#F2F2F2]/40 text-xs font-mono uppercase tracking-widest mb-2 block">Name on Back *</label>
-              <input value={nameOnBack} onChange={e => setNameOnBack(e.target.value)}
+              <input
+                value={nameOnBack}
+                onChange={e => { setNameOnBack(e.target.value); setErrors(p => ({ ...p, nameOnBack: '' })) }}
                 placeholder="Your name or gamertag"
-                className="w-full bg-[#0D0D0D] border border-white/10 px-4 py-3 text-[#F2F2F2] text-sm font-mono focus:outline-none focus:border-[#E8191A]/60 transition-colors" />
-              {errors.nameOnBack && <p className="text-[#E8191A] text-xs font-mono mt-1">{errors.nameOnBack}</p>}
+                maxLength={20}
+                className="w-full bg-[#0D0D0D] border border-white/10 px-4 py-3 text-[#F2F2F2] text-sm font-mono focus:outline-none focus:border-[#E8191A]/60 transition-colors"
+              />
+              <div className="flex justify-between mt-1">
+                {errors.nameOnBack
+                  ? <p className="text-[#E8191A] text-xs font-mono">{errors.nameOnBack}</p>
+                  : <span />}
+                <p className="text-[#F2F2F2]/20 text-xs font-mono">{nameOnBack.length}/20</p>
+              </div>
             </div>
 
+            {/* Number on Back (V-Neck only) */}
             {modalProduct.isVNeck && (
-              <div className="mb-4">
+              <div className="mb-5">
                 <label className="text-[#F2F2F2]/40 text-xs font-mono uppercase tracking-widest mb-2 block">Number on Back *</label>
-                <input value={numberOnBack} onChange={e => setNumberOnBack(e.target.value)}
+                <input
+                  value={numberOnBack}
+                  onChange={e => { setNumberOnBack(e.target.value); setErrors(p => ({ ...p, numberOnBack: '' })) }}
                   placeholder="e.g. 24"
-                  className="w-full bg-[#0D0D0D] border border-white/10 px-4 py-3 text-[#F2F2F2] text-sm font-mono focus:outline-none focus:border-[#E8191A]/60 transition-colors" />
+                  maxLength={3}
+                  className="w-full bg-[#0D0D0D] border border-white/10 px-4 py-3 text-[#F2F2F2] text-sm font-mono focus:outline-none focus:border-[#E8191A]/60 transition-colors"
+                />
                 {errors.numberOnBack && <p className="text-[#E8191A] text-xs font-mono mt-1">{errors.numberOnBack}</p>}
               </div>
             )}
 
-            <button onClick={handleAddToCart}
+            <button
+              onClick={handleAddToCart}
+              disabled={added}
               className={`w-full flex items-center justify-center gap-3 px-10 py-4 font-black tracking-widest uppercase text-base transition-all clip-corner text-white ${
-                added ? 'bg-[#00A878]' : 'bg-[#E8191A] hover:bg-[#B81011] hover:shadow-[0_0_40px_rgba(232,25,26,0.4)]'
+                added
+                  ? 'bg-[#00A878] cursor-default'
+                  : 'bg-[#E8191A] hover:bg-[#B81011] hover:shadow-[0_0_40px_rgba(232,25,26,0.4)]'
               }`}
               style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-              {added ? <><Check size={18} /> Added!</> : <><ShoppingBag size={18} /> Add to Cart</>}
+              {added
+                ? <><Check size={18} /> Added to Cart!</>
+                : <><ShoppingBag size={18} /> Add to Cart</>}
             </button>
           </div>
         </div>
       )}
+
+      <style>{`
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(16px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   )
 }
