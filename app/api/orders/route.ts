@@ -1,8 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
+import { Ratelimit } from '@upstash/ratelimit'
+import { Redis } from '@upstash/redis'
+
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(5, '1 m'),
+})
 
 export async function POST(req: NextRequest) {
   try {
+    // Rate limiting
+    const ip = req.headers.get('x-forwarded-for') ?? 'anonymous'
+    const { success } = await ratelimit.limit(ip)
+    if (!success) {
+      return NextResponse.json({ error: 'Too many requests. Try again later.' }, { status: 429 })
+    }
+
     const resend = new Resend(process.env.RESEND_API_KEY ?? '')
     const order = await req.json()
 
@@ -20,7 +34,23 @@ export async function POST(req: NextRequest) {
       numberOnBack,
       price,
       paypalOrderId,
+      discount,
+      finalTotal,
     } = order
+
+    // Input validation
+    const required = { customerName, customerEmail, address, city, state, zip, country, product, size, nameOnBack }
+    for (const [field, value] of Object.entries(required)) {
+      if (!value || typeof value !== 'string' || value.trim().length === 0 || value.length > 200) {
+        return NextResponse.json({ error: `Invalid field: ${field}` }, { status: 400 })
+      }
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail)) {
+      return NextResponse.json({ error: 'Invalid email address' }, { status: 400 })
+    }
+    if (!paypalOrderId || typeof paypalOrderId !== 'string') {
+      return NextResponse.json({ error: 'Invalid order ID' }, { status: 400 })
+    }
 
     const isVNeck = product.includes('V-NECK')
 
@@ -43,6 +73,8 @@ export async function POST(req: NextRequest) {
                 <tr><td style="color:#F2F2F2;opacity:0.4;font-size:12px;padding:6px 0;text-transform:uppercase;">Name on Back</td><td style="color:#F2F2F2;font-size:14px;padding:6px 0;">${nameOnBack}</td></tr>
                 ${isVNeck ? `<tr><td style="color:#F2F2F2;opacity:0.4;font-size:12px;padding:6px 0;text-transform:uppercase;">Number on Back</td><td style="color:#F2F2F2;font-size:14px;padding:6px 0;">${numberOnBack}</td></tr>` : ''}
                 <tr><td style="color:#F2F2F2;opacity:0.4;font-size:12px;padding:6px 0;text-transform:uppercase;">Price</td><td style="color:#E8191A;font-size:14px;font-weight:bold;padding:6px 0;">${price}</td></tr>
+                ${discount && discount !== 'None' ? `<tr><td style="color:#F2F2F2;opacity:0.4;font-size:12px;padding:6px 0;text-transform:uppercase;">Discount</td><td style="color:#00A878;font-size:14px;padding:6px 0;">${discount}</td></tr>` : ''}
+                ${finalTotal ? `<tr><td style="color:#F2F2F2;opacity:0.4;font-size:12px;padding:6px 0;text-transform:uppercase;">Total Charged</td><td style="color:#E8191A;font-size:16px;font-weight:bold;padding:6px 0;">${finalTotal}</td></tr>` : ''}
                 <tr><td style="color:#F2F2F2;opacity:0.4;font-size:12px;padding:6px 0;text-transform:uppercase;">Order ID</td><td style="color:#F2F2F2;opacity:0.6;font-size:12px;padding:6px 0;">${paypalOrderId}</td></tr>
               </table>
             </div>
@@ -82,6 +114,8 @@ export async function POST(req: NextRequest) {
                 <tr><td style="color:#F2F2F2;opacity:0.4;font-size:12px;padding:6px 0;text-transform:uppercase;">Name on Back</td><td style="color:#F2F2F2;font-size:14px;padding:6px 0;">${nameOnBack}</td></tr>
                 ${isVNeck ? `<tr><td style="color:#F2F2F2;opacity:0.4;font-size:12px;padding:6px 0;text-transform:uppercase;">Number on Back</td><td style="color:#F2F2F2;font-size:14px;padding:6px 0;">${numberOnBack}</td></tr>` : ''}
                 <tr><td style="color:#F2F2F2;opacity:0.4;font-size:12px;padding:6px 0;text-transform:uppercase;">Price</td><td style="color:#E8191A;font-size:14px;font-weight:bold;padding:6px 0;">${price}</td></tr>
+                ${discount && discount !== 'None' ? `<tr><td style="color:#F2F2F2;opacity:0.4;font-size:12px;padding:6px 0;text-transform:uppercase;">Discount</td><td style="color:#00A878;font-size:14px;padding:6px 0;">${discount}</td></tr>` : ''}
+                ${finalTotal ? `<tr><td style="color:#F2F2F2;opacity:0.4;font-size:12px;padding:6px 0;text-transform:uppercase;">Total Charged</td><td style="color:#E8191A;font-size:16px;font-weight:bold;padding:6px 0;">${finalTotal}</td></tr>` : ''}
                 <tr><td style="color:#F2F2F2;opacity:0.4;font-size:12px;padding:6px 0;text-transform:uppercase;">PayPal Order ID</td><td style="color:#F2F2F2;opacity:0.6;font-size:12px;padding:6px 0;">${paypalOrderId}</td></tr>
               </table>
             </div>
@@ -105,6 +139,7 @@ export async function POST(req: NextRequest) {
     })
 
     return NextResponse.json({ success: true })
+
   } catch (error) {
     console.error('Order error:', error)
     return NextResponse.json({ error: 'Failed to process order' }, { status: 500 })
