@@ -112,7 +112,7 @@ export default function PartnersPage() {
                 className="flex items-center gap-3 bg-[#E8191A] hover:bg-[#B81011] px-8 py-4 font-bold tracking-widest uppercase text-sm transition-all hover:shadow-[0_0_30px_rgba(232,25,26,0.4)] clip-corner text-white w-fit"
                 style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
                 <Mail size={16} />
-                here@overtakegg.com
+                contact@overtakegg.com
               </a>
             </div>
 
