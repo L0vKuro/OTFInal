@@ -7,7 +7,7 @@ import { Twitter, Youtube, Twitch, Users, TrendingUp } from 'lucide-react'
 const PLATFORM_COLORS: Record<string, string> = {
   Twitch: '#9146FF',
   YouTube: '#FF0000',
-  TikTok: '#010101',
+  TikTok: '#EE1D52',
 }
 
 function LiveSection() {
@@ -101,9 +101,9 @@ export default function CreatorsPage() {
           </p>
           <div className="flex flex-wrap gap-6 mt-10">
             {[
-              { label: 'Active Creators', value: '6' },
+              { label: 'Active Creators', value: '8' },
               { label: 'Combined Followers', value: '6K+' },
-              { label: 'Platforms', value: 'Twitch' },
+              { label: 'Platforms', value: 'Twitch & TikTok' },
             ].map(({ label, value }) => (
               <div key={label} className="flex items-center gap-3 border border-white/8 px-5 py-3 bg-white/2">
                 <TrendingUp size={16} className="text-[#E8191A]" />
@@ -121,12 +121,13 @@ export default function CreatorsPage() {
       <div className="max-w-7xl mx-auto px-6 py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {creators.map((creator) => {
+            const platformColor = PLATFORM_COLORS[creator.platform] || '#E8191A'
             return (
               <a key={creator.id} href={creator.link} target="_blank" rel="noopener noreferrer"
                 className="group relative bg-[#0D0D0D] border border-white/5 hover:border-[#E8191A]/20 overflow-hidden card-hover block">
                 <div className="h-px w-full bg-gradient-to-r from-[#E8191A] to-transparent" />
                 <div className="h-48 relative overflow-hidden"
-                  style={{ background: `linear-gradient(135deg, ${PLATFORM_COLORS[creator.platform] || '#E8191A'}15, transparent 60%)` }}>
+                  style={{ background: `linear-gradient(135deg, ${platformColor}15, transparent 60%)` }}>
                   <div className="absolute inset-0 bg-grid opacity-20" />
                   <img src={`/${creator.photo}`} alt={creator.handle}
                     style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', opacity: 0.6 }}
@@ -140,7 +141,7 @@ export default function CreatorsPage() {
                   </div>
                   <div className="absolute top-4 left-4">
                     <div className="text-[10px] font-mono font-bold px-2 py-1 uppercase tracking-widest"
-                      style={{ color: PLATFORM_COLORS[creator.platform] || '#E8191A', background: `${PLATFORM_COLORS[creator.platform] || '#E8191A'}20`, border: `1px solid ${PLATFORM_COLORS[creator.platform] || '#E8191A'}40` }}>
+                      style={{ color: '#ffffff', background: platformColor, border: `1px solid ${platformColor}` }}>
                       {creator.platform}
                     </div>
                   </div>
@@ -173,6 +174,13 @@ export default function CreatorsPage() {
                         onClick={e => e.stopPropagation()}
                         className="w-7 h-7 flex items-center justify-center border border-white/8 hover:border-[#1DA1F2]/50 hover:bg-[#1DA1F2]/10 rounded transition-all text-white/30 hover:text-[#1DA1F2]">
                         <Twitter size={12} />
+                      </a>
+                    )}
+                    {creator.link && creator.platform === 'TikTok' && (
+                      <a href={creator.link} target="_blank" rel="noopener noreferrer"
+                        onClick={e => e.stopPropagation()}
+                        className="w-7 h-7 flex items-center justify-center border border-white/8 hover:border-[#EE1D52]/50 hover:bg-[#EE1D52]/10 rounded transition-all text-white/30 hover:text-[#EE1D52]">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.19 8.19 0 0 0 4.78 1.52V6.76a4.85 4.85 0 0 1-1.01-.07z"/></svg>
                       </a>
                     )}
                     {creator.socials.youtube && (
