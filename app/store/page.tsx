@@ -8,16 +8,6 @@ const SIZES = ['S', 'M', 'L', 'XL', '2XL', '3XL']
 
 const products = [
   {
-    id: 'test-item',
-    name: 'TEST ITEM — $1',
-    price: 1,
-    tag: 'TEST',
-    description: 'A $1 test item to verify the full checkout, payment, and email system works correctly. Remove after testing.',
-    details: ['Test purchase only', 'Real $1 charge', 'Emails will be sent', 'Remove after testing'],
-    images: ['/wordmark.png'],
-    isVNeck: false,
-  },
-  {
     id: 'polo-2026',
     name: 'OFFICIAL 2026 POLO',
     price: 65,
