@@ -19,14 +19,17 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.paypal.com https://www.paypalobjects.com",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.paypal.com https://www.paypalobjects.com https://*.paypal.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
               "img-src 'self' data: https: blob:",
-              "connect-src 'self' https://www.paypal.com https://formspree.io https://api.resend.com",
-              "frame-src https://www.paypal.com https://www.sandbox.paypal.com",
+              "connect-src 'self' https://www.paypal.com https://*.paypal.com https://formspree.io https://api.resend.com",
+              "frame-src 'self' https://www.paypal.com https://www.sandbox.paypal.com https://*.paypal.com",
+              "frame-ancestors 'none'",
               "object-src 'none'",
               "base-uri 'self'",
+              "form-action 'self' https://www.paypal.com",
+              "upgrade-insecure-requests",
             ].join('; '),
           },
           {
@@ -38,5 +41,4 @@ const nextConfig = {
     ]
   },
 }
-
 module.exports = nextConfig
