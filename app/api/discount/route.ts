@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(req: NextRequest) {
   try {
+    // Referrer check
+    const origin = req.headers.get('origin') ?? ''
+    if (!origin.includes('overtakegg.com') && !origin.includes('localhost')) {
+      return NextResponse.json({ valid: false, message: 'Forbidden' }, { status: 403 })
+    }
+
     const body = await req.json()
     const code = (body?.code ?? '').toString().trim().toUpperCase()
 
@@ -11,11 +17,11 @@ export async function POST(req: NextRequest) {
 
     const now = new Date()
 
-    if (code === 'MEMBER15') {
+    if (code === 'OVER18TAKE') {
       if (now > new Date('2027-01-01')) {
         return NextResponse.json({ valid: false, message: 'This discount code has expired' })
       }
-      return NextResponse.json({ valid: true, percent: 15 })
+      return NextResponse.json({ valid: true, percent: 18 })
     }
 
     if (code === 'DISCOUNT10') {
