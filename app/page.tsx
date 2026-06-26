@@ -64,17 +64,14 @@ function JerseyPromo({ onClose }: { onClose: () => void }) {
       <div className="relative bg-[#141414] border border-white/10 w-full max-w-2xl overflow-hidden shadow-2xl"
         style={{ animation: 'slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' }}>
 
-        {/* Top red accent line */}
         <div className="h-1 w-full bg-gradient-to-r from-[#E8191A] via-[#FF3334] to-transparent" />
 
-        {/* Close button */}
         <button onClick={onClose}
           className="absolute top-4 right-4 z-10 text-[#F2F2F2]/40 hover:text-[#F2F2F2] transition-colors bg-black/40 rounded p-1">
           <X size={18} />
         </button>
 
         <div className="grid grid-cols-1 sm:grid-cols-2">
-          {/* Jersey Image */}
           <div className="relative bg-[#0D0D0D] flex items-center justify-center p-8 min-h-[240px]">
             <div className="absolute inset-0 bg-gradient-to-br from-[#E8191A]/10 to-transparent" />
             <img
@@ -89,7 +86,6 @@ function JerseyPromo({ onClose }: { onClose: () => void }) {
             </div>
           </div>
 
-          {/* Text Content */}
           <div className="p-8 flex flex-col justify-center">
             <div className="flex items-center gap-2 mb-3">
               <ShoppingBag size={12} className="text-[#E8191A]" />
@@ -105,7 +101,6 @@ function JerseyPromo({ onClose }: { onClose: () => void }) {
               Rep the org in the official Overtake 2026 Polo. Built for competitors who refuse to blend in — now available at the store.
             </p>
 
-            {/* Discount Code */}
             <div className="bg-[#0D0D0D] border border-[#E8191A]/30 p-4 mb-6">
               <div className="flex items-center gap-2 mb-2">
                 <Tag size={11} className="text-[#E8191A]" />
@@ -152,7 +147,10 @@ function JerseyPromo({ onClose }: { onClose: () => void }) {
 }
 
 export default function HomePage() {
-  const [splashDone, setSplashDone] = useState(false)
+  const [splashDone, setSplashDone] = useState(() => {
+    if (typeof window === 'undefined') return false
+    return sessionStorage.getItem('ot-splash') === 'done'
+  })
   const [fadeOut, setFadeOut] = useState(false)
   const [showPromo, setShowPromo] = useState(false)
 
@@ -160,7 +158,7 @@ export default function HomePage() {
     setFadeOut(true)
     setTimeout(() => {
       setSplashDone(true)
-      // Show promo 1 second after splash closes
+      sessionStorage.setItem('ot-splash', 'done')
       setTimeout(() => setShowPromo(true), 300)
     }, 700)
   }
