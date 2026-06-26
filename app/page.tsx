@@ -161,7 +161,7 @@ export default function HomePage() {
     setTimeout(() => {
       setSplashDone(true)
       // Show promo 1 second after splash closes
-      setTimeout(() => setShowPromo(true), 1000)
+      setTimeout(() => setShowPromo(true), 300)
     }, 700)
   }
 
