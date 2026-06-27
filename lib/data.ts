@@ -113,8 +113,6 @@
       { name: 'AUZKKI', role: 'PLAYER', country: '🇺🇸', real: 'AUZKKI', twitter: '' },
       { name: 'ItztheforgettenZ', role: 'PLAYER', country: '🇺🇸', real: 'ItztheforgettenZ', twitter: '' },
       { name: 'catz', role: 'PLAYER', country: '🇺🇸', real: 'catz', twitter: '' },
-      
-      
     ],
   },
   {
