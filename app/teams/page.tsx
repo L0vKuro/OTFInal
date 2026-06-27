@@ -131,7 +131,7 @@ export default function TeamsPage() {
                         <img
                           src={`/${photo}`}
                           alt={player.name}
-                          className="group-hover:scale-110 group-hover:opacity-100"
+                          className="player-photo"
                           style={{
                             width: '100%',
                             height: '100%',
@@ -204,6 +204,13 @@ export default function TeamsPage() {
           </a>
         </div>
       </div>
+
+      <style>{`
+        .card-hover:hover .player-photo {
+          transform: scale(1.12);
+          opacity: 1;
+        }
+      `}</style>
     </div>
   )
 }
