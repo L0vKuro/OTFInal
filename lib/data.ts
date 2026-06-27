@@ -111,6 +111,10 @@
       { name: 'HOLDMYPOLLO', role: 'PLAYER', country: '🇺🇸', real: 'HoldMyPollo', twitter: '' },
       { name: 'CHEF', role: 'PLAYER', country: '🇺🇸', real: 'CHEF', twitter: '' },
       { name: 'AUZKKI', role: 'PLAYER', country: '🇺🇸', real: 'AUZKKI', twitter: '' },
+      { name: 'ItztheforgettenZ', role: 'PLAYER', country: '🇺🇸', real: 'ItztheforgettenZ', twitter: '' },
+      { name: 'catz', role: 'PLAYER', country: '🇺🇸', real: 'catz', twitter: '' },
+      
+      
     ],
   },
   {
