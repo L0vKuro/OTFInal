@@ -39,7 +39,6 @@ const PLAYER_PHOTOS: Record<string, string> = {
   'azzyriax': 'player-azzy.jpg',
   'flip': 'player-flip.jpg',
   'swisz': 'player-Swisz.jpg',
-  
 }
 
 function getPlayerPhoto(name: string): string {
@@ -132,7 +131,15 @@ export default function TeamsPage() {
                         <img
                           src={`/${photo}`}
                           alt={player.name}
-                          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', opacity: 0.85 }}
+                          className="group-hover:scale-110 group-hover:opacity-100"
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            objectPosition: 'top',
+                            opacity: 0.85,
+                            transition: 'transform 0.3s ease, opacity 0.3s ease',
+                          }}
                           onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
                         />
                         <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${cardColor}30, transparent)` }} />
