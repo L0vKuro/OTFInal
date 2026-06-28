@@ -7,9 +7,7 @@ const CREATOR_LOGINS = [
   'x19_eh',
   'luke_12345678932',
   'zendigo_playz',
-  'oficr',
   'lordrogue22',
-  'depmonk',
   '1umartv',
   'delinquentfps',
   'dynasty_k1ng',
@@ -21,7 +19,6 @@ const CREATOR_LOGINS = [
   'soto_on_tt',
   'trapzfv',
   'xlluka',
-  'otcchunk',
 ]
 
 async function getToken() {
