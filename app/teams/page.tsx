@@ -56,7 +56,6 @@ export default function TeamsPage() {
     <div className="relative min-h-screen">
       <div className="absolute inset-0 bg-grid opacity-20 pointer-events-none" />
 
-      {/* Header */}
       <div className="relative pt-36 pb-16 border-b border-white/5">
         <div className="absolute inset-0 bg-gradient-to-b from-[#E8191A]/5 to-transparent" />
         <div className="relative max-w-7xl mx-auto px-6">
@@ -75,7 +74,7 @@ export default function TeamsPage() {
                 background: 'rgba(0,212,255,0.08)',
                 clipPath: 'polygon(0 0, 100% 0, 100% 60%, 92% 100%, 0 100%)',
               }}>
-              🎯 Fortnite Division <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              Fortnite Division <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
             </a>
           </div>
           <p className="text-[#F2F2F2]/40 text-lg mt-6 max-w-lg">
@@ -97,13 +96,10 @@ export default function TeamsPage() {
         </div>
       </div>
 
-      {/* Teams */}
       <div className="max-w-7xl mx-auto px-6 py-16 space-y-16">
         {teams.map((team: any, idx: number) => {
           if (team.id === 'fortnite') return null
-
           const trackerLink = team.id in TRACKER_LINKS ? TRACKER_LINKS[team.id] : null
-
           return (
             <div key={team.id} id={team.id} className="scroll-mt-24">
               <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
@@ -120,11 +116,9 @@ export default function TeamsPage() {
                     {team.game}
                   </h2>
                 </div>
-
-                {/* Tracker Button */}
                 {trackerLink !== null && (
                   trackerLink !== '' ? (
-                    
+                    <a
                       href={trackerLink}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -154,7 +148,6 @@ export default function TeamsPage() {
                   )
                 )}
               </div>
-
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
                 {team.roster.map((player: any, pi: number) => {
                   const photo = getPlayerPhoto(player.name)
@@ -163,7 +156,6 @@ export default function TeamsPage() {
                   const isFemaleCoach = ['GINGY', 'JOGORKU'].includes(player.name)
                   const cardColor = isRedCard || isFemaleCoach ? '#E8191A' : isFemaleTeam ? '#FF69B4' : team.color
                   const hasTwitter = player.twitter && player.twitter !== ''
-
                   const inner = (
                     <>
                       <div className="h-px w-full" style={{ background: `linear-gradient(90deg, ${cardColor}, transparent)` }} />
@@ -191,7 +183,7 @@ export default function TeamsPage() {
                         </div>
                         <div className="absolute top-2 right-2">
                           <span className="text-[10px] font-mono px-2 py-1 uppercase tracking-wider font-black"
-                            style={{ color: cardColor, background: `#000000CC`, border: `1px solid ${cardColor}60` }}>
+                            style={{ color: cardColor, background: '#000000CC', border: `1px solid ${cardColor}60` }}>
                             {player.role}
                           </span>
                         </div>
@@ -207,7 +199,6 @@ export default function TeamsPage() {
                       </div>
                     </>
                   )
-
                   return hasTwitter ? (
                     <a key={pi} href={player.twitter} target="_blank" rel="noopener noreferrer"
                       className="group relative bg-[#141414] border border-white/5 hover:border-white/20 overflow-hidden card-hover block">
@@ -220,7 +211,6 @@ export default function TeamsPage() {
                   )
                 })}
               </div>
-
               {idx < teams.length - 1 && (
                 <div className="mt-16 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
               )}
@@ -229,7 +219,6 @@ export default function TeamsPage() {
         })}
       </div>
 
-      {/* Join CTA */}
       <div className="bg-[#141414] border-t border-white/5 py-20">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <h2 className="font-display font-black text-5xl md:text-6xl uppercase text-[#F2F2F2] mb-4"
