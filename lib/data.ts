@@ -278,15 +278,6 @@ export const news = [
     image: '/news-deadlock.png',
   },
   {
-    id: 3,
-    title: 'OVERTAKE ENTERS CLASH ROYALE',
-    date: 'May 30, 2026',
-    category: 'CLASH ROYALE',
-    excerpt: 'Overtake makes its mark in Clash Royale with the signing of MegaHitIdee, bringing competitive excellence to mobile esports.',
-    link: 'https://x.com/OvertakeSector/status/2060738006294704365?s=20',
-    image: '/news-clashroyale.png',
-  },
-  {
     id: 4,
     title: 'OVERTAKE HAS A NEW ACADEMY TEAM',
     date: 'May 24, 2026',
