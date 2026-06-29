@@ -183,14 +183,12 @@ export default function TeamsPage() {
                             height: '100%',
                             objectFit: 'cover',
                             objectPosition: 'top',
-                            opacity: 0.85,
-                            filter: 'brightness(0.35)',
-                            transition: 'transform 0.3s ease, opacity 0.3s ease, filter 0.3s ease',
                           }}
                           onError={e => {
                             ;(e.currentTarget as HTMLImageElement).style.display = 'none'
                           }}
                         />
+                        <div className="player-overlay absolute inset-0" />
                         <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${cardColor}30, transparent)` }} />
                         <div className="absolute bottom-2 left-3">
                           <span
@@ -270,10 +268,18 @@ export default function TeamsPage() {
       </div>
 
       <style>{`
+        .player-photo {
+          transition: transform 0.3s ease;
+        }
+        .player-overlay {
+          background: rgba(0, 0, 0, 0.75);
+          transition: opacity 0.3s ease;
+        }
         .card-hover:hover .player-photo {
           transform: scale(1.12);
-          opacity: 1;
-          filter: brightness(1);
+        }
+        .card-hover:hover .player-overlay {
+          opacity: 0;
         }
       `}</style>
     </div>
