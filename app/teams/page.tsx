@@ -169,7 +169,7 @@ export default function TeamsPage() {
                             height: '100%',
                             objectFit: 'cover',
                             objectPosition: 'top',
-                            opacity: 0.85,
+                            opacity: 0.3,
                             transition: 'transform 0.3s ease, opacity 0.3s ease',
                           }}
                           onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
