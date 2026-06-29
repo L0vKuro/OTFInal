@@ -19,7 +19,7 @@ const CREATOR_LOGINS = [
   'soto_on_tt',
   'trapzfv',
   'xlluka',
-  'fnl_gaz',
+  'finl_gaz',
 ]
 
 async function getToken() {
