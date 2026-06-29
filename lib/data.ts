@@ -1,4 +1,4 @@
-  export const teams = [
+export const teams = [
   {
     id: 'valorant',
     game: 'VALORANT',
@@ -28,6 +28,20 @@
     ],
   },
   {
+    id: 'r6-main',
+    game: 'RAINBOW 6 — MAIN',
+    tag: 'OT',
+    color: '#009BDE',
+    region: 'NA',
+    roster: [
+      { name: 'SNEKY', role: 'PLAYER', country: '🇺🇸', real: '@SnekyFPS', twitter: 'https://x.com/SnekyFPS' },
+      { name: 'BRADY', role: 'PLAYER', country: '🇺🇸', real: '@braydenvalen', twitter: 'https://x.com/braydenvalen' },
+      { name: 'TEAK', role: 'PLAYER', country: '🇺🇸', real: '@TeakR6', twitter: 'https://x.com/TeakR6' },
+      { name: 'ZMAN', role: 'PLAYER', country: '🇺🇸', real: '@ZmanFPS', twitter: 'https://x.com/ZmanFPS' },
+      { name: 'HEKTIK', role: 'PLAYER', country: '🇺🇸', real: '@ripHektik', twitter: 'https://x.com/ripHektik' },
+    ],
+  },
+  {
     id: 'deadlock',
     game: 'DEADLOCK',
     tag: 'OT',
@@ -40,34 +54,6 @@
       { name: 'KIINGKOOOPA', role: 'PLAYER', country: '🇺🇸', real: '@KiiingKooopa', twitter: 'https://x.com/KiiingKooopa' },
       { name: 'DELINQUENT', role: 'PLAYER', country: '🇺🇸', real: '@delinquentFps', twitter: 'https://x.com/delinquentFps' },
       { name: 'MAXX', role: 'PLAYER', country: '🇺🇸', real: '@MaxxTF2', twitter: 'https://x.com/MaxxTF2' },
-    ],
-  },
-  {
-    id: 'warzone',
-    game: 'WARZONE',
-    tag: 'OT',
-    color: '#FF6B00',
-    region: 'NA',
-    roster: [
-      { name: 'FAVOR8', role: 'PLAYER', country: '🇺🇸', real: '@Favor8_', twitter: 'https://x.com/Favor8_' },
-      { name: 'GODCOOKIE', role: 'PLAYER', country: '🇺🇸', real: '@godcookie_2', twitter: 'https://x.com/godcookie_2' },
-      { name: 'KONTROL', role: 'PLAYER', country: '🇺🇸', real: '@SynKontrol', twitter: 'https://x.com/SynKontrol' },
-      { name: 'XIMMY', role: 'PLAYER', country: '🇺🇸', real: '@ximmywz', twitter: 'https://x.com/ximmywz' },
-      { name: 'LUKA', role: 'PLAYER', country: '🇺🇸', real: '@xLuka_77', twitter: 'https://x.com/xLuka_77' },
-    ],
-  },
-  {
-    id: 'r6-main',
-    game: 'RAINBOW 6 — MAIN',
-    tag: 'OT',
-    color: '#009BDE',
-    region: 'NA',
-    roster: [
-      { name: 'SNEKY', role: 'PLAYER', country: '🇺🇸', real: '@SnekyFPS', twitter: 'https://x.com/SnekyFPS' },
-      { name: 'BRADY', role: 'PLAYER', country: '🇺🇸', real: '@braydenvalen', twitter: 'https://x.com/braydenvalen' },
-      { name: 'TEAK', role: 'PLAYER', country: '🇺🇸', real: '@TeakR6', twitter: 'https://x.com/TeakR6' },
-      { name: 'ZMAN', role: 'PLAYER', country: '🇺🇸', real: '@ZmanFPS', twitter: 'https://x.com/ZmanFPS' },
-      { name: 'HEKTIK', role: 'PLAYER', country: '🇺🇸', real: '@ripHektik', twitter: 'https://x.com/ripHektik' },
     ],
   },
   {
@@ -98,6 +84,20 @@
       { name: 'AZZYRIAX', role: 'PLAYER', country: '🇺🇸', real: '@azzyriax', twitter: 'https://x.com/azzyriax' },
       { name: 'GINGY', role: 'COACH', country: '🇺🇸', real: '@not_gingy', twitter: 'https://x.com/not_gingy' },
       { name: 'JOGORKU', role: 'COACH', country: '🇺🇸', real: '@Jogorku', twitter: 'https://x.com/Jogorku' },
+    ],
+  },
+  {
+    id: 'warzone',
+    game: 'WARZONE',
+    tag: 'OT',
+    color: '#FF6B00',
+    region: 'NA',
+    roster: [
+      { name: 'FAVOR8', role: 'PLAYER', country: '🇺🇸', real: '@Favor8_', twitter: 'https://x.com/Favor8_' },
+      { name: 'GODCOOKIE', role: 'PLAYER', country: '🇺🇸', real: '@godcookie_2', twitter: 'https://x.com/godcookie_2' },
+      { name: 'KONTROL', role: 'PLAYER', country: '🇺🇸', real: '@SynKontrol', twitter: 'https://x.com/SynKontrol' },
+      { name: 'XIMMY', role: 'PLAYER', country: '🇺🇸', real: '@ximmywz', twitter: 'https://x.com/ximmywz' },
+      { name: 'LUKA', role: 'PLAYER', country: '🇺🇸', real: '@xLuka_77', twitter: 'https://x.com/xLuka_77' },
     ],
   },
   {
