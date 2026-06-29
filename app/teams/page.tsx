@@ -116,4 +116,141 @@ export default function TeamsPage() {
                     </span>
                   </div>
                   <h2 className="font-display font-black text-5xl md:text-6xl uppercase"
-                    style={{ fontFamily:
+                    style={{ fontFamily: 'Barlow Condensed, sans-serif', color: team.color }}>
+                    {team.game}
+                  </h2>
+                </div>
+
+                {/* Tracker Button */}
+                {trackerLink !== null && (
+                  trackerLink !== '' ? (
+                    
+                      href={trackerLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-shrink-0 flex items-center gap-2 px-5 py-2.5 text-xs font-black tracking-widest uppercase transition-all hover:opacity-80"
+                      style={{
+                        fontFamily: 'Barlow Condensed, sans-serif',
+                        color: team.color,
+                        border: `1px solid ${team.color}60`,
+                        background: `${team.color}15`,
+                      }}>
+                      <ExternalLink size={12} />
+                      Tracker
+                    </a>
+                  ) : (
+                    <div
+                      className="flex-shrink-0 flex items-center gap-2 px-5 py-2.5 text-xs font-black tracking-widest uppercase cursor-not-allowed"
+                      style={{
+                        fontFamily: 'Barlow Condensed, sans-serif',
+                        color: team.color,
+                        border: `1px solid ${team.color}30`,
+                        background: `${team.color}08`,
+                        opacity: 0.35,
+                      }}>
+                      <ExternalLink size={12} />
+                      Tracker
+                    </div>
+                  )
+                )}
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
+                {team.roster.map((player: any, pi: number) => {
+                  const photo = getPlayerPhoto(player.name)
+                  const isFemaleTeam = team.id === 'r6-FEMALE'
+                  const isRedCard = ['NATHAN', 'SHIYO', 'ABYCE'].includes(player.name)
+                  const isFemaleCoach = ['GINGY', 'JOGORKU'].includes(player.name)
+                  const cardColor = isRedCard || isFemaleCoach ? '#E8191A' : isFemaleTeam ? '#FF69B4' : team.color
+                  const hasTwitter = player.twitter && player.twitter !== ''
+
+                  const inner = (
+                    <>
+                      <div className="h-px w-full" style={{ background: `linear-gradient(90deg, ${cardColor}, transparent)` }} />
+                      <div className="h-40 relative overflow-hidden bg-[#0D0D0D]">
+                        <img
+                          src={`/${photo}`}
+                          alt={player.name}
+                          className="player-photo"
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            objectPosition: 'top',
+                            opacity: 0.85,
+                            transition: 'transform 0.3s ease, opacity 0.3s ease',
+                          }}
+                          onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
+                        />
+                        <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${cardColor}30, transparent)` }} />
+                        <div className="absolute bottom-2 left-3">
+                          <span className="font-display font-black text-3xl opacity-20"
+                            style={{ fontFamily: 'Barlow Condensed, sans-serif', color: cardColor }}>
+                            {pi + 1 < 10 ? `0${pi + 1}` : pi + 1}
+                          </span>
+                        </div>
+                        <div className="absolute top-2 right-2">
+                          <span className="text-[10px] font-mono px-2 py-1 uppercase tracking-wider font-black"
+                            style={{ color: cardColor, background: `#000000CC`, border: `1px solid ${cardColor}60` }}>
+                            {player.role}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="p-3">
+                        <h3 className="font-display font-black text-lg text-[#F2F2F2] uppercase"
+                          style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                          {player.name}
+                        </h3>
+                        <p className="text-xs mt-0.5 font-mono" style={{ color: cardColor }}>
+                          {player.real}
+                        </p>
+                      </div>
+                    </>
+                  )
+
+                  return hasTwitter ? (
+                    <a key={pi} href={player.twitter} target="_blank" rel="noopener noreferrer"
+                      className="group relative bg-[#141414] border border-white/5 hover:border-white/20 overflow-hidden card-hover block">
+                      {inner}
+                    </a>
+                  ) : (
+                    <div key={pi} className="group relative bg-[#141414] border border-white/5 overflow-hidden card-hover">
+                      {inner}
+                    </div>
+                  )
+                })}
+              </div>
+
+              {idx < teams.length - 1 && (
+                <div className="mt-16 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+              )}
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Join CTA */}
+      <div className="bg-[#141414] border-t border-white/5 py-20">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <h2 className="font-display font-black text-5xl md:text-6xl uppercase text-[#F2F2F2] mb-4"
+            style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+            WANT TO WEAR THE JERSEY?
+          </h2>
+          <p className="text-[#F2F2F2]/40 mb-8">Applications for Season 2026 tryouts are open.</p>
+          <a href="/join"
+            className="inline-flex items-center gap-3 bg-[#E8191A] hover:bg-[#B81011] px-10 py-5 font-black tracking-widest uppercase text-base transition-all hover:shadow-[0_0_40px_rgba(232,25,26,0.4)] clip-corner text-[#F2F2F2]"
+            style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+            Apply for Tryout <ChevronRight size={18} />
+          </a>
+        </div>
+      </div>
+
+      <style>{`
+        .card-hover:hover .player-photo {
+          transform: scale(1.12);
+          opacity: 1;
+        }
+      `}</style>
+    </div>
+  )
+}
