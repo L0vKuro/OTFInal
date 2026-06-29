@@ -43,7 +43,7 @@ const TRACKER_LINKS: Record<string, string> = {
   'valorant': 'https://www.vlr.gg/team/17236/overtake',
   'counterstrike': 'https://www.hltv.org/team/13855/overtake-sector',
   'deadlock': '',
-  'r6-main': '',
+  'r6-main': 'https://liquipedia.net/rainbowsix/Overtake_Sector',
 }
 
 function getPlayerPhoto(name: string): string {
