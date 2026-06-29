@@ -173,7 +173,7 @@ export default function TeamsPage() {
                   const inner = (
                     <>
                       <div className="h-px w-full" style={{ background: `linear-gradient(90deg, ${cardColor}, transparent)` }} />
-                      <div className="h-40 relative overflow-hidden bg-[#0D0D0D]">
+                      <div className="h-56 relative overflow-hidden bg-[#0D0D0D]">
                         <img
                           src={`/${photo}`}
                           alt={player.name}
@@ -275,8 +275,17 @@ export default function TeamsPage() {
           background: rgba(0, 0, 0, 0.75);
           transition: opacity 0.3s ease;
         }
+        .card-hover {
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+          transform: scale(1.05);
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+          z-index: 10;
+          position: relative;
+        }
         .card-hover:hover .player-photo {
-          transform: scale(1.12);
+          transform: scale(1.15);
         }
         .card-hover:hover .player-overlay {
           opacity: 0;
