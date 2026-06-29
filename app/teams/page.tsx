@@ -118,7 +118,7 @@ export default function TeamsPage() {
                 </div>
                 {trackerLink !== null && (
                   trackerLink !== '' ? (
-                    <a
+                    
                       href={trackerLink}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -169,8 +169,9 @@ export default function TeamsPage() {
                             height: '100%',
                             objectFit: 'cover',
                             objectPosition: 'top',
-                            opacity: 0.3,
-                            transition: 'transform 0.3s ease, opacity 0.3s ease',
+                            opacity: 0.85,
+                            filter: 'brightness(0.35)',
+                            transition: 'transform 0.3s ease, opacity 0.3s ease, filter 0.3s ease',
                           }}
                           onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
                         />
@@ -238,6 +239,7 @@ export default function TeamsPage() {
         .card-hover:hover .player-photo {
           transform: scale(1.12);
           opacity: 1;
+          filter: brightness(1);
         }
       `}</style>
     </div>
