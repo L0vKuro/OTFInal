@@ -104,8 +104,8 @@ export default function CreatorsPage() {
           </p>
           <div className="flex flex-wrap gap-6 mt-10">
             {[
-              { label: 'Active Creators', value: '10' },
-              { label: 'Combined Followers', value: '9.4k+' },
+              { label: 'Active Creators', value: '12' },
+              { label: 'Combined Followers', value: '14.4k+' },
               { label: 'Platforms', value: 'Youtube, Twitch & TikTok' },
             ].map(({ label, value }) => (
               <div key={label} className="flex items-center gap-3 border border-white/8 px-5 py-3 bg-white/2">
