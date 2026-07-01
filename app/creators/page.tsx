@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { creators } from '@/lib/data'
-import { Twitter, Youtube, Twitch, Users, TrendingUp } from 'lucide-react'
+import { Twitter, Youtube, Twitch, Users, TrendingUp, ExternalLink } from 'lucide-react'
 
 const PLATFORM_COLORS: Record<string, string> = {
   Twitch: '#9146FF',
@@ -78,6 +78,10 @@ function LiveSection() {
 }
 
 export default function CreatorsPage() {
+  const [hoveredId, setHoveredId] = useState<string | null>(null)
+
+  const hoveredCreator = creators.find(c => c.id === hoveredId)
+
   return (
     <div className="relative min-h-screen">
       <div className="absolute inset-0 bg-grid opacity-20 pointer-events-none" />
@@ -123,8 +127,15 @@ export default function CreatorsPage() {
           {creators.map((creator) => {
             const platformColor = PLATFORM_COLORS[creator.platform] || '#E8191A'
             return (
-              <a key={creator.id} href={creator.link} target="_blank" rel="noopener noreferrer"
-                className="group relative bg-[#0D0D0D] border border-white/5 hover:border-[#E8191A]/20 overflow-hidden card-hover block">
+              
+                key={creator.id}
+                href={creator.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                onMouseEnter={() => setHoveredId(creator.id)}
+                onMouseLeave={() => setHoveredId(null)}
+                className="group relative bg-[#0D0D0D] border border-white/5 hover:border-[#E8191A]/20 overflow-hidden card-hover block"
+              >
                 <div className="h-px w-full bg-gradient-to-r from-[#E8191A] to-transparent" />
                 <div className="h-48 relative overflow-hidden"
                   style={{ background: `linear-gradient(135deg, ${platformColor}15, transparent 60%)` }}>
@@ -159,7 +170,7 @@ export default function CreatorsPage() {
                       {creator.specialty}
                     </span>
                   </div>
-                  <p className="text-white/40 text-sm leading-relaxed mb-5">{creator.bio}</p>
+                  <p className="text-white/40 text-sm leading-relaxed mb-5 line-clamp-3">{creator.bio}</p>
                   <div className="flex items-center gap-2 pt-4 border-t border-white/5">
                     <span className="text-white/20 text-xs font-mono mr-1">FOLLOW:</span>
                     {creator.socials.twitch && (
@@ -214,6 +225,109 @@ export default function CreatorsPage() {
           </a>
         </div>
       </div>
+
+      {/* Expanded Hover Overlay */}
+      {hoveredCreator && (
+        <div
+          className="fixed inset-0 z-[80] flex items-center justify-center p-6 pointer-events-none"
+          style={{ animation: 'fadeIn 0.2s ease-out' }}
+        >
+          <div className="absolute inset-0 bg-black/85 backdrop-blur-sm" />
+          <div
+            className="relative bg-[#0D0D0D] border border-[#E8191A]/30 w-full max-w-3xl overflow-hidden shadow-2xl"
+            style={{ animation: 'scaleIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)' }}
+          >
+            <div className="h-1 w-full" style={{ background: PLATFORM_COLORS[hoveredCreator.platform] || '#E8191A' }} />
+            <div className="grid grid-cols-1 sm:grid-cols-2">
+              {/* Image */}
+              <div className="relative h-72 sm:h-full min-h-[320px] overflow-hidden bg-[#141414]">
+                <img
+                  src={`/${hoveredCreator.photo}`}
+                  alt={hoveredCreator.handle}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }}
+                  onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
+                />
+                <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, #0D0D0D 5%, transparent 50%)' }} />
+                <div className="absolute top-4 left-4">
+                  <div
+                    className="text-[10px] font-mono font-bold px-2 py-1 uppercase tracking-widest"
+                    style={{
+                      color: '#ffffff',
+                      background: PLATFORM_COLORS[hoveredCreator.platform] || '#E8191A',
+                      border: `1px solid ${PLATFORM_COLORS[hoveredCreator.platform] || '#E8191A'}`,
+                    }}
+                  >
+                    {hoveredCreator.platform}
+                  </div>
+                </div>
+                <div className="absolute top-4 right-4">
+                  <div className="flex items-center gap-1.5 bg-black/60 backdrop-blur border border-white/10 px-3 py-1.5 rounded-sm">
+                    <Users size={11} className="text-white/50" />
+                    <span className="font-mono text-xs font-bold text-white">{hoveredCreator.followers}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="p-8 flex flex-col justify-center">
+                <h3
+                  className="font-display font-black text-4xl text-white uppercase mb-1"
+                  style={{ fontFamily: 'Barlow Condensed, sans-serif' }}
+                >
+                  {hoveredCreator.handle}
+                </h3>
+                <p className="text-white/30 text-sm mb-4">{hoveredCreator.real} {hoveredCreator.country}</p>
+
+                <span className="inline-block text-[10px] font-mono px-2 py-0.5 bg-[#E8191A]/10 text-[#E8191A] border border-[#E8191A]/20 uppercase tracking-wider mb-5 w-fit">
+                  {hoveredCreator.specialty}
+                </span>
+
+                <p className="text-white/50 text-sm leading-relaxed mb-6">
+                  {hoveredCreator.bio}
+                </p>
+
+                <div className="flex items-center gap-2 pt-5 border-t border-white/5">
+                  <span className="text-white/20 text-xs font-mono mr-1">FOLLOW:</span>
+                  {hoveredCreator.socials.twitch && (
+                    <div className="w-8 h-8 flex items-center justify-center border border-white/8 rounded text-[#9146FF]">
+                      <Twitch size={13} />
+                    </div>
+                  )}
+                  {hoveredCreator.socials.twitter && (
+                    <div className="w-8 h-8 flex items-center justify-center border border-white/8 rounded text-[#1DA1F2]">
+                      <Twitter size={13} />
+                    </div>
+                  )}
+                  {hoveredCreator.link && hoveredCreator.platform === 'TikTok' && (
+                    <div className="w-8 h-8 flex items-center justify-center border border-white/8 rounded text-[#EE1D52]">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.19 8.19 0 0 0 4.78 1.52V6.76a4.85 4.85 0 0 1-1.01-.07z"/></svg>
+                    </div>
+                  )}
+                  {hoveredCreator.socials.youtube && (
+                    <div className="w-8 h-8 flex items-center justify-center border border-white/8 rounded text-red-400">
+                      <Youtube size={13} />
+                    </div>
+                  )}
+                  <span className="ml-auto flex items-center gap-1.5 text-white/30 text-xs font-mono">
+                    <ExternalLink size={11} /> Click to visit
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes scaleIn {
+          from { opacity: 0; transform: scale(0.9); }
+          to { opacity: 1; transform: scale(1); }
+        }
+      `}</style>
     </div>
   )
 }
