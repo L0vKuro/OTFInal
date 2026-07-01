@@ -31,7 +31,7 @@ export default function JoinPage() {
   const [loading, setLoading] = useState(false)
 
   const [playerForm, setPlayerForm] = useState({
-    name: '', ign: '', email: '', game: '', rank: '', otherGame: '', region: '', age: '', socials: '', clips: '', why: '',
+    name: '', ign: '', email: '', twitter: '', game: '', rank: '', otherGame: '', region: '', age: '', clips: '', why: '',
   })
 
   const [creatorForm, setCreatorForm] = useState({
@@ -174,6 +174,11 @@ export default function JoinPage() {
                       className="input-dark w-full px-4 py-3 rounded-sm text-sm" placeholder="your@email.com" />
                   </div>
                   <div>
+                    <label className="block text-xs font-mono text-white/30 uppercase tracking-widest mb-2">Twitter / X Handle *</label>
+                    <input type="text" required value={playerForm.twitter} onChange={e => setPlayerForm(f => ({ ...f, twitter: e.target.value }))}
+                      className="input-dark w-full px-4 py-3 rounded-sm text-sm" placeholder="@yourtwitter" />
+                  </div>
+                  <div>
                     <label className="block text-xs font-mono text-white/30 uppercase tracking-widest mb-2">Age *</label>
                     <input type="number" required min="16" max="40" value={playerForm.age} onChange={e => setPlayerForm(f => ({ ...f, age: e.target.value }))}
                       className="input-dark w-full px-4 py-3 rounded-sm text-sm" placeholder="Your age" />
@@ -206,19 +211,6 @@ export default function JoinPage() {
                       </select>
                     )}
                   </div>
-                </div>
-
-                {playerForm.game === 'Other' && (
-                  <div>
-                    <label className="block text-xs font-mono text-white/30 uppercase tracking-widest mb-2">Which Game? *</label>
-                    <input type="text" required value={playerForm.otherGame}
-                      onChange={e => setPlayerForm(f => ({ ...f, otherGame: e.target.value }))}
-                      className="input-dark w-full px-4 py-3 rounded-sm text-sm"
-                      placeholder="Enter the game you play" />
-                  </div>
-                )}
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-xs font-mono text-white/30 uppercase tracking-widest mb-2">Region *</label>
                     <select required value={playerForm.region} onChange={e => setPlayerForm(f => ({ ...f, region: e.target.value }))}
@@ -230,12 +222,17 @@ export default function JoinPage() {
                       ))}
                     </select>
                   </div>
-                  <div>
-                    <label className="block text-xs font-mono text-white/30 uppercase tracking-widest mb-2">Social Links</label>
-                    <input type="text" value={playerForm.socials} onChange={e => setPlayerForm(f => ({ ...f, socials: e.target.value }))}
-                      className="input-dark w-full px-4 py-3 rounded-sm text-sm" placeholder="Twitter, Discord, Twitch..." />
-                  </div>
                 </div>
+
+                {playerForm.game === 'Other' && (
+                  <div>
+                    <label className="block text-xs font-mono text-white/30 uppercase tracking-widest mb-2">Which Game? *</label>
+                    <input type="text" required value={playerForm.otherGame}
+                      onChange={e => setPlayerForm(f => ({ ...f, otherGame: e.target.value }))}
+                      className="input-dark w-full px-4 py-3 rounded-sm text-sm"
+                      placeholder="Enter the game you play" />
+                  </div>
+                )}
 
                 <div>
                   <label className="block text-xs font-mono text-white/30 uppercase tracking-widest mb-2">Clips / VOD Links</label>
@@ -284,14 +281,8 @@ export default function JoinPage() {
                   </div>
                   <div>
                     <label className="block text-xs font-mono text-white/30 uppercase tracking-widest mb-2">Twitter / X Handle *</label>
-                    <input
-                      type="text"
-                      required
-                      value={creatorForm.twitter}
-                      onChange={e => setCreatorForm(f => ({ ...f, twitter: e.target.value }))}
-                      className="input-dark w-full px-4 py-3 rounded-sm text-sm"
-                      placeholder="@yourtwitter"
-                    />
+                    <input type="text" required value={creatorForm.twitter} onChange={e => setCreatorForm(f => ({ ...f, twitter: e.target.value }))}
+                      className="input-dark w-full px-4 py-3 rounded-sm text-sm" placeholder="@yourtwitter" />
                   </div>
                   <div>
                     <label className="block text-xs font-mono text-white/30 uppercase tracking-widest mb-2">Primary Platform *</label>
