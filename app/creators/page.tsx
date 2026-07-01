@@ -79,7 +79,6 @@ function LiveSection() {
 
 export default function CreatorsPage() {
   const [hoveredId, setHoveredId] = useState<string | null>(null)
-
   const hoveredCreator = creators.find(c => c.id === hoveredId)
 
   return (
@@ -119,7 +118,6 @@ export default function CreatorsPage() {
         </div>
       </div>
 
-      {/* Live Section */}
       <LiveSection />
 
       <div className="max-w-7xl mx-auto px-6 py-20">
@@ -127,7 +125,7 @@ export default function CreatorsPage() {
           {creators.map((creator) => {
             const platformColor = PLATFORM_COLORS[creator.platform] || '#E8191A'
             return (
-              
+              <a
                 key={creator.id}
                 href={creator.link}
                 target="_blank"
@@ -226,7 +224,6 @@ export default function CreatorsPage() {
         </div>
       </div>
 
-      {/* Expanded Hover Overlay */}
       {hoveredCreator && (
         <div
           className="fixed inset-0 z-[80] flex items-center justify-center p-6 pointer-events-none"
@@ -239,7 +236,6 @@ export default function CreatorsPage() {
           >
             <div className="h-1 w-full" style={{ background: PLATFORM_COLORS[hoveredCreator.platform] || '#E8191A' }} />
             <div className="grid grid-cols-1 sm:grid-cols-2">
-              {/* Image */}
               <div className="relative h-72 sm:h-full min-h-[320px] overflow-hidden bg-[#141414]">
                 <img
                   src={`/${hoveredCreator.photo}`}
@@ -268,7 +264,6 @@ export default function CreatorsPage() {
                 </div>
               </div>
 
-              {/* Content */}
               <div className="p-8 flex flex-col justify-center">
                 <h3
                   className="font-display font-black text-4xl text-white uppercase mb-1"
