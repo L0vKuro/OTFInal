@@ -35,7 +35,7 @@ export default function JoinPage() {
   })
 
   const [creatorForm, setCreatorForm] = useState({
-    name: '', handle: '', email: '', platform: '', followers: '', content: '', socials: '', why: '', samples: '',
+    name: '', handle: '', email: '', twitter: '', platform: '', followers: '', content: '', socials: '', why: '', samples: '',
   })
 
   const handlePlayerSubmit = async (e: React.FormEvent) => {
@@ -208,7 +208,6 @@ export default function JoinPage() {
                   </div>
                 </div>
 
-                {/* Other game text field */}
                 {playerForm.game === 'Other' && (
                   <div>
                     <label className="block text-xs font-mono text-white/30 uppercase tracking-widest mb-2">Which Game? *</label>
@@ -282,6 +281,17 @@ export default function JoinPage() {
                     <label className="block text-xs font-mono text-white/30 uppercase tracking-widest mb-2">Email *</label>
                     <input type="email" required value={creatorForm.email} onChange={e => setCreatorForm(f => ({ ...f, email: e.target.value }))}
                       className="input-dark w-full px-4 py-3 rounded-sm text-sm" placeholder="your@email.com" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-mono text-white/30 uppercase tracking-widest mb-2">Twitter / X Handle *</label>
+                    <input
+                      type="text"
+                      required
+                      value={creatorForm.twitter}
+                      onChange={e => setCreatorForm(f => ({ ...f, twitter: e.target.value }))}
+                      className="input-dark w-full px-4 py-3 rounded-sm text-sm"
+                      placeholder="@yourtwitter"
+                    />
                   </div>
                   <div>
                     <label className="block text-xs font-mono text-white/30 uppercase tracking-widest mb-2">Primary Platform *</label>
