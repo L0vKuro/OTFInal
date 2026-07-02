@@ -218,7 +218,7 @@ export default function CreatorsPage() {
 
       <div className="max-w-7xl mx-auto px-6 py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {creators.map((creator: any) => {
+          {[...creators].sort((a: any, b: any) => a.tier - b.tier).map((creator: any) => {
             const platformColor = PLATFORM_COLORS[creator.platform] || '#E8191A'
             const tierInfo = TIER_INFO[creator.tier as number] || TIER_INFO[3]
             return (
