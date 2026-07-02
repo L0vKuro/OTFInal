@@ -2,12 +2,18 @@
 
 import { useState, useEffect } from 'react'
 import { creators } from '@/lib/data'
-import { Twitter, Youtube, Twitch, Users, TrendingUp, ExternalLink } from 'lucide-react'
+import { Twitter, Youtube, Twitch, Users, TrendingUp, ExternalLink, Star, Award, Shield } from 'lucide-react'
 
 const PLATFORM_COLORS: Record<string, string> = {
   Twitch: '#9146FF',
   YouTube: '#FF0000',
   TikTok: '#EE1D52',
+}
+
+const TIER_INFO: Record<number, { label: string; short: string; color: string }> = {
+  1: { label: 'Tier 1 — Featured Creator', short: 'TIER 1', color: '#FFD447' },
+  2: { label: 'Tier 2 — Growth Creator', short: 'TIER 2', color: '#E8191A' },
+  3: { label: 'Tier 3 — Development Creator', short: 'TIER 3', color: '#7A7A7A' },
 }
 
 function LiveSection() {
@@ -77,6 +83,96 @@ function LiveSection() {
   )
 }
 
+function TierSystem() {
+  const tiers = [
+    {
+      num: 1,
+      title: 'Featured Creator',
+      icon: Star,
+      color: '#FFD447',
+      desc: 'Our most consistent and trusted creators. They represent the brand at a high level and help drive Overtake\'s growth.',
+      points: [
+        'First access to sponsorships & brand deals',
+        'Featured on Overtake socials & campaigns',
+        'Priority for exclusive partnerships',
+        'Leadership on creator projects',
+      ],
+    },
+    {
+      num: 2,
+      title: 'Growth Creator',
+      icon: Award,
+      color: '#E8191A',
+      desc: 'Building consistency and showing strong potential, with a clear path toward Tier 1.',
+      points: [
+        'Featured shoutouts when earned',
+        'Branding & content strategy support',
+        'Clear benchmarks to reach Tier 1',
+        'Chances to assist team content & events',
+      ],
+    },
+    {
+      num: 3,
+      title: 'Development Creator',
+      icon: Shield,
+      color: '#7A7A7A',
+      desc: 'Newer creators building the habits and consistency needed to grow within Overtake.',
+      points: [
+        'Team guidance while building consistency',
+        'Access to guides, feedback & coaching',
+        'Regular check-ins and growth goals',
+        'Included in creator events & activities',
+      ],
+    },
+  ]
+
+  return (
+    <div className="bg-[#0D0D0D] border-t border-white/5 py-24">
+      <div className="max-w-6xl mx-auto px-6">
+        <div className="text-center mb-14">
+          <p className="text-[#E8191A] text-xs font-mono tracking-widest uppercase mb-4">// How It Works</p>
+          <h2 className="font-display font-black text-5xl md:text-6xl uppercase text-white mb-4"
+            style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+            CREATOR TIER<br />SYSTEM
+          </h2>
+          <p className="text-white/40 text-lg max-w-xl mx-auto">
+            Our tiers reward consistency, growth, and brand representation — giving every creator a clear path forward within Overtake.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {tiers.map(({ num, title, icon: Icon, color, desc, points }) => (
+            <div key={num} className="bg-[#141414] border border-white/5 overflow-hidden">
+              <div className="h-1 w-full" style={{ background: color }} />
+              <div className="p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 flex items-center justify-center border" style={{ borderColor: `${color}50`, background: `${color}15` }}>
+                    <Icon size={18} style={{ color }} />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-mono uppercase tracking-widest" style={{ color }}>Tier {num}</p>
+                    <h3 className="font-display font-black text-xl text-white uppercase leading-none"
+                      style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{title}</h3>
+                  </div>
+                </div>
+                <p className="text-white/40 text-sm leading-relaxed mb-5">{desc}</p>
+                <div className="space-y-2">
+                  {points.map((point, i) => (
+                    <div key={i} className="flex items-start gap-2">
+                      <div className="w-1 h-1 rounded-full mt-2 flex-shrink-0" style={{ background: color }} />
+                      <span className="text-white/40 text-xs">{point}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function CreatorsPage() {
   const [hoveredId, setHoveredId] = useState<string | null>(null)
   const hoveredCreator = creators.find(c => c.id === hoveredId)
@@ -122,8 +218,9 @@ export default function CreatorsPage() {
 
       <div className="max-w-7xl mx-auto px-6 py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {creators.map((creator) => {
+          {creators.map((creator: any) => {
             const platformColor = PLATFORM_COLORS[creator.platform] || '#E8191A'
+            const tierInfo = TIER_INFO[creator.tier as number] || TIER_INFO[3]
             return (
               <a
                 key={creator.id}
@@ -148,10 +245,14 @@ export default function CreatorsPage() {
                       <span className="font-mono text-xs font-bold text-white">{creator.followers}</span>
                     </div>
                   </div>
-                  <div className="absolute top-4 left-4">
+                  <div className="absolute top-4 left-4 flex flex-col gap-2 items-start">
                     <div className="text-[10px] font-mono font-bold px-2 py-1 uppercase tracking-widest"
                       style={{ color: '#ffffff', background: platformColor, border: `1px solid ${platformColor}` }}>
                       {creator.platform}
+                    </div>
+                    <div className="text-[10px] font-mono font-bold px-2 py-1 uppercase tracking-widest"
+                      style={{ color: tierInfo.color, background: 'rgba(0,0,0,0.7)', border: `1px solid ${tierInfo.color}80` }}>
+                      {tierInfo.short}
                     </div>
                   </div>
                 </div>
@@ -206,6 +307,9 @@ export default function CreatorsPage() {
           })}
         </div>
       </div>
+
+      <TierSystem />
+
       <div className="bg-[#0D0D0D] border-t border-white/5 py-24">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <p className="text-[#E8191A] text-xs font-mono tracking-widest uppercase mb-4">// Creator Program</p>
@@ -244,7 +348,7 @@ export default function CreatorsPage() {
                   onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
                 />
                 <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, #0D0D0D 5%, transparent 50%)' }} />
-                <div className="absolute top-4 left-4">
+                <div className="absolute top-4 left-4 flex flex-col gap-2 items-start">
                   <div
                     className="text-[10px] font-mono font-bold px-2 py-1 uppercase tracking-widest"
                     style={{
@@ -254,6 +358,16 @@ export default function CreatorsPage() {
                     }}
                   >
                     {hoveredCreator.platform}
+                  </div>
+                  <div
+                    className="text-[10px] font-mono font-bold px-2 py-1 uppercase tracking-widest"
+                    style={{
+                      color: (TIER_INFO[(hoveredCreator as any).tier as number] || TIER_INFO[3]).color,
+                      background: 'rgba(0,0,0,0.7)',
+                      border: `1px solid ${(TIER_INFO[(hoveredCreator as any).tier as number] || TIER_INFO[3]).color}80`,
+                    }}
+                  >
+                    {(TIER_INFO[(hoveredCreator as any).tier as number] || TIER_INFO[3]).label}
                   </div>
                 </div>
                 <div className="absolute top-4 right-4">
