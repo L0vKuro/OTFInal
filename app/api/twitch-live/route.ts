@@ -11,6 +11,7 @@ const CREATOR_LOGINS = [
   '1umartv',
   'delinquentfps',
   'dynasty_k1ng',
+  'vanishhfps'
   'godcookie_',
   'jahwci',
   'keotaress',
