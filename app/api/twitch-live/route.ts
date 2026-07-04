@@ -12,7 +12,6 @@ const CREATOR_LOGINS = [
   'delinquentfps',
   'dynasty_k1ng',
   'godcookie_',
-  'ikillshott',
   'jahwci',
   'keotaress',
   'kiiiingkooopa',
