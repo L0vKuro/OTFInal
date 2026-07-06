@@ -91,15 +91,24 @@ export default function AboutPage() {
       <div className="relative pt-36 pb-20 border-b border-white/5 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-[#E8191A]/5 to-transparent" />
         <div className="relative max-w-7xl mx-auto px-6">
-          <p className="text-[#E8191A] text-xs font-mono tracking-widest uppercase mb-4">// Our Story</p>
-          <h1 className="font-display font-black text-7xl md:text-9xl uppercase leading-none"
-            style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-            <span className="text-white">WHO</span><br />
-            <span style={{ background: 'linear-gradient(135deg, #FF3334 0%, #E8191A 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>WE ARE</span>
-          </h1>
-          <p className="text-white/40 text-xl mt-8 max-w-2xl leading-relaxed">
-            Driven by Passion, Overtake is backed by Members who believe in doing more than just playing video games. In and out of the game we support each other for who we are. 1 Goal, 1 Mission, we are Overtake.
-          </p>
+          <div className="flex items-start justify-between gap-8">
+            <div>
+              <p className="text-[#E8191A] text-xs font-mono tracking-widest uppercase mb-4">// Our Story</p>
+              <h1 className="font-display font-black text-7xl md:text-9xl uppercase leading-none"
+                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                <span className="text-white">WHO</span><br />
+                <span style={{ background: 'linear-gradient(135deg, #FF3334 0%, #E8191A 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>WE ARE</span>
+              </h1>
+              <p className="text-white/40 text-xl mt-8 max-w-2xl leading-relaxed">
+                Driven by Passion, Overtake is backed by Members who believe in doing more than just playing video games. In and out of the game we support each other for who we are. 1 Goal, 1 Mission, we are Overtake.
+              </p>
+            </div>
+            <Link href="/brand"
+              className="hidden md:flex items-center gap-2 border border-white/10 hover:border-[#E8191A]/40 px-6 py-3 text-white/60 hover:text-white font-medium tracking-wider uppercase text-sm transition-all whitespace-nowrap"
+              style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+              Brand Kit <ChevronRight size={14} />
+            </Link>
+          </div>
         </div>
       </div>
 
