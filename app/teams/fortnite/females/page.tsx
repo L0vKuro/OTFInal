@@ -65,25 +65,29 @@ export default function OvertakeFemalesPage() {
         {/* Fullscreen hover overlay */}
         {hovered && (
           <div
-            className="fixed inset-0 z-50 flex items-end"
+            className="fixed inset-0 z-50 flex items-end bg-[#0D0D0D]"
             style={{ animation: 'fadeIn 0.25s ease-out' }}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
           >
-            <img
-              src="/player-natalee.jpg"
-              alt="Natalee"
-              style={{
-                position: 'absolute',
-                inset: 0,
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-                objectPosition: 'top',
-                animation: 'scaleIn 0.3s ease-out forwards',
-              }}
-            />
-            <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.92) 25%, rgba(0,0,0,0.3) 65%, transparent 100%)' }} />
+            {/* Image — contained to right half, not stretching full screen */}
+            <div className="absolute inset-0 flex items-center justify-end">
+              <div className="relative h-full w-1/2">
+                <img
+                  src="/player-natalee.jpg"
+                  alt="Natalee"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    objectPosition: 'top',
+                    animation: 'scaleIn 0.3s ease-out forwards',
+                  }}
+                />
+                <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, #0D0D0D 0%, transparent 40%)' }} />
+              </div>
+            </div>
+            <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.7) 20%, transparent 80%)' }} />
             <div className="relative z-10 p-12 w-full">
               <p className="text-xs font-mono uppercase tracking-widest mb-2" style={{ color: pink }}>// Overtake Fortnite</p>
               <h2 className="font-display font-black text-6xl md:text-8xl uppercase text-white leading-none mb-4"
