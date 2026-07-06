@@ -180,10 +180,10 @@ function FemaleSection() {
 
   return (
     <>
-      {/* Trigger, rectangular and centered in the hero's decorative area */}
+      {/* Trigger, rectangular, positioned right in the hero */}
       <button
         onClick={handleClick}
-        className="hidden lg:flex absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 items-center justify-center gap-3 bg-[#141414]/90 backdrop-blur border-2 border-[#FF6FB5]/50 hover:border-[#FF6FB5] px-12 py-6 rounded-lg shadow-lg transition-colors cursor-pointer group"
+        className="hidden lg:flex absolute top-1/2 right-20 -translate-y-1/2 z-40 items-center justify-center gap-3 bg-[#141414]/90 backdrop-blur border-2 border-[#FF6FB5]/50 hover:border-[#FF6FB5] px-12 py-6 rounded-lg shadow-lg transition-colors cursor-pointer group"
         aria-label="View Overtake Females"
       >
         <Sparkles size={22} className="text-[#FF6FB5] group-hover:scale-110 transition-transform" />
@@ -237,12 +237,6 @@ export default function FortnitePage() {
       <div className="relative pt-36 pb-20 border-b border-white/5 overflow-hidden">
         <FemaleSection />
         <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom, ${color}08, transparent)` }} />
-        <div className="absolute right-0 top-0 bottom-0 w-1/2 overflow-hidden opacity-10 pointer-events-none">
-          {[...Array(8)].map((_, i) => (
-            <div key={i} className="absolute top-0 bottom-0 w-px"
-              style={{ right: `${i * 50}px`, transform: 'skewX(-15deg)', background: color }} />
-          ))}
-        </div>
         <div className="relative max-w-7xl mx-auto px-6">
           <div className="flex items-center gap-3 mb-4">
             <a href="/teams" className="text-[#F2F2F2]/30 hover:text-[#F2F2F2] text-xs font-mono tracking-widest uppercase transition-colors">← Back to Teams</a>
