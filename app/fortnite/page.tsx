@@ -183,7 +183,7 @@ function FemaleSection() {
       {/* Trigger, rectangular, positioned right in the hero */}
       <button
         onClick={handleClick}
-        className="hidden lg:flex absolute top-1/2 right-96 -translate-y-1/2 z-40 items-center justify-center gap-3 bg-[#141414]/90 backdrop-blur border-2 border-[#FF6FB5]/50 hover:border-[#FF6FB5] px-12 py-6 rounded-lg shadow-lg transition-colors cursor-pointer group"
+        className="hidden lg:flex absolute top-1/2 right-112 -translate-y-1/2 z-40 items-center justify-center gap-3 bg-[#141414]/90 backdrop-blur border-2 border-[#FF6FB5]/50 hover:border-[#FF6FB5] px-12 py-6 rounded-lg shadow-lg transition-colors cursor-pointer group"
         aria-label="View Overtake Females"
       >
         <Sparkles size={22} className="text-[#FF6FB5] group-hover:scale-110 transition-transform" />
