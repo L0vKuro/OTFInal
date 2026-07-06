@@ -7,43 +7,66 @@ const color = '#00D4FF'
 
 const rosterTiers = [
   {
-    tier: 'Overtake | Fortnite',
-    icon: Users,
-    tierColor: '#7A7A7A',
-    count: 4,
-    desc: 'General team members repping the Overtake Fortnite division. The entry point into our competitive pathway.',
-    members: [] as { name: string; twitter: string }[],
-  },
-  {
-    tier: 'Overtake | Fortnite Academy',
-    icon: Shield,
-    tierColor: '#00D4FF',
-    count: 3,
-    desc: 'Developing players building consistency and results, with a clear path up toward the Competitive Roster.',
-    members: [
-      { name: 'Extinct', twitter: 'GuruExtinct' },
-      { name: 'Motra', twitter: 'motrafnt' },
-      { name: 'Washekirk', twitter: 'vask3fnr' },
-    ],
+    tier: 'Fortnite | Pro Roster',
+    icon: Crown,
+    tierColor: '#FFD447',
+    count: 0,
+    members: [] as { name: string; twitter: string; photo: string }[],
   },
   {
     tier: 'Fortnite | Competitive Roster',
     icon: Trophy,
     tierColor: '#E8191A',
     count: 2,
-    desc: 'Our active competitive lineup, representing Overtake at tournaments and ranked competition.',
     members: [
-      { name: 'Narwhal', twitter: 'Narwhal1x' },
-      { name: 'Trapz', twitter: 'trapzvp' },
+      { name: 'Narwhal', twitter: 'Narwhal1x', photo: '/player-narwhal.jpg' },
+      { name: 'Trapz', twitter: 'trapzvp', photo: '/player-trapz.jpg' },
     ],
   },
+  {
+    tier: 'Overtake | Fortnite Academy',
+    icon: Shield,
+    tierColor: '#00D4FF',
+    count: 3,
+    members: [
+      { name: 'Extinct', twitter: 'GuruExtinct', photo: '/player-extinct.jpg' },
+      { name: 'Motra', twitter: 'motrafnt', photo: '/player-motra.jpg' },
+      { name: 'Washekirk', twitter: 'vask3fnr', photo: '/player-washekirk.jpg' },
+    ],
+  },
+  {
+    tier: 'Overtake | Fortnite',
+    icon: Users,
+    tierColor: '#7A7A7A',
+    count: 4,
+    members: [] as { name: string; twitter: string; photo: string }[],
+  },
+]
+
+const tierInfo = [
   {
     tier: 'Fortnite | Pro Roster',
     icon: Crown,
     tierColor: '#FFD447',
-    count: 0,
     desc: 'The top of the pathway. Reserved for our highest-level competitive talent — currently open.',
-    members: [] as { name: string; twitter: string }[],
+  },
+  {
+    tier: 'Fortnite | Competitive Roster',
+    icon: Trophy,
+    tierColor: '#E8191A',
+    desc: 'Our active competitive lineup, representing Overtake at tournaments and ranked competition.',
+  },
+  {
+    tier: 'Overtake | Fortnite Academy',
+    icon: Shield,
+    tierColor: '#00D4FF',
+    desc: 'Developing players building consistency and results, with a clear path up toward the Competitive Roster.',
+  },
+  {
+    tier: 'Overtake | Fortnite',
+    icon: Users,
+    tierColor: '#7A7A7A',
+    desc: 'General team members repping the Overtake Fortnite division. The entry point into our competitive pathway.',
   },
 ]
 
@@ -60,42 +83,80 @@ const management = [
   },
 ]
 
-function RosterTiers() {
+function PlayerRoster() {
   return (
     <div>
-      <p className="text-xs font-mono tracking-widest uppercase mb-8" style={{ color }}>// Roster Pathway</p>
+      <p className="text-xs font-mono tracking-widest uppercase mb-8" style={{ color }}>// Current Roster</p>
+      <div className="space-y-12">
+        {rosterTiers.map(({ tier, icon: Icon, tierColor, count, members }) => (
+          <div key={tier}>
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-9 h-9 flex items-center justify-center border flex-shrink-0"
+                style={{ borderColor: `${tierColor}50`, background: `${tierColor}15` }}>
+                <Icon size={16} style={{ color: tierColor }} />
+              </div>
+              <h3 className="font-display font-black text-xl uppercase leading-none"
+                style={{ fontFamily: 'Barlow Condensed, sans-serif', color: tierColor }}>
+                {tier}
+              </h3>
+              <span className="text-[10px] font-mono px-2 py-1 uppercase tracking-widest border ml-1"
+                style={{ color: tierColor, borderColor: `${tierColor}40`, background: `${tierColor}10` }}>
+                {count} {count === 1 ? 'Member' : 'Members'}
+              </span>
+            </div>
+
+            {members.length > 0 ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+                {members.map((p) => (
+                  <a key={p.name} href={`https://x.com/${p.twitter}`} target="_blank" rel="noopener noreferrer"
+                    className="group bg-[#141414] border border-white/5 hover:border-[#E8191A]/30 overflow-hidden card-hover">
+                    <div className="aspect-square relative overflow-hidden bg-[#0D0D0D]">
+                      <img src={p.photo} alt={p.name}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
+                      <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, #0D0D0D 10%, transparent 50%)' }} />
+                    </div>
+                    <div className="p-3">
+                      <p className="font-display font-black text-lg text-white uppercase leading-none mb-1"
+                        style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{p.name}</p>
+                      <p className="text-white/30 text-xs font-mono">@{p.twitter}</p>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-[#141414] border border-white/5 p-6 text-center">
+                <p className="text-white/30 text-sm font-mono">
+                  {count > 0 ? 'Player names coming soon.' : 'Roster spot currently open.'}
+                </p>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function TierInfo() {
+  return (
+    <div>
+      <p className="text-xs font-mono tracking-widest uppercase mb-8" style={{ color }}>// How The Pathway Works</p>
       <div className="relative">
         <div className="absolute left-6 top-0 bottom-0 w-px bg-white/8 hidden sm:block" />
         <div className="space-y-4">
-          {rosterTiers.map(({ tier, icon: Icon, tierColor, count, desc, members }) => (
+          {tierInfo.map(({ tier, icon: Icon, tierColor, desc }) => (
             <div key={tier} className="relative flex items-start gap-6 bg-[#141414] border border-white/5 p-6 sm:pl-6">
               <div className="relative z-10 w-12 h-12 flex items-center justify-center border flex-shrink-0"
                 style={{ borderColor: `${tierColor}50`, background: `${tierColor}15` }}>
                 <Icon size={20} style={{ color: tierColor }} />
               </div>
               <div className="flex-1">
-                <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                  <h3 className="font-display font-black text-2xl uppercase leading-none"
-                    style={{ fontFamily: 'Barlow Condensed, sans-serif', color: tierColor }}>
-                    {tier}
-                  </h3>
-                  <span className="text-[10px] font-mono px-2 py-1 uppercase tracking-widest border"
-                    style={{ color: tierColor, borderColor: `${tierColor}40`, background: `${tierColor}10` }}>
-                    {count} {count === 1 ? 'Member' : 'Members'}
-                  </span>
-                </div>
-                <p className="text-[#F2F2F2]/40 text-sm leading-relaxed mb-4">{desc}</p>
-                {members.length > 0 && (
-                  <div className="flex flex-wrap gap-2">
-                    {members.map((m) => (
-                      <a key={m.name} href={`https://x.com/${m.twitter}`} target="_blank" rel="noopener noreferrer"
-                        className="flex items-center gap-2 text-xs font-mono text-[#F2F2F2]/50 hover:text-[#F2F2F2] transition-colors border border-white/8 hover:border-white/20 px-3 py-1.5">
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                        {m.name}
-                      </a>
-                    ))}
-                  </div>
-                )}
+                <h3 className="font-display font-black text-2xl uppercase leading-none mb-2"
+                  style={{ fontFamily: 'Barlow Condensed, sans-serif', color: tierColor }}>
+                  {tier}
+                </h3>
+                <p className="text-[#F2F2F2]/40 text-sm leading-relaxed">{desc}</p>
               </div>
             </div>
           ))}
@@ -144,7 +205,6 @@ function FemaleSection() {
 
             <div className="bg-[#141414] border border-white/5 overflow-hidden">
               <div className="h-64 relative overflow-hidden bg-[#141414]">
-                {/* Upload player-natalee.jpg to your public folder for this to render */}
                 <img
                   src="/player-natalee.jpg"
                   alt="Natalee"
@@ -159,7 +219,6 @@ function FemaleSection() {
                   Natalee
                 </h3>
                 <p className="text-[#FF6FB5] text-xs font-mono uppercase tracking-widest mb-4">Overtake Fortnite</p>
-                {/* Placeholder bio — replace with the real description */}
                 <p className="text-white/50 text-sm leading-relaxed">
                   Bio coming soon. Replace this placeholder text with Natalee&apos;s real description once provided.
                 </p>
@@ -220,8 +279,8 @@ export default function FortnitePage() {
 
       <div className="max-w-7xl mx-auto px-6 py-20 space-y-20">
 
-        {/* Roster Tiers */}
-        <RosterTiers />
+        {/* Player Roster */}
+        <PlayerRoster />
 
         {/* About */}
         <div>
@@ -270,6 +329,9 @@ export default function FortnitePage() {
             ))}
           </div>
         </div>
+
+        {/* Tier Info */}
+        <TierInfo />
       </div>
 
       {/* CTA */}
