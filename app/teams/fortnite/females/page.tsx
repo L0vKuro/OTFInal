@@ -28,11 +28,11 @@ export default function OvertakeFemalesPage() {
         </div>
       </div>
 
-      {/* Player Card Grid (matches Teams page card style) */}
+      {/* Player Card Grid */}
       <div className="max-w-7xl mx-auto px-6 py-20">
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
           
-            href="https://x.com/"
+            href="https://x.com/nataleefn"
             target="_blank"
             rel="noopener noreferrer"
             className="group relative bg-[#141414] border border-white/5 hover:border-white/20 overflow-hidden card-hover block"
@@ -104,28 +104,12 @@ export default function OvertakeFemalesPage() {
       </div>
 
       <style>{`
-        .player-photo {
-          transition: transform 0.3s ease;
-        }
-        .player-overlay {
-          background: rgba(0, 0, 0, 0.75);
-          transition: opacity 0.3s ease;
-        }
-        .card-hover {
-          transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .card-hover:hover {
-          transform: scale(1.05);
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-          z-index: 10;
-          position: relative;
-        }
-        .card-hover:hover .player-photo {
-          transform: scale(1.15);
-        }
-        .card-hover:hover .player-overlay {
-          opacity: 0;
-        }
+        .player-photo { transition: transform 0.3s ease; }
+        .player-overlay { background: rgba(0,0,0,0.75); transition: opacity 0.3s ease; }
+        .card-hover { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .card-hover:hover { transform: scale(1.05); box-shadow: 0 20px 40px rgba(0,0,0,0.6); z-index: 10; position: relative; }
+        .card-hover:hover .player-photo { transform: scale(1.15); }
+        .card-hover:hover .player-overlay { opacity: 0; }
       `}</style>
     </div>
   )
