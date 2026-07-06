@@ -258,6 +258,11 @@ export default function AboutPage() {
               style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
               Join Overtake <ChevronRight size={14} />
             </Link>
+            <Link href="/brand"
+              className="flex items-center gap-2 border border-white/10 hover:border-[#E8191A]/40 px-8 py-4 text-white/60 hover:text-white font-medium tracking-wider uppercase text-sm transition-all"
+              style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+              Brand Kit <ChevronRight size={14} />
+            </Link>
             <Link href="/contact"
               className="flex items-center gap-2 border border-white/10 hover:border-white/30 px-8 py-4 text-white/60 hover:text-white font-medium tracking-wider uppercase text-sm transition-all"
               style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
