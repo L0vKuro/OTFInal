@@ -29,7 +29,7 @@ export default function OvertakeFemalesPage() {
 
       <div className="max-w-7xl mx-auto px-6 py-20">
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
-          
+          <a
             href="https://x.com/nataleefn"
             target="_blank"
             rel="noopener noreferrer"
