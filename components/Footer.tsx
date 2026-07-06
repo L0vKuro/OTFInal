@@ -14,6 +14,7 @@ const footerLinks = {
     { href: '/teams',    label: 'Teams' },
     { href: '/creators', label: 'Creators' },
     { href: '/partners', label: 'Partners' },
+    { href: '/brand',    label: 'Brand Kit' },
   ],
   Engage: [
     { href: '/join',                                     label: 'Join Overtake' },
