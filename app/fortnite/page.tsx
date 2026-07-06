@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { ChevronRight, Users, Trophy, Zap, Star, Crown, Shield, Sparkles, X } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { ChevronRight, Users, Trophy, Zap, Star, Crown, Shield, Sparkles } from 'lucide-react'
 
 const color = '#00D4FF'
 
@@ -167,66 +168,70 @@ function TierInfo() {
 }
 
 function FemaleSection() {
-  const [open, setOpen] = useState(false)
+  const router = useRouter()
+  const [transitioning, setTransitioning] = useState(false)
+
+  const handleClick = () => {
+    setTransitioning(true)
+    setTimeout(() => {
+      router.push('/teams/fortnite/females')
+    }, 900)
+  }
 
   return (
     <>
-      {/* Side tab trigger */}
+      {/* Floating butterfly-style trigger, positioned beside hero text */}
       <button
-        onClick={() => setOpen(true)}
-        className="hidden md:flex fixed top-1/2 right-0 -translate-y-1/2 z-40 items-center gap-2 bg-[#141414] border border-[#FF6FB5]/40 hover:border-[#FF6FB5] pl-4 pr-3 py-4 rounded-l-md shadow-lg transition-all hover:pr-5 group"
-        style={{ writingMode: 'vertical-rl' }}
-        aria-label="View Overtake Women"
+        onClick={handleClick}
+        className="hidden lg:flex absolute top-24 right-10 z-30 items-center gap-2 bg-[#141414]/90 backdrop-blur border border-[#FF6FB5]/40 hover:border-[#FF6FB5] px-4 py-3 rounded-full shadow-lg transition-colors group"
+        style={{ animation: 'float 3.5s ease-in-out infinite' }}
+        aria-label="View Overtake Females"
       >
-        <Sparkles size={16} className="text-[#FF6FB5] rotate-90 group-hover:scale-110 transition-transform" />
-        <span className="font-display font-black uppercase tracking-widest text-sm text-white"
+        <Sparkles size={16} className="text-[#FF6FB5] group-hover:scale-110 transition-transform" />
+        <span className="font-display font-black uppercase tracking-widest text-xs text-white whitespace-nowrap"
           style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-          Overtake Women
+          Overtake Females
         </span>
       </button>
 
-      {/* Slide-in panel */}
-      <div
-        className={`fixed inset-0 z-50 transition-opacity ${open ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'}`}
-      >
-        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setOpen(false)} />
-        <div
-          className="absolute top-0 right-0 h-full w-full sm:w-[420px] bg-[#0D0D0D] border-l border-[#FF6FB5]/30 shadow-2xl overflow-y-auto transition-transform duration-300"
-          style={{ transform: open ? 'translateX(0)' : 'translateX(100%)' }}
-        >
-          <div className="h-1 w-full" style={{ background: 'linear-gradient(90deg, #FF6FB5, #E8191A)' }} />
-          <div className="p-8">
-            <div className="flex items-center justify-between mb-8">
-              <p className="text-[#FF6FB5] text-xs font-mono tracking-widest uppercase">// Overtake Women</p>
-              <button onClick={() => setOpen(false)} className="text-white/40 hover:text-white transition-colors">
-                <X size={20} />
-              </button>
-            </div>
-
-            <div className="bg-[#141414] border border-white/5 overflow-hidden">
-              <div className="h-64 relative overflow-hidden bg-[#141414]">
-                <img
-                  src="/player-natalee.jpg"
-                  alt="Natalee"
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }}
-                  onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
-                />
-                <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, #141414 10%, transparent 60%)' }} />
-              </div>
-              <div className="p-6">
-                <h3 className="font-display font-black text-3xl text-white uppercase mb-1"
-                  style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-                  Natalee
-                </h3>
-                <p className="text-[#FF6FB5] text-xs font-mono uppercase tracking-widest mb-4">Overtake Fortnite</p>
-                <p className="text-white/50 text-sm leading-relaxed">
-                  Bio coming soon. Replace this placeholder text with Natalee&apos;s real description once provided.
-                </p>
-              </div>
-            </div>
-          </div>
+      {/* Zoom transition overlay */}
+      {transitioning && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0D0D0D]"
+          style={{ animation: 'fadeIn 0.3s ease-out' }}>
+          <h2
+            className="font-display font-black uppercase text-center px-6"
+            style={{
+              fontFamily: 'Barlow Condensed, sans-serif',
+              fontSize: 'clamp(2.5rem, 8vw, 6rem)',
+              background: 'linear-gradient(135deg, #FF6FB5, #E8191A)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              animation: 'zoomIn 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
+            }}
+          >
+            OVERTAKE FEMALES
+          </h2>
         </div>
-      </div>
+      )}
+
+      <style>{`
+        @keyframes float {
+          0%, 100% { transform: translate(0, 0) rotate(0deg); }
+          25% { transform: translate(3px, -8px) rotate(2deg); }
+          50% { transform: translate(-2px, -4px) rotate(-1deg); }
+          75% { transform: translate(2px, -10px) rotate(1deg); }
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes zoomIn {
+          0% { opacity: 0; transform: scale(0.3); }
+          60% { opacity: 1; transform: scale(1.1); }
+          100% { opacity: 1; transform: scale(1); }
+        }
+      `}</style>
     </>
   )
 }
@@ -236,10 +241,9 @@ export default function FortnitePage() {
     <div className="relative min-h-screen">
       <div className="absolute inset-0 bg-grid opacity-20 pointer-events-none" />
 
-      <FemaleSection />
-
       {/* Header */}
       <div className="relative pt-36 pb-20 border-b border-white/5 overflow-hidden">
+        <FemaleSection />
         <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom, ${color}08, transparent)` }} />
         <div className="absolute right-0 top-0 bottom-0 w-1/2 overflow-hidden opacity-10">
           {[...Array(8)].map((_, i) => (
