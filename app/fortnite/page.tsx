@@ -72,16 +72,8 @@ const tierInfo = [
 ]
 
 const management = [
-  {
-    name: 'ZAP',
-    role: 'Fortnite Manager',
-    twitter: 'zapticalggs',
-  },
-  {
-    name: 'JAVSR',
-    role: 'Fortnite Talent Manager',
-    twitter: 'javsrtalent',
-  },
+  { name: 'ZAP', role: 'Fortnite Manager', twitter: 'zapticalggs' },
+  { name: 'JAVSR', role: 'Fortnite Talent Manager', twitter: 'javsrtalent' },
 ]
 
 function PlayerRoster() {
@@ -105,7 +97,6 @@ function PlayerRoster() {
                 {count} {count === 1 ? 'Member' : 'Members'}
               </span>
             </div>
-
             {members.length > 0 ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
                 {members.map((p) => (
@@ -176,31 +167,9 @@ function TierInfo() {
   )
 }
 
-function FemaleSection() {
-  const router = useRouter()
-  const [transitioning, setTransitioning] = useState(false)
-
-  const handleClick = () => {
-    setTransitioning(true)
-    setTimeout(() => {
-      router.push('/teams/fortnite/females')
-    }, 650)
-  }
-
+function FemaleSection({ transitioning }: { transitioning: boolean }) {
   return (
     <>
-      <button
-        onClick={handleClick}
-        className="hidden lg:flex absolute top-1/2 right-96 -translate-y-1/2 z-40 items-center justify-center gap-3 bg-[#141414]/90 backdrop-blur border-2 border-[#FF6FB5]/50 hover:border-[#FF6FB5] px-12 py-6 rounded-lg shadow-lg transition-colors cursor-pointer group"
-        aria-label="View Overtake Females"
-      >
-        <Sparkles size={22} className="text-[#FF6FB5] group-hover:scale-110 transition-transform" />
-        <span className="font-display font-black uppercase tracking-widest text-xl text-white whitespace-nowrap"
-          style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-          Overtake Females
-        </span>
-      </button>
-
       {transitioning && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0D0D0D]"
           style={{ animation: 'fadeIn 0.2s ease-out' }}>
@@ -220,29 +189,33 @@ function FemaleSection() {
           </h2>
         </div>
       )}
-
       <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        @keyframes zoomIn {
-          0% { opacity: 0; transform: scale(0.85); }
-          100% { opacity: 1; transform: scale(1); }
-        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes zoomIn { 0% { opacity: 0; transform: scale(0.85); } 100% { opacity: 1; transform: scale(1); } }
       `}</style>
     </>
   )
 }
 
 export default function FortnitePage() {
+  const router = useRouter()
+  const [transitioning, setTransitioning] = useState(false)
+
+  const handleClick = () => {
+    setTransitioning(true)
+    setTimeout(() => {
+      router.push('/teams/fortnite/females')
+    }, 650)
+  }
+
   return (
     <div className="relative min-h-screen">
       <div className="absolute inset-0 bg-grid opacity-20 pointer-events-none" />
 
+      <FemaleSection transitioning={transitioning} />
+
       {/* Header */}
       <div className="relative pt-36 pb-20 border-b border-white/5 overflow-hidden">
-        <FemaleSection />
         <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom, ${color}08, transparent)` }} />
         <div className="relative max-w-7xl mx-auto px-6">
           <div className="flex items-center gap-3 mb-4">
@@ -270,6 +243,18 @@ export default function FortnitePage() {
               </div>
             ))}
           </div>
+          <div className="mt-6">
+            <button
+              onClick={handleClick}
+              className="flex items-center gap-3 bg-[#141414] border-2 border-[#FF6FB5]/50 hover:border-[#FF6FB5] px-8 py-4 transition-colors cursor-pointer group"
+            >
+              <Sparkles size={18} className="text-[#FF6FB5] group-hover:scale-110 transition-transform" />
+              <span className="font-display font-black uppercase tracking-widest text-base text-white"
+                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                Overtake Females
+              </span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -277,7 +262,6 @@ export default function FortnitePage() {
 
         <PlayerRoster />
 
-        {/* About */}
         <div>
           <p className="text-xs font-mono tracking-widest uppercase mb-8" style={{ color }}>// About Our Division</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -300,7 +284,6 @@ export default function FortnitePage() {
           </div>
         </div>
 
-        {/* Management */}
         <div>
           <p className="text-xs font-mono tracking-widest uppercase mb-8" style={{ color }}>// Management</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
