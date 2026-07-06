@@ -54,7 +54,7 @@ const quotes = [
   { name: 'Ghxst', role: 'General Manager', quote: 'To be a goat, you must learn and overcome the failures and struggles that go along with the dreams you foresee.' },
   { name: 'Ghost', role: 'Project Manager', quote: 'It is during our darkest moments that we must focus to see the light.' },
   { name: 'Dynasty', role: 'Content Manager', quote: 'Life is like a video game, it gets hard because you leveled up.' },
-  { name: 'Jxe', role: 'Social Media Manager', quote: 'In order to be successful at what you\'re doing, you have to be obsessed with change.' },
+  { name: 'Jxe', role: 'Social Media Manager', quote: 'In order to be successful at what you\''re doing, you have to be obsessed with change.' },
   { name: 'Visionz', role: 'CoD Manager', quote: 'Success is focusing the full power of all you are on what you have a burning desire to achieve.' },
   { name: 'Zap', role: 'Fortnite Manager', quote: 'Learn as if you will live forever, live like you will die tomorrow.' },
   { name: 'Javsr', role: 'Fortnite Talent Manager', quote: 'Talent wins games, but teamwork and intelligence win championships.' },
@@ -91,7 +91,7 @@ export default function AboutPage() {
       <div className="relative pt-36 pb-20 border-b border-white/5 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-[#E8191A]/5 to-transparent" />
         <div className="relative max-w-7xl mx-auto px-6">
-          <div className="flex items-start justify-between gap-8">
+          <div className="flex items-end justify-between gap-8">
             <div>
               <p className="text-[#E8191A] text-xs font-mono tracking-widest uppercase mb-4">// Our Story</p>
               <h1 className="font-display font-black text-7xl md:text-9xl uppercase leading-none"
@@ -104,7 +104,7 @@ export default function AboutPage() {
               </p>
             </div>
             <Link href="/brand"
-              className="hidden md:flex items-center gap-2 border border-white/10 hover:border-[#E8191A]/40 px-6 py-3 text-white/60 hover:text-white font-medium tracking-wider uppercase text-sm transition-all whitespace-nowrap"
+              className="hidden md:flex items-center gap-2 bg-[#141414] border border-[#E8191A]/40 hover:border-[#E8191A] px-6 py-3 text-white hover:bg-[#1c1c1c] font-bold tracking-wider uppercase text-sm transition-all whitespace-nowrap shadow-lg"
               style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
               Brand Kit <ChevronRight size={14} />
             </Link>
