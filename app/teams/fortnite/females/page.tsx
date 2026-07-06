@@ -28,29 +28,55 @@ export default function OvertakeFemalesPage() {
         </div>
       </div>
 
-      {/* Player Card */}
-      <div className="max-w-4xl mx-auto px-6 py-20">
-        <div className="bg-[#141414] border border-white/5 overflow-hidden max-w-md mx-auto">
-          <div className="h-1 w-full" style={{ background: `linear-gradient(90deg, ${pink}, #E8191A)` }} />
-          <div className="h-80 relative overflow-hidden bg-[#141414]">
-            <img
-              src="/player-natalee.jpg"
-              alt="Natalee"
-              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }}
-              onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
-            />
-            <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, #141414 10%, transparent 60%)' }} />
-          </div>
-          <div className="p-8">
-            <h3 className="font-display font-black text-4xl text-white uppercase mb-1"
-              style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-              Natalee
-            </h3>
-            <p className="text-xs font-mono uppercase tracking-widest mb-5" style={{ color: pink }}>Overtake Fortnite</p>
-            <p className="text-white/50 text-sm leading-relaxed">
-              Bio coming soon. Replace this placeholder text with Natalee&apos;s real description once provided.
-            </p>
-          </div>
+      {/* Player Card Grid (matches Teams page card style) */}
+      <div className="max-w-7xl mx-auto px-6 py-20">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
+          
+            href="https://x.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative bg-[#141414] border border-white/5 hover:border-white/20 overflow-hidden card-hover block"
+          >
+            <div className="h-px w-full" style={{ background: `linear-gradient(90deg, ${pink}, transparent)` }} />
+            <div className="h-56 relative overflow-hidden bg-[#0D0D0D]">
+              <img
+                src="/player-natalee.jpg"
+                alt="Natalee"
+                className="player-photo"
+                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }}
+                onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
+              />
+              <div className="player-overlay absolute inset-0" />
+              <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${pink}30, transparent)` }} />
+              <div className="absolute bottom-2 left-3">
+                <span className="font-display font-black text-3xl opacity-20"
+                  style={{ fontFamily: 'Barlow Condensed, sans-serif', color: pink }}>
+                  01
+                </span>
+              </div>
+              <div className="absolute top-2 right-2">
+                <span className="text-[10px] font-mono px-2 py-1 uppercase tracking-wider font-black"
+                  style={{ color: pink, background: '#000000CC', border: `1px solid ${pink}60` }}>
+                  Player
+                </span>
+              </div>
+            </div>
+            <div className="p-3">
+              <h3 className="font-display font-black text-lg text-[#F2F2F2] uppercase"
+                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                Natalee
+              </h3>
+              <p className="text-xs mt-0.5 font-mono" style={{ color: pink }}>
+                Overtake Fortnite
+              </p>
+            </div>
+          </a>
+        </div>
+
+        <div className="mt-8 max-w-2xl">
+          <p className="text-white/50 text-sm leading-relaxed">
+            Competitive Fortnite player and streamer for Overtake, splitting time between scrims and content to grow the Fortnite community on and off stream.
+          </p>
         </div>
       </div>
 
@@ -76,6 +102,31 @@ export default function OvertakeFemalesPage() {
           </div>
         </div>
       </div>
+
+      <style>{`
+        .player-photo {
+          transition: transform 0.3s ease;
+        }
+        .player-overlay {
+          background: rgba(0, 0, 0, 0.75);
+          transition: opacity 0.3s ease;
+        }
+        .card-hover {
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+          transform: scale(1.05);
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+          z-index: 10;
+          position: relative;
+        }
+        .card-hover:hover .player-photo {
+          transform: scale(1.15);
+        }
+        .card-hover:hover .player-overlay {
+          opacity: 0;
+        }
+      `}</style>
     </div>
   )
 }
