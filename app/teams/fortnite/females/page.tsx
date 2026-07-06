@@ -27,54 +27,35 @@ export default function OvertakeFemalesPage() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-20">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
-          <a
-            href="https://x.com/nataleefn"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group relative bg-[#141414] border border-white/5 hover:border-white/20 overflow-hidden card-hover block"
-          >
-            <div className="h-px w-full" style={{ background: `linear-gradient(90deg, ${pink}, transparent)` }} />
-            <div className="h-56 relative overflow-hidden bg-[#0D0D0D]">
-              <img
-                src="/player-natalee.jpg"
-                alt="Natalee"
-                className="player-photo"
-                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }}
-                onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
-              />
-              <div className="player-overlay absolute inset-0" />
-              <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${pink}30, transparent)` }} />
-              <div className="absolute bottom-2 left-3">
-                <span className="font-display font-black text-3xl opacity-20"
-                  style={{ fontFamily: 'Barlow Condensed, sans-serif', color: pink }}>
-                  01
-                </span>
-              </div>
-              <div className="absolute top-2 right-2">
-                <span className="text-[10px] font-mono px-2 py-1 uppercase tracking-wider font-black"
-                  style={{ color: pink, background: '#000000CC', border: `1px solid ${pink}60` }}>
-                  Player
-                </span>
-              </div>
-            </div>
-            <div className="p-3">
-              <h3 className="font-display font-black text-lg text-[#F2F2F2] uppercase"
-                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-                Natalee
-              </h3>
-              <p className="text-xs mt-0.5 font-mono" style={{ color: pink }}>
-                Overtake Fortnite
-              </p>
-            </div>
-          </a>
+      <div className="relative w-full" style={{ height: '100vh' }}>
+        <img
+          src="/player-natalee.jpg"
+          alt="Natalee"
+          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }}
+        />
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, #0D0D0D 30%, rgba(0,0,0,0.3) 70%, transparent 100%)' }} />
+        <div className="absolute top-0 left-0 right-0 h-1" style={{ background: `linear-gradient(90deg, ${pink}, transparent)` }} />
+        <div className="absolute top-6 right-6">
+          <span className="text-xs font-mono px-3 py-1.5 uppercase tracking-wider font-black"
+            style={{ color: pink, background: '#000000CC', border: `1px solid ${pink}60` }}>
+            Player
+          </span>
         </div>
-
-        <div className="mt-8 max-w-2xl">
-          <p className="text-white/50 text-sm leading-relaxed">
+        <div className="absolute bottom-0 left-0 right-0 p-10">
+          <p className="text-xs font-mono uppercase tracking-widest mb-2" style={{ color: pink }}>// Overtake Fortnite</p>
+          <h2 className="font-display font-black text-6xl md:text-8xl uppercase text-white leading-none mb-4"
+            style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+            Natalee
+          </h2>
+          <p className="text-white/60 text-base leading-relaxed max-w-lg mb-6">
             Competitive Fortnite player and streamer for Overtake, splitting time between scrims and content to grow the Fortnite community on and off stream.
           </p>
+          <a href="https://x.com/nataleefn" target="_blank" rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-sm font-mono px-5 py-3 transition-colors border hover:bg-white/10"
+            style={{ color: pink, borderColor: `${pink}50` }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            @nataleefn
+          </a>
         </div>
       </div>
 
@@ -99,15 +80,6 @@ export default function OvertakeFemalesPage() {
           </div>
         </div>
       </div>
-
-      <style>{`
-        .player-photo { transition: transform 0.3s ease; }
-        .player-overlay { background: rgba(0,0,0,0.75); transition: opacity 0.3s ease; }
-        .card-hover { transition: transform 0.3s ease, box-shadow 0.3s ease; }
-        .card-hover:hover { transform: scale(1.05); box-shadow: 0 20px 40px rgba(0,0,0,0.6); z-index: 10; position: relative; }
-        .card-hover:hover .player-photo { transform: scale(1.15); }
-        .card-hover:hover .player-overlay { opacity: 0; }
-      `}</style>
     </div>
   )
 }
