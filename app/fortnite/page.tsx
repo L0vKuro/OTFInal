@@ -175,19 +175,19 @@ function FemaleSection() {
     setTransitioning(true)
     setTimeout(() => {
       router.push('/teams/fortnite/females')
-    }, 900)
+    }, 650)
   }
 
   return (
     <>
-      {/* Trigger, positioned lower and centered in the hero's decorative area */}
+      {/* Trigger, rectangular and centered in the hero's decorative area */}
       <button
         onClick={handleClick}
-        className="hidden lg:flex absolute top-1/2 right-24 -translate-y-1/2 z-40 items-center gap-2 bg-[#141414]/90 backdrop-blur border border-[#FF6FB5]/40 hover:border-[#FF6FB5] px-4 py-3 rounded-full shadow-lg transition-colors cursor-pointer group"
+        className="hidden lg:flex absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 items-center justify-center gap-3 bg-[#141414]/90 backdrop-blur border-2 border-[#FF6FB5]/50 hover:border-[#FF6FB5] px-12 py-6 rounded-lg shadow-lg transition-colors cursor-pointer group"
         aria-label="View Overtake Females"
       >
-        <Sparkles size={16} className="text-[#FF6FB5] group-hover:scale-110 transition-transform" />
-        <span className="font-display font-black uppercase tracking-widest text-xs text-white whitespace-nowrap"
+        <Sparkles size={22} className="text-[#FF6FB5] group-hover:scale-110 transition-transform" />
+        <span className="font-display font-black uppercase tracking-widest text-xl text-white whitespace-nowrap"
           style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
           Overtake Females
         </span>
@@ -196,7 +196,7 @@ function FemaleSection() {
       {/* Zoom transition overlay */}
       {transitioning && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0D0D0D]"
-          style={{ animation: 'fadeIn 0.3s ease-out' }}>
+          style={{ animation: 'fadeIn 0.2s ease-out' }}>
           <h2
             className="font-display font-black uppercase text-center px-6"
             style={{
@@ -206,7 +206,7 @@ function FemaleSection() {
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
-              animation: 'zoomIn 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
+              animation: 'zoomIn 0.6s ease-out forwards',
             }}
           >
             OVERTAKE FEMALES
@@ -220,8 +220,7 @@ function FemaleSection() {
           to { opacity: 1; }
         }
         @keyframes zoomIn {
-          0% { opacity: 0; transform: scale(0.3); }
-          60% { opacity: 1; transform: scale(1.1); }
+          0% { opacity: 0; transform: scale(0.85); }
           100% { opacity: 1; transform: scale(1); }
         }
       `}</style>
