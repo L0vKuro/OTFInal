@@ -9,12 +9,11 @@ export default function OvertakeFemalesPage() {
     <div className="relative min-h-screen">
       <div className="absolute inset-0 bg-grid opacity-20 pointer-events-none" />
 
-      {/* Header */}
       <div className="relative pt-36 pb-20 border-b border-white/5 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom, ${pink}08, transparent)` }} />
         <div className="relative max-w-7xl mx-auto px-6">
           <div className="flex items-center gap-3 mb-4">
-            <a href="/teams/fortnite" className="text-[#F2F2F2]/30 hover:text-[#F2F2F2] text-xs font-mono tracking-widest uppercase transition-colors">← Back to Fortnite</a>
+            <a href="/teams/fortnite" className="text-[#F2F2F2]/30 hover:text-[#F2F2F2] text-xs font-mono tracking-widest uppercase transition-colors">Back to Fortnite</a>
           </div>
           <p className="text-xs font-mono tracking-widest uppercase mb-4" style={{ color: pink }}>// Women in Overtake</p>
           <h1 className="font-display font-black text-7xl md:text-9xl uppercase text-[#F2F2F2] leading-none"
@@ -28,7 +27,6 @@ export default function OvertakeFemalesPage() {
         </div>
       </div>
 
-      {/* Player Card Grid */}
       <div className="max-w-7xl mx-auto px-6 py-20">
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
           
@@ -80,7 +78,6 @@ export default function OvertakeFemalesPage() {
         </div>
       </div>
 
-      {/* CTA */}
       <div className="bg-[#141414] border-t border-white/5 py-20">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <h2 className="font-display font-black text-4xl md:text-6xl uppercase text-[#F2F2F2] mb-4"
