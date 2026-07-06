@@ -254,8 +254,7 @@ export default function FortnitePage() {
           <p className="text-xs font-mono tracking-widest uppercase mb-4" style={{ color }}>// Overtake Fortnite Division</p>
           <h1 className="font-display font-black text-7xl md:text-9xl uppercase text-[#F2F2F2] leading-none"
             style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-            OVER<br />
-            <span style={{ background: `linear-gradient(135deg, ${color}, #0099BB)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>TAKE</span><br />
+            OVER<span style={{ background: `linear-gradient(135deg, ${color}, #0099BB)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>TAKE</span><br />
             FORTNITE
           </h1>
           <p className="text-[#F2F2F2]/40 text-lg mt-6 max-w-xl">
@@ -265,7 +264,7 @@ export default function FortnitePage() {
             {[
               { label: 'Division', value: 'NA' },
               { label: 'Status', value: 'ACTIVE' },
-              { label: 'Manager', value: 'ZAP' },
+              { label: 'Manager', value: 'ZAP & JAVSR' },
             ].map(({ label, value }) => (
               <div key={label} className="flex items-center gap-3 border border-white/8 px-5 py-3 bg-white/2">
                 <span className="text-[#F2F2F2]/40 text-sm">{label}</span>
