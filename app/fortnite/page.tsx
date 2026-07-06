@@ -12,7 +12,7 @@ const rosterTiers = [
     icon: Crown,
     tierColor: '#FFD447',
     count: 0,
-    members: [] as { name: string; twitter: string; photo: string }[],
+    members: [] as { name: string; twitter: string; photo: string; tracker?: string }[],
   },
   {
     tier: 'Fortnite | Competitive Roster',
@@ -20,8 +20,8 @@ const rosterTiers = [
     tierColor: '#E8191A',
     count: 2,
     members: [
-      { name: 'Narwhal', twitter: 'Narwhal1x', photo: '/player-narwhal.jpg' },
-      { name: 'Trapz', twitter: 'trapzvp', photo: '/player-trapz.jpg' },
+      { name: 'Narwhal', twitter: 'Narwhal1x', photo: '/player-narwhal.jpg', tracker: 'https://fortnitetracker.com/profile/all/OT%20Narwhal/events' },
+      { name: 'Trapz', twitter: 'trapzvp', photo: '/player-trapz.jpg', tracker: 'https://fortnitetracker.com/profile/all/OT%20Trapz%20317/events' },
     ],
   },
   {
@@ -31,8 +31,8 @@ const rosterTiers = [
     count: 3,
     members: [
       { name: 'Extinct', twitter: 'GuruExtinct', photo: '/player-extinct.jpg' },
-      { name: 'Motra', twitter: 'motrafnt', photo: '/player-motra.jpg' },
-      { name: 'Washekirk', twitter: 'vask3fnr', photo: '/player-washekirk.jpg' },
+      { name: 'Motra', twitter: 'motrafnt', photo: '/player-motra.jpg', tracker: 'https://fortnitetracker.com/profile/all/guido%20pit%20stop%C7%83' },
+      { name: 'Washekirk', twitter: 'vask3fnr', photo: '/player-washekirk.jpg', tracker: 'https://fortnitetracker.com/profile/kbm/WASHYWASHYWASHY.' },
     ],
   },
   {
@@ -40,7 +40,7 @@ const rosterTiers = [
     icon: Users,
     tierColor: '#7A7A7A',
     count: 4,
-    members: [] as { name: string; twitter: string; photo: string }[],
+    members: [] as { name: string; twitter: string; photo: string; tracker?: string }[],
   },
 ]
 
@@ -109,20 +109,29 @@ function PlayerRoster() {
             {members.length > 0 ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
                 {members.map((p) => (
-                  <a key={p.name} href={`https://x.com/${p.twitter}`} target="_blank" rel="noopener noreferrer"
-                    className="group bg-[#141414] border border-white/5 hover:border-[#E8191A]/30 overflow-hidden card-hover">
-                    <div className="aspect-square relative overflow-hidden bg-[#0D0D0D]">
-                      <img src={p.photo} alt={p.name}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                        onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
-                      <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, #0D0D0D 10%, transparent 50%)' }} />
-                    </div>
-                    <div className="p-3">
-                      <p className="font-display font-black text-lg text-white uppercase leading-none mb-1"
-                        style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{p.name}</p>
-                      <p className="text-white/30 text-xs font-mono">@{p.twitter}</p>
-                    </div>
-                  </a>
+                  <div key={p.name} className="group bg-[#141414] border border-white/5 hover:border-[#E8191A]/30 overflow-hidden card-hover">
+                    <a href={`https://x.com/${p.twitter}`} target="_blank" rel="noopener noreferrer" className="block">
+                      <div className="aspect-square relative overflow-hidden bg-[#0D0D0D]">
+                        <img src={p.photo} alt={p.name}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                          onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
+                        <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, #0D0D0D 10%, transparent 50%)' }} />
+                      </div>
+                      <div className="p-3">
+                        <p className="font-display font-black text-lg text-white uppercase leading-none mb-1"
+                          style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{p.name}</p>
+                        <p className="text-white/30 text-xs font-mono">@{p.twitter}</p>
+                      </div>
+                    </a>
+                    {p.tracker && (
+                      <a href={p.tracker} target="_blank" rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-1.5 w-full py-2 text-[10px] font-mono uppercase tracking-widest transition-colors border-t border-white/5 hover:bg-[#00D4FF]/10"
+                        style={{ color: '#00D4FF' }}>
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                        Tracker
+                      </a>
+                    )}
+                  </div>
                 ))}
               </div>
             ) : (
@@ -180,7 +189,6 @@ function FemaleSection() {
 
   return (
     <>
-      {/* Trigger, rectangular, positioned right in the hero */}
       <button
         onClick={handleClick}
         className="hidden lg:flex absolute top-1/2 right-96 -translate-y-1/2 z-40 items-center justify-center gap-3 bg-[#141414]/90 backdrop-blur border-2 border-[#FF6FB5]/50 hover:border-[#FF6FB5] px-12 py-6 rounded-lg shadow-lg transition-colors cursor-pointer group"
@@ -193,7 +201,6 @@ function FemaleSection() {
         </span>
       </button>
 
-      {/* Zoom transition overlay */}
       {transitioning && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0D0D0D]"
           style={{ animation: 'fadeIn 0.2s ease-out' }}>
@@ -268,7 +275,6 @@ export default function FortnitePage() {
 
       <div className="max-w-7xl mx-auto px-6 py-20 space-y-20">
 
-        {/* Player Roster */}
         <PlayerRoster />
 
         {/* About */}
@@ -319,7 +325,6 @@ export default function FortnitePage() {
           </div>
         </div>
 
-        {/* Tier Info */}
         <TierInfo />
       </div>
 
