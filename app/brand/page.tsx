@@ -12,7 +12,7 @@ const guidePages = [
 
 const logos = [
   {
-    file: '/brand/logo-transparent-red__1_.png',
+    file: '/brand/logo-transparent-red (1).png',
     label: 'Icon Logo',
     desc: 'Red star mark — transparent background',
     filename: 'overtake-icon-red.png',
