@@ -65,7 +65,6 @@ export const teams = [
     roster: [
       { name: 'KEO', role: 'PLAYER', country: '🇺🇸', real: '@keo197', twitter: 'https://x.com/keo197' },
       { name: 'FINAL', role: 'PLAYER', country: '🇺🇸', real: '@finalkiss_', twitter: 'https://x.com/finalkiss_' },
-      { name: 'FLIP', role: 'PLAYER', country: '🇺🇸', real: '@Flip_1r6', twitter: 'https://x.com/Flip_1r6' },
       { name: 'SWISZ', role: 'PLAYER', country: '🇺🇸', real: '@SwiszKVX', twitter: 'https://x.com/SwiszKVX' },
       { name: 'TBA', role: 'PLAYER', country: '🇺🇸', real: 'Coming Soon', twitter: '' },
     ],
