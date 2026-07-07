@@ -4,10 +4,25 @@ import { Download, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 
 const guidePages = [
-  { src: '/brand/guide-1.jpg', label: 'Cover / Overview' },
-  { src: '/brand/guide-2.jpg', label: 'Logo & Lockups' },
-  { src: '/brand/guide-3.jpg', label: 'Color & Typography' },
-  { src: '/brand/guide-4.jpg', label: 'Usage Guidelines' },
+  { file: '/brand/guide-1.jpg', label: 'Cover / Overview' },
+  { file: '/brand/guide-2.jpg', label: 'Logo & Lockups' },
+  { file: '/brand/guide-3.jpg', label: 'Color & Typography' },
+  { file: '/brand/guide-4.jpg', label: 'Usage Guidelines' },
+]
+
+const logos = [
+  {
+    file: '/brand/logo-transparent-red__1_.png',
+    label: 'Icon Logo',
+    desc: 'Red star mark — transparent background',
+    filename: 'overtake-icon-red.png',
+  },
+  {
+    file: '/brand/overtakewordmark.png',
+    label: 'Wordmark',
+    desc: 'OVERTAKE text lockup — transparent background',
+    filename: 'overtake-wordmark.png',
+  },
 ]
 
 const colors = [
@@ -46,8 +61,44 @@ export default function BrandPage() {
         </div>
       </div>
 
+      {/* Logo Downloads */}
+      <div className="py-24 max-w-7xl mx-auto px-6">
+        <div className="mb-14">
+          <p className="text-[#E8191A] text-xs font-mono tracking-widest uppercase mb-4">// Logo Assets</p>
+          <h2 className="font-display font-black text-5xl md:text-7xl uppercase text-white"
+            style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+            LOGOS
+          </h2>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {logos.map((logo) => (
+            <div key={logo.file} className="bg-[#141414] border border-white/5 overflow-hidden">
+              {/* Preview */}
+              <div className="bg-[#0D0D0D] flex items-center justify-center p-12 border-b border-white/5" style={{ minHeight: '160px' }}>
+                <img
+                  src={logo.file}
+                  alt={logo.label}
+                  style={{ maxHeight: '80px', maxWidth: '100%', objectFit: 'contain', filter: 'invert(1)' }}
+                />
+              </div>
+              {/* Info + download */}
+              <div className="p-5 flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-white font-bold text-sm uppercase" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{logo.label}</p>
+                  <p className="text-white/40 text-xs font-mono mt-0.5">{logo.desc}</p>
+                </div>
+                <a href={logo.file} download={logo.filename}
+                  className="flex items-center gap-2 bg-[#E8191A]/10 hover:bg-[#E8191A]/20 border border-[#E8191A]/30 px-4 py-2 text-[#E8191A] text-xs font-mono uppercase tracking-wider transition-colors flex-shrink-0">
+                  <Download size={12} /> PNG
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Color Palette */}
-      <div className="bg-[#0D0D0D] border-b border-white/5 py-24">
+      <div className="bg-[#0D0D0D] border-t border-b border-white/5 py-24">
         <div className="max-w-7xl mx-auto px-6">
           <div className="mb-14">
             <p className="text-[#E8191A] text-xs font-mono tracking-widest uppercase mb-4">// Palette</p>
@@ -79,33 +130,37 @@ export default function BrandPage() {
         </div>
         <div className="bg-[#141414] border border-white/5 p-10">
           <p className="text-white/40 text-xs font-mono uppercase tracking-widest mb-2">Display / Headings</p>
-          <p className="text-6xl font-black text-white uppercase mb-8" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+          <p className="text-6xl font-black text-white uppercase mb-4" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
             Barlow Condensed
           </p>
-          <p className="text-white/40 text-xs font-mono uppercase tracking-widest mb-2">Used for headlines, stat callouts, and all-caps labels.</p>
+          <p className="text-white/40 text-xs font-mono uppercase tracking-widest">Used for headlines, stat callouts, and all-caps labels.</p>
         </div>
       </div>
 
-      {/* Guide Page Gallery */}
+      {/* Guide Downloads */}
       <div className="bg-[#0D0D0D] border-t border-white/5 py-24">
         <div className="max-w-7xl mx-auto px-6">
           <div className="mb-14">
-            <p className="text-[#E8191A] text-xs font-mono tracking-widest uppercase mb-4">// Full Reference</p>
+            <p className="text-[#E8191A] text-xs font-mono tracking-widest uppercase mb-4">// Downloads</p>
             <h2 className="font-display font-black text-5xl md:text-7xl uppercase text-white"
               style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-              GUIDE PAGES
+              GUIDE FILES
             </h2>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {guidePages.map((p) => (
-              <a key={p.src} href={p.src} target="_blank" rel="noopener noreferrer"
-                className="block bg-[#141414] border border-white/5 hover:border-[#E8191A]/30 overflow-hidden card-hover group">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={p.src} alt={p.label} className="w-full h-auto opacity-90 group-hover:opacity-100 transition-opacity" />
-                <div className="p-4 flex items-center justify-between">
-                  <p className="text-white/60 text-sm font-mono uppercase tracking-wider">{p.label}</p>
-                  <Download size={14} className="text-white/30 group-hover:text-[#E8191A] transition-colors" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {guidePages.map((d) => (
+              <a key={d.file} href={d.file} download
+                className="flex items-center justify-between bg-[#141414] border border-white/5 hover:border-[#E8191A]/30 p-6 card-hover group">
+                <div className="flex items-center gap-4">
+                  <div className="w-8 h-8 flex items-center justify-center border border-[#E8191A]/30 bg-[#E8191A]/10">
+                    <Download size={14} className="text-[#E8191A]" />
+                  </div>
+                  <p className="text-white font-bold uppercase tracking-wider text-sm"
+                    style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                    {d.label}
+                  </p>
                 </div>
+                <Download size={16} className="text-white/30 group-hover:text-[#E8191A] transition-colors" />
               </a>
             ))}
           </div>
