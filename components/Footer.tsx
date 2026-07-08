@@ -50,7 +50,7 @@ export default function Footer() {
             <p className="text-[#F2F2F2]/35 text-sm leading-relaxed max-w-xs mb-6">
               Overtake is a premier competitive esports organization building the next generation of champions in & out of the game.
             </p>
-            <a href="https://discord.com/invite/OvertakeSector" target="_blank" rel="noopener noreferrer"
+            <a href="https://discord.gg/YxdAbax8VB" target="_blank" rel="noopener noreferrer"
               className="inline-flex items-center gap-3 bg-[#E8191A]/10 hover:bg-[#E8191A]/20 border border-[#E8191A]/30 px-5 py-3 rounded-sm text-sm font-medium text-[#E8191A] hover:text-[#F2F2F2] transition-all group">
               <MessageCircle size={16} />
               Join our Discord
