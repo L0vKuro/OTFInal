@@ -386,7 +386,7 @@ export default function HomePage() {
             </h2>
             <p className="text-[#F2F2F2]/40 text-lg mb-10 max-w-lg mx-auto">Connect with Overtake fans, get exclusive updates, and be first in line for tryouts.</p>
             <div className="flex flex-wrap items-center justify-center gap-4">
-              <a href="https://discord.com/invite/OvertakeSector" target="_blank" rel="noopener noreferrer"
+              <a href="https://discord.gg/YxdAbax8VB" target="_blank" rel="noopener noreferrer"
                 className="inline-flex items-center gap-3 bg-[#E8191A] hover:bg-[#B81011] px-10 py-5 font-bold tracking-widest uppercase text-base transition-all hover:shadow-[0_0_40px_rgba(232,25,26,0.5)] text-[#F2F2F2]"
                 style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
                 <MessageCircle size={18} /> Join Discord — Free
