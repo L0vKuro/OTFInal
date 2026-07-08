@@ -249,7 +249,7 @@ export default function HomePage() {
                   style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
                   Our Rosters
                 </Link>
-                <a href="https://discord.com/invite/OvertakeSector" target="_blank" rel="noopener noreferrer"
+                <a href="https://discord.gg/YxdAbax8VB" target="_blank" rel="noopener noreferrer"
                   className="flex items-center gap-2 text-[#E8191A] hover:text-[#F2F2F2] border border-[#E8191A]/20 hover:border-[#E8191A]/50 hover:bg-[#E8191A]/10 px-5 py-4 text-sm font-medium transition-all">
                   <MessageCircle size={16} /> Discord
                 </a>
