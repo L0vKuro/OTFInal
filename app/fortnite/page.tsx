@@ -36,7 +36,7 @@ const rosterTiers = [
     ],
   },
   {
-    tier: 'Overtake | Fortnite',
+    tier: 'Overtake | Fortnite Creator',
     icon: Users,
     tierColor: '#7A7A7A',
     count: 4,
@@ -64,10 +64,10 @@ const tierInfo = [
     desc: 'Developing players building consistency and results, with a clear path up toward the Competitive Roster.',
   },
   {
-    tier: 'Overtake | Fortnite',
+    tier: 'Overtake | Fortnite Creator',
     icon: Users,
     tierColor: '#7A7A7A',
-    desc: 'General team members repping the Overtake Fortnite division. The entry point into our competitive pathway.',
+    desc: 'Fortnite creators under the Overtake banner, growing their audience and platform while representing the org across social media and live streams.',
   },
 ]
 
