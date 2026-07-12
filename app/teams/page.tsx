@@ -37,6 +37,8 @@ const PLAYER_PHOTOS: Record<string, string> = {
   azzyriax: 'player-azzy.jpg',
   flip: 'player-flip.jpg',
   swisz: 'player-Swisz.jpg',
+  ghost: 'player-ghost.jpg',
+  holdmypollo: 'player-pollo.jpg',
 }
 
 const TRACKER_LINKS: Record<string, string> = {
