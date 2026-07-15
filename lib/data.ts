@@ -342,6 +342,15 @@ export const partners = [
 
 export const news = [
   {
+    id: 16,
+    title: 'OVERTAKE WELCOMES NEW OWNER',
+    date: 'July 14, 2026',
+    category: 'PARTNERSHIP',
+    excerpt: 'Overtake officially welcomes Shady to Overtake, Joining forces as the THIRD owner of the Organization!',
+    link: 'https://x.com/OvertakeSector/status/2077186381168902188?s=20',
+    image: '/shady.jpg',
+  },
+  {
     id: 13,
     title: 'OVERTAKE PARTNERS WITH INK3D',
     date: 'June 24, 2026',
