@@ -348,7 +348,7 @@ export const news = [
     category: 'PARTNERSHIP',
     excerpt: 'Overtake officially welcomes Shady to Overtake, Joining forces as the THIRD owner of the Organization!',
     link: 'https://x.com/OvertakeSector/status/2077186381168902188?s=20',
-    image: '/shady.jpg',
+    image: '/SHADY.png',
   },
   {
     id: 13,
