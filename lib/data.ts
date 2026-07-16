@@ -338,6 +338,14 @@ export const partners = [
     logo: '/Ink3d.png',
     link: 'https://ink3dshop.com/',
   },
+  {
+    name: 'SCL',
+    category: 'Esports League',
+    tier: 'Official',
+    desc: 'SCL is a competitive esports league giving players the stage to prove themselves. Overtake is proud to partner with SCL and represent our players at the highest level of organized competition.',
+    logo: '/scl.png',
+    link: 'https://scl.gg/',
+  },
 ]
 
 export const news = [
