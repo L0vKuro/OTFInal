@@ -11,7 +11,7 @@ const GAME_SHORT: Record<string, string> = {
   'RAINBOW 6 — MAIN': 'R6',
   'RAINBOW 6 — ACADEMY': 'R6 ACE',
   'RAINBOW 6 — FEMALE': 'R6 FEM',
-  'CALL OF DUTY ACADEMY': 'COD',
+  'CALL OF DUTY ACADEMY': 'COD ACAD',
   'DEADLOCK': 'DL',
   'WARZONE': 'WZ',
 }
