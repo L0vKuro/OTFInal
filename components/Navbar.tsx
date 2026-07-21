@@ -40,18 +40,18 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // Bump animation when item added
   useEffect(() => {
     if (count > prevCount.current) {
       setCartBump(true)
       setTimeout(() => setCartBump(false), 400)
-      // Auto-open cart drawer when item added
       setCartOpen(true)
     }
     prevCount.current = count
   }, [count])
 
   useEffect(() => { setMenuOpen(false); setCartOpen(false) }, [pathname])
+
+  if (pathname.startsWith('/admin')) return null
 
   const goToCheckout = () => {
     setCartOpen(false)
@@ -110,7 +110,6 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Toast notification */}
       {lastAdded && (
         <div className="fixed top-24 right-4 z-[60] animate-in slide-in-from-right duration-300">
           <div className="bg-[#141414] border border-[#00A878]/40 px-4 py-3 flex items-center gap-3 shadow-2xl max-w-xs">
@@ -126,7 +125,6 @@ export default function Navbar() {
         </div>
       )}
 
-      {/* Cart Drawer */}
       <div className={`fixed top-0 right-0 h-full w-80 bg-[#141414] border-l border-white/5 z-50 flex flex-col shadow-2xl transition-transform duration-300 ${
         cartOpen ? 'translate-x-0' : 'translate-x-full'
       }`}>
@@ -200,12 +198,10 @@ export default function Navbar() {
         )}
       </div>
 
-      {/* Cart overlay */}
       <div className={`fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ${
         cartOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
       }`} onClick={() => setCartOpen(false)} />
 
-      {/* Mobile Menu */}
       <div className={`fixed inset-0 z-40 lg:hidden transition-all duration-300 ${
         menuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
       }`}>
