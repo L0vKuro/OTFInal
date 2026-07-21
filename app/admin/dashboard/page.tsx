@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Plus, Trash2, Copy, ExternalLink, Tag, Link, BarChart2, LogOut, Check } from 'lucide-react'
+import { Plus, Trash2, Copy, ExternalLink, Tag, Link, BarChart2, LogOut, Check, Mail, Send, Clock } from 'lucide-react'
 
 type DiscountCode = {
   id: string
@@ -27,18 +27,31 @@ type TrackingLink = {
   created_at: string
 }
 
+type OrderEmail = {
+  id: string
+  customer_name: string
+  customer_email: string
+  order_number: string
+  tracking_url: string
+  sent_at: string
+  notes: string
+}
+
 export default function AdminDashboard() {
   const router = useRouter()
-  const [tab, setTab] = useState<'codes' | 'links'>('codes')
+  const [tab, setTab] = useState<'codes' | 'links' | 'email'>('codes')
   const [codes, setCodes] = useState<DiscountCode[]>([])
   const [links, setLinks] = useState<TrackingLink[]>([])
+  const [orderEmails, setOrderEmails] = useState<OrderEmail[]>([])
   const [loading, setLoading] = useState(true)
   const [copied, setCopied] = useState<string | null>(null)
+  const [sending, setSending] = useState(false)
+  const [emailSent, setEmailSent] = useState(false)
+  const [emailError, setEmailError] = useState('')
 
-  // New code form
   const [newCode, setNewCode] = useState({ code: '', type: 'percent', value: '', max_uses: '', expires_at: '', notes: '' })
-  // New link form
   const [newLink, setNewLink] = useState({ name: '', slug: '', destination_url: '', sent_to: '', notes: '' })
+  const [emailForm, setEmailForm] = useState({ customer_name: '', customer_email: '', order_number: '', tracking_url: '', notes: '' })
 
   const getAuth = () => sessionStorage.getItem('admin_auth') || ''
 
@@ -59,12 +72,14 @@ export default function AdminDashboard() {
 
   const fetchAll = async () => {
     setLoading(true)
-    const [c, l] = await Promise.all([
+    const [c, l, e] = await Promise.all([
       api({ action: 'getCodes' }),
       api({ action: 'getLinks' }),
+      api({ action: 'getOrderEmails' }),
     ])
     setCodes(c.data || [])
     setLinks(l.data || [])
+    setOrderEmails(e.data || [])
     setLoading(false)
   }
 
@@ -92,6 +107,22 @@ export default function AdminDashboard() {
     if (!confirm('Delete this link?')) return
     await api({ action: 'deleteLink', id })
     fetchAll()
+  }
+
+  const sendTrackingEmail = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setSending(true)
+    setEmailError('')
+    const res = await api({ action: 'sendTrackingEmail', ...emailForm })
+    if (res.success) {
+      setEmailSent(true)
+      setEmailForm({ customer_name: '', customer_email: '', order_number: '', tracking_url: '', notes: '' })
+      fetchAll()
+      setTimeout(() => setEmailSent(false), 4000)
+    } else {
+      setEmailError(res.error || 'Failed to send email.')
+    }
+    setSending(false)
   }
 
   const copyToClipboard = (text: string, id: string) => {
@@ -144,9 +175,9 @@ export default function AdminDashboard() {
             <span className="font-display font-black text-xl text-white" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{links.reduce((a, l) => a + l.clicks, 0)}</span>
           </div>
           <div className="flex items-center gap-3">
-            <Tag size={16} className="text-[#E8191A]" />
-            <span className="text-white/40 text-sm font-mono">Total Code Uses</span>
-            <span className="font-display font-black text-xl text-white" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{codes.reduce((a, c) => a + c.uses, 0)}</span>
+            <Mail size={16} className="text-[#E8191A]" />
+            <span className="text-white/40 text-sm font-mono">Emails Sent</span>
+            <span className="font-display font-black text-xl text-white" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{orderEmails.length}</span>
           </div>
         </div>
       </div>
@@ -154,7 +185,11 @@ export default function AdminDashboard() {
       <div className="max-w-7xl mx-auto px-6 py-10">
         {/* Tabs */}
         <div className="flex gap-2 mb-8 border-b border-white/5">
-          {[{ id: 'codes', label: 'Discount Codes', icon: Tag }, { id: 'links', label: 'Tracking Links', icon: Link }].map(({ id, label, icon: Icon }) => (
+          {[
+            { id: 'codes', label: 'Discount Codes', icon: Tag },
+            { id: 'links', label: 'Tracking Links', icon: Link },
+            { id: 'email', label: 'Send Tracking Email', icon: Mail },
+          ].map(({ id, label, icon: Icon }) => (
             <button key={id} onClick={() => setTab(id as any)}
               className="flex items-center gap-2 px-6 py-3 text-sm font-black uppercase tracking-widest transition-all border-b-2"
               style={{
@@ -170,12 +205,9 @@ export default function AdminDashboard() {
         {/* DISCOUNT CODES TAB */}
         {tab === 'codes' && (
           <div className="space-y-8">
-            {/* Create form */}
             <div className="bg-[#141414] border border-white/5 p-6">
               <h2 className="font-display font-black text-xl text-white uppercase mb-5"
-                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-                Create New Code
-              </h2>
+                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>Create New Code</h2>
               <form onSubmit={createCode} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
                   <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Code *</label>
@@ -223,12 +255,10 @@ export default function AdminDashboard() {
                 </div>
               </form>
             </div>
-
-            {/* Codes list */}
             <div className="space-y-3">
               {codes.length === 0 && (
                 <div className="bg-[#141414] border border-white/5 p-8 text-center">
-                  <p className="text-white/30 font-mono text-sm">No discount codes yet. Create one above.</p>
+                  <p className="text-white/30 font-mono text-sm">No discount codes yet.</p>
                 </div>
               )}
               {codes.map((code) => (
@@ -246,10 +276,8 @@ export default function AdminDashboard() {
                       <span>Uses: <span className="text-white">{code.uses}{code.max_uses ? ` / ${code.max_uses}` : ' / ∞'}</span></span>
                       {code.expires_at && <span>Expires: <span className="text-white">{new Date(code.expires_at).toLocaleDateString()}</span></span>}
                       {code.notes && <span>Note: <span className="text-white/60">{code.notes}</span></span>}
-                      <span>Created: {new Date(code.created_at).toLocaleDateString()}</span>
                     </div>
                   </div>
-                  {/* Usage bar */}
                   {code.max_uses && (
                     <div className="w-32">
                       <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
@@ -281,12 +309,9 @@ export default function AdminDashboard() {
         {/* TRACKING LINKS TAB */}
         {tab === 'links' && (
           <div className="space-y-8">
-            {/* Create form */}
             <div className="bg-[#141414] border border-white/5 p-6">
               <h2 className="font-display font-black text-xl text-white uppercase mb-5"
-                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-                Create Tracking Link
-              </h2>
+                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>Create Tracking Link</h2>
               <form onSubmit={createLink} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Name *</label>
@@ -295,7 +320,7 @@ export default function AdminDashboard() {
                     className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
                 </div>
                 <div>
-                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Slug * (used in URL)</label>
+                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Slug *</label>
                   <div className="flex items-center">
                     <span className="bg-[#0D0D0D] border border-r-0 border-white/10 px-3 py-3 text-white/30 font-mono text-xs whitespace-nowrap">overtakegg.com/track/</span>
                     <input required value={newLink.slug} onChange={e => setNewLink({ ...newLink, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-') })}
@@ -330,12 +355,10 @@ export default function AdminDashboard() {
                 </div>
               </form>
             </div>
-
-            {/* Links list */}
             <div className="space-y-3">
               {links.length === 0 && (
                 <div className="bg-[#141414] border border-white/5 p-8 text-center">
-                  <p className="text-white/30 font-mono text-sm">No tracking links yet. Create one above.</p>
+                  <p className="text-white/30 font-mono text-sm">No tracking links yet.</p>
                 </div>
               )}
               {links.map((link) => (
@@ -351,10 +374,8 @@ export default function AdminDashboard() {
                     </div>
                     <div className="flex flex-wrap gap-4 text-xs font-mono text-white/40">
                       <span>URL: <span className="text-[#E8191A]">overtakegg.com/track/{link.slug}</span></span>
-                      <span>→ <span className="text-white/60 truncate max-w-xs">{link.destination_url}</span></span>
                       {link.sent_to && <span>Sent to: <span className="text-white">{link.sent_to}</span></span>}
                       {link.notes && <span>Note: <span className="text-white/60">{link.notes}</span></span>}
-                      <span>Created: {new Date(link.created_at).toLocaleDateString()}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -374,6 +395,110 @@ export default function AdminDashboard() {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* SEND TRACKING EMAIL TAB */}
+        {tab === 'email' && (
+          <div className="space-y-8">
+            {/* Send form */}
+            <div className="bg-[#141414] border border-white/5 p-6">
+              <h2 className="font-display font-black text-xl text-white uppercase mb-2"
+                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>Send Order Tracking Email</h2>
+              <p className="text-white/40 text-sm font-mono mb-6">Sends a branded Overtake email to the customer with their tracking link.</p>
+
+              {emailSent && (
+                <div className="flex items-center gap-3 bg-green-500/10 border border-green-500/30 px-4 py-3 mb-6">
+                  <Check size={16} className="text-green-400" />
+                  <p className="text-green-400 text-sm font-mono">Email sent successfully!</p>
+                </div>
+              )}
+              {emailError && (
+                <div className="bg-[#E8191A]/10 border border-[#E8191A]/30 px-4 py-3 mb-6">
+                  <p className="text-[#E8191A] text-sm font-mono">{emailError}</p>
+                </div>
+              )}
+
+              <form onSubmit={sendTrackingEmail} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Customer Name *</label>
+                  <input required value={emailForm.customer_name} onChange={e => setEmailForm({ ...emailForm, customer_name: e.target.value })}
+                    placeholder="John Doe"
+                    className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
+                </div>
+                <div>
+                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Customer Email *</label>
+                  <input required type="email" value={emailForm.customer_email} onChange={e => setEmailForm({ ...emailForm, customer_email: e.target.value })}
+                    placeholder="customer@email.com"
+                    className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
+                </div>
+                <div>
+                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Order Number *</label>
+                  <input required value={emailForm.order_number} onChange={e => setEmailForm({ ...emailForm, order_number: e.target.value })}
+                    placeholder="1234"
+                    className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
+                </div>
+                <div>
+                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Tracking URL *</label>
+                  <input required type="url" value={emailForm.tracking_url} onChange={e => setEmailForm({ ...emailForm, tracking_url: e.target.value })}
+                    placeholder="https://tools.usps.com/go/TrackConfirmAction?tLabels=..."
+                    className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Internal Notes (not sent to customer)</label>
+                  <input value={emailForm.notes} onChange={e => setEmailForm({ ...emailForm, notes: e.target.value })}
+                    placeholder="e.g. Jersey + hoodie order"
+                    className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
+                </div>
+                <div className="sm:col-span-2">
+                  <button type="submit" disabled={sending}
+                    className="flex items-center gap-2 bg-[#E8191A] hover:bg-[#B81011] px-6 py-3 font-black tracking-widest uppercase text-sm transition-all text-white clip-corner disabled:opacity-50"
+                    style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                    {sending ? <><Clock size={14} className="animate-spin" /> Sending...</> : <><Send size={14} /> Send Tracking Email</>}
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            {/* Email history */}
+            <div>
+              <h3 className="font-display font-black text-lg text-white uppercase mb-4"
+                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                Email History <span className="text-white/30 text-base">({orderEmails.length})</span>
+              </h3>
+              <div className="space-y-3">
+                {orderEmails.length === 0 && (
+                  <div className="bg-[#141414] border border-white/5 p-8 text-center">
+                    <p className="text-white/30 font-mono text-sm">No emails sent yet.</p>
+                  </div>
+                )}
+                {orderEmails.map((email) => (
+                  <div key={email.id} className="bg-[#141414] border border-white/5 p-5">
+                    <div className="flex flex-wrap items-start justify-between gap-4">
+                      <div>
+                        <div className="flex items-center gap-3 mb-1">
+                          <span className="font-display font-black text-xl text-white uppercase"
+                            style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{email.customer_name}</span>
+                          <span className="text-xs font-mono px-2 py-0.5 border"
+                            style={{ color: '#00A878', borderColor: '#00A87840', background: '#00A87810' }}>
+                            Order #{email.order_number}
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap gap-4 text-xs font-mono text-white/40">
+                          <span>To: <span className="text-white">{email.customer_email}</span></span>
+                          <span>Tracking: <a href={email.tracking_url} target="_blank" rel="noopener noreferrer" className="text-[#E8191A] hover:underline">View Link</a></span>
+                          {email.notes && <span>Note: <span className="text-white/60">{email.notes}</span></span>}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 text-white/30 text-xs font-mono">
+                        <Clock size={12} />
+                        {new Date(email.sent_at).toLocaleDateString()} {new Date(email.sent_at).toLocaleTimeString()}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
