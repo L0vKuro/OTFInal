@@ -350,6 +350,33 @@ export const partners = [
 
 export const news = [
   {
+    id: 19,
+    title: 'OVERTAKE WELCOMES NEW ESPORTS DIRECTOR',
+    date: 'July 20, 2026',
+    category: 'STAFF',
+    excerpt: 'Isaac officially joins Overtake as Esports Director, bringing leadership and vision to help drive the organization to the next level.',
+    link: 'https://x.com/OvertakeSector/status/2079280178266558556?s=20',
+    image: '/news-isaac.jpg',
+  },
+  {
+    id: 18,
+    title: 'OVERTAKE INTRODUCES NEW CHALLENGERS PLAYER',
+    date: 'July 19, 2026',
+    category: 'PLAYER',
+    excerpt: 'T7vin officially joins Overtake as the newest CoD Challengers player, bringing competitive firepower to the academy roster.',
+    link: 'https://x.com/OvertakeSector/status/2078917792774898021?s=20',
+    image: '/news-t7vin.jpg',
+  },
+  {
+    id: 17,
+    title: 'OVERTAKE WELCOMES NEW CONTENT LEAD',
+    date: 'July 17, 2026',
+    category: 'CONTENT',
+    excerpt: 'Kvstr joins Overtake as the organization\'s newest Content Lead, stepping in to shape and drive the creative direction of the brand.',
+    link: 'https://x.com/OvertakeSector/status/2078223215370162334?s=20',
+    image: '/news-kvstr.jpg',
+  },
+  {
     id: 16,
     title: 'OVERTAKE WELCOMES NEW OWNER',
     date: 'July 14, 2026',
