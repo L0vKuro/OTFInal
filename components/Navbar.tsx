@@ -74,7 +74,7 @@ export default function Navbar() {
           <div className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => (
               <Link key={link.href} href={link.href}
-                className={`nav-link px-4 py-2 text-sm font-medium tracking-wider uppercase transition-colors ${
+                className={`nav-link px-4 py-2 text-base font-bold tracking-wider uppercase transition-colors ${
                   pathname === link.href ? 'text-[#E8191A]' : 'text-[#F2F2F2]/55 hover:text-[#F2F2F2]'
                 }`}
                 style={{ fontFamily: 'Barlow Condensed, sans-serif', letterSpacing: '0.12em' }}>
