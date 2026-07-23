@@ -39,9 +39,9 @@ const milestones = [
 const leadership = [
   { name: 'Lazur', role: 'CEO / Founder', bio: 'Visionary behind Overtake Sector. Building the org from the ground up with passion and purpose.', twitter: 'wydlazur' },
   { name: 'Kuro', role: 'COO', bio: 'Oversees day-to-day operations and keeps the organization running at its best.', twitter: 'L0vKuro' },
-  { name: 'Ghxst', role: 'General Manager', bio: 'Manages the overall direction of teams and ensures competitive excellence across all titles.', twitter: 'JohnWickFPS' },
   { name: 'Shady', role: 'Chief Strategy Officer', bio: 'Develops and oversees the organization\'s long-term growth strategy, positioning Overtake for sustained success.', twitter: 'ShadyBoBandy' },
   { name: 'Isaac', role: 'Esports Director', bio: 'Oversees competitive teams, players, coaches, recruitment, tournament participation, and overall esports operations.', twitter: 'IsaaacBlitz' },
+  { name: 'Ghxst', role: 'General Manager', bio: 'Manages the overall direction of teams and ensures competitive excellence across all titles.', twitter: 'JohnWickFPS' },
   { name: 'Ghost', role: 'Project Manager', bio: 'Coordinates projects and initiatives across the organization to keep everything on track.', twitter: 'GraveGhost_1' },
   { name: 'Dynasty', role: 'Content Manager', bio: 'Leads the content strategy and creative direction for Overtake across all platforms.', twitter: 'DynastyK1NG' },
   { name: 'Jxe', role: 'Social Media Manager', bio: "Drives Overtake's social presence and keeps fans connected with the latest updates.", twitter: 'OfficialJxe5_' },
