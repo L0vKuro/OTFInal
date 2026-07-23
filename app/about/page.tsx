@@ -53,9 +53,9 @@ const leadership = [
 const quotes = [
   { name: 'Lazur', role: 'CEO / Founder', quote: "Don't worry about failure; you only have to be right once." },
   { name: 'Kuro', role: 'COO', quote: 'Doubt kills more dreams than failure ever will.' },
-  { name: 'Ghxst', role: 'General Manager', quote: 'To be a goat, you must learn and overcome the failures and struggles that go along with the dreams you foresee.' },
   { name: 'Shady', role: 'Chief Strategy Officer', quote: 'No discipline feels pleasant in the moment — it is painful. But those who push through it are rewarded with a harvest of growth, peace, and purpose.' },
   { name: 'Isaac', role: 'Esports Director', quote: 'Good company is the company of clever, well-informed people who have a great deal of conversation — that is what moves things forward.' },
+  { name: 'Ghxst', role: 'General Manager', quote: 'To be a goat, you must learn and overcome the failures and struggles that go along with the dreams you foresee.' },
   { name: 'Ghost', role: 'Project Manager', quote: 'It is during our darkest moments that we must focus to see the light.' },
   { name: 'Dynasty', role: 'Content Manager', quote: 'Life is like a video game, it gets hard because you leveled up.' },
   { name: 'Jxe', role: 'Social Media Manager', quote: 'In order to be successful at what you\'re doing, you have to be obsessed with change.' },
