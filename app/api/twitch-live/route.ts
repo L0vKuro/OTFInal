@@ -20,6 +20,12 @@ const CREATOR_LOGINS = [
   'trapzfv',
   'xlluka',
   'finl_gaz',
+  'd3xoh',
+  'jgknown',
+  'kvstrszn',
+  'l0ki_xjg',
+  'nitromadnes',
+  'otnexus',
 ]
 
 async function getToken() {
