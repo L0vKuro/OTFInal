@@ -1,19 +1,5 @@
 export const teams = [
   {
-    id: 'valorant',
-    game: 'VALORANT',
-    tag: 'OT',
-    color: '#FF4655',
-    region: 'NA',
-    roster: [
-      { name: 'CFAX', role: 'PLAYER', country: '🇺🇸', real: '@CfaxFTW', twitter: 'https://x.com/CfaxFTW' },
-      { name: 'SAMBAE', role: 'PLAYER', country: '🇺🇸', real: '@sambaeFPS', twitter: 'https://x.com/sambaeFPS' },
-      { name: 'BLESS', role: 'PLAYER', country: '🇺🇸', real: '@toniorobinson7', twitter: 'https://x.com/toniorobinson7' },
-      { name: 'SIDEBERIA', role: 'PLAYER', country: '🇺🇸', real: '@sideberia', twitter: 'https://x.com/sideberia' },
-      { name: 'BAZE', role: 'PLAYER', country: '🇺🇸', real: '@baze_gg', twitter: 'https://x.com/baze_gg' },
-    ],
-  },
-  {
     id: 'counterstrike',
     game: 'COUNTER-STRIKE',
     tag: 'OT',
