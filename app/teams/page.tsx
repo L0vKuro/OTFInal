@@ -6,7 +6,6 @@ import { teams } from '@/lib/data'
 import { ChevronRight, ExternalLink } from 'lucide-react'
 
 const GAME_SHORT: Record<string, string> = {
-  'VALORANT': 'VAL',
   'COUNTER-STRIKE': 'CS2',
   'RAINBOW 6 — MAIN': 'R6',
   'RAINBOW 6 — ACADEMY': 'R6 ACE',
@@ -17,7 +16,6 @@ const GAME_SHORT: Record<string, string> = {
 }
 
 const TEAM_DESCRIPTIONS: Record<string, string> = {
-  'VALORANT': 'Tactical, precise, relentless. Our Valorant squad competes at the highest level of ranked and tournament play, representing Overtake with strategy and skill.',
   'COUNTER-STRIKE': 'Old school discipline, new era results. Our CS roster brings grit and game sense to every server they touch.',
   'RAINBOW 6 — MAIN': 'Siege is won in the details. Our main roster runs calculated strats and clutch plays that keep Overtake in the conversation at every level.',
   'RAINBOW 6 — ACADEMY': 'The next wave is here. Overtake Academy is where raw talent gets refined into competitive excellence.',
@@ -54,7 +52,6 @@ const PLAYER_PHOTOS: Record<string, string> = {
 }
 
 const TRACKER_LINKS: Record<string, string> = {
-  valorant: 'https://www.vlr.gg/team/17236/overtake',
   counterstrike: 'https://www.hltv.org/team/13855/overtake-sector',
   deadlock: '',
   'r6-main': 'https://liquipedia.net/rainbowsix/Overtake_Sector',
