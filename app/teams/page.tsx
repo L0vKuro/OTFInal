@@ -43,9 +43,9 @@ function getPlayerPhoto(name: string): string {
 
 
 export default function TeamsPage() {
-  const router = useRouter()
-  const [activeTeam, setActiveTeam] = useState(filteredTeams[0])
-
+const router = useRouter()
+const [activeTeam, setActiveTeam] = useState(teams[0])
+const filteredTeams = teams
   const team = activeTeam as any
   const trackerLink = team.id in TRACKER_LINKS ? TRACKER_LINKS[team.id] : null
   const desc = TEAM_DESCRIPTIONS[team.game] || ''
