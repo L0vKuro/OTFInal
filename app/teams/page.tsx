@@ -7,39 +7,18 @@ import { ChevronRight, ExternalLink } from 'lucide-react'
 
 const GAME_SHORT: Record<string, string> = {
   'COUNTER-STRIKE': 'CS2',
-  'RAINBOW 6 — MAIN': 'R6',
-  'RAINBOW 6 — ACADEMY': 'R6 ACE',
-  'RAINBOW 6 — FEMALE': 'R6 FEM',
-  'CALL OF DUTY ACADEMY': 'COD ACAD',
   'DEADLOCK': 'DL',
-  'WARZONE': 'WZ',
 }
 
 const TEAM_DESCRIPTIONS: Record<string, string> = {
   'COUNTER-STRIKE': 'Old school discipline, new era results. Our CS roster brings grit and game sense to every server they touch.',
-  'RAINBOW 6 — MAIN': 'Siege is won in the details. Our main roster runs calculated strats and clutch plays that keep Overtake in the conversation at every level.',
-  'RAINBOW 6 — ACADEMY': 'The next wave is here. Overtake Academy is where raw talent gets refined into competitive excellence.',
-  'RAINBOW 6 — FEMALE': 'Breaking barriers and setting standards. Our female roster competes with the same intensity and drive as every Overtake squad.',
-  'CALL OF DUTY ACADEMY': 'Built for the big stage. Our CoD Academy roster has LAN experience and championship DNA.',
   'DEADLOCK': 'First movers in a new era. Overtake entered Deadlock early and we\'re here to dominate it.',
-  'WARZONE': 'Drop in, wipe the lobby, repeat. Our Warzone squad brings elite gunfight IQ and BR experience.',
 }
 
 const PLAYER_PHOTOS: Record<string, string> = {
   ein: 'player-e-in.png',
   vcipher: 'player-vcipher.png',
-  megahitidee: 'player-megahitIdee.jpg',
   kiingkooopa: 'player-kiinkooopa.jpg',
-  godcookie: 'player-cookie.webp',
-  kontrol: 'player-kontrol.jpeg',
-  ximmy: 'player-ximmy.png',
-  yesyert: 'player-yesyert.png',
-  deasells: 'player-deasells.png',
-  favor8: 'player-favor8.png',
-  adlibb: 'player-adlibb.png',
-  nathan: 'coach-Nathan.jpg',
-  shiyo: 'coach-Shiyo.jpg',
-  abyce: 'coach-Abyce.jpg',
   final: 'player-finalkiss.jpg',
   gingy: 'coach-gingy.jpg',
   jogorku: 'coach-jogorku.jpg',
@@ -62,7 +41,6 @@ function getPlayerPhoto(name: string): string {
   return PLAYER_PHOTOS[key] || `player-${key}.jpg`
 }
 
-const filteredTeams = teams.filter(t => t.id !== 'fortnite')
 
 export default function TeamsPage() {
   const router = useRouter()
