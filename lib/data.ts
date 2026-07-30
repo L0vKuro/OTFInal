@@ -43,7 +43,7 @@ export const creators = [
     tier: 1,
     bio: "Overtake's Content Lead, shaping the org's creative direction while bringing consistent variety gaming content across Twitch and YouTube.",
     link: 'https://www.twitch.tv/KvstrSZN',
-    photo: 'creator-Kvstr.jpg',
+    photo: 'creator-kvstr.jpg',
     socials: { twitch: 'KvstrSZN', twitter: 'https://x.com/KvstrSZN', youtube: 'channel/UCykqzXBBbK_NF4QMBiwbp-A' },
   },
   {
