@@ -32,6 +32,21 @@ export const teams = [
 
 export const creators = [
   {
+    id: 'kvstr',
+    handle: 'KVSTR',
+    real: 'KvstrSZN',
+    platform: 'Twitch',
+    followers: '2.2K',
+    content: 'Gaming',
+    country: '🇺🇸',
+    specialty: 'VARIETY GAMING',
+    tier: 1,
+    bio: "Overtake's Content Lead, shaping the org's creative direction while bringing consistent variety gaming content across Twitch and YouTube.",
+    link: 'https://www.twitch.tv/KvstrSZN',
+    photo: 'creator-Kvstr.jpg',
+    socials: { twitch: 'KvstrSZN', twitter: 'https://x.com/KvstrSZN', youtube: 'channel/UCykqzXBBbK_NF4QMBiwbp-A' },
+  },
+  {
     id: 'x19',
     handle: 'X19',
     real: 'X19_EH',
@@ -165,21 +180,6 @@ export const creators = [
     link: 'https://www.twitch.tv/jgknown',
     photo: 'creator-JG.jpg',
     socials: { twitch: 'jgknown', twitter: 'https://x.com/JGKnown', youtube: '' },
-  },
-  {
-    id: 'dexoh',
-    handle: 'DEXOH',
-    real: 'DexohGaming',
-    platform: 'YouTube',
-    followers: '4.5K',
-    content: 'Gaming',
-    country: '🇺🇸',
-    specialty: 'VARIETY GAMING',
-    tier: 2,
-    bio: 'Dexoh joins the Overtake creator roster with gaming content on YouTube and X, bringing his own edge to the content division.',
-    link: 'https://www.youtube.com/@DexohGaming',
-    photo: 'creator-Dexoh.jpg',
-    socials: { twitch: '', twitter: 'https://x.com/DEX0H', youtube: 'DexohGaming' },
   },
   {
     id: 'nitromadness',
