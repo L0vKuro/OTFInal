@@ -20,19 +20,26 @@ async function getTwitchToken() {
   return data.access_token as string
 }
 
-async function countTwitchStreamsInMonth(login: string, period: string, token: string) {
+type PlatformEvent = { externalId: string; eventDate: string; title: string }
+
+function monthRange(period: string) {
   const [year, month] = period.split('-').map(Number)
   const monthStart = new Date(Date.UTC(year, month - 1, 1))
   const monthEnd = new Date(Date.UTC(year, month, 1))
+  return { monthStart, monthEnd }
+}
+
+async function getTwitchVideosInMonth(login: string, period: string, token: string): Promise<PlatformEvent[]> {
+  const { monthStart, monthEnd } = monthRange(period)
 
   const userRes = await fetch(`https://api.twitch.tv/helix/users?login=${login}`, {
     headers: { 'Client-ID': process.env.TWITCH_CLIENT_ID!, 'Authorization': `Bearer ${token}` },
   })
   const userData = await userRes.json()
   const userId = userData.data?.[0]?.id
-  if (!userId) return 0
+  if (!userId) return []
 
-  let count = 0
+  const events: PlatformEvent[] = []
   let cursor = ''
   let keepGoing = true
 
@@ -47,7 +54,9 @@ async function countTwitchStreamsInMonth(login: string, period: string, token: s
 
     for (const v of videos) {
       const created = new Date(v.created_at)
-      if (created >= monthStart && created < monthEnd) count++
+      if (created >= monthStart && created < monthEnd) {
+        events.push({ externalId: v.id, eventDate: v.created_at.slice(0, 10), title: v.title || '' })
+      }
       if (created < monthStart) keepGoing = false
     }
 
@@ -55,7 +64,66 @@ async function countTwitchStreamsInMonth(login: string, period: string, token: s
     if (!cursor) keepGoing = false
   }
 
-  return count
+  return events
+}
+
+async function getYoutubeUploadsPlaylistId(channelValue: string, apiKey: string): Promise<string | null> {
+  const value = channelValue.trim()
+  let url = ''
+  if (value.startsWith('UC')) {
+    url = `https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${value}&key=${apiKey}`
+  } else if (value.startsWith('@')) {
+    url = `https://www.googleapis.com/youtube/v3/channels?part=contentDetails&forHandle=${value}&key=${apiKey}`
+  } else {
+    url = `https://www.googleapis.com/youtube/v3/channels?part=contentDetails&forUsername=${value}&key=${apiKey}`
+  }
+  const res = await fetch(url)
+  const data = await res.json()
+  return data.items?.[0]?.contentDetails?.relatedPlaylists?.uploads || null
+}
+
+async function getYoutubeVideosInMonth(channelValue: string, period: string, apiKey: string): Promise<PlatformEvent[]> {
+  const { monthStart, monthEnd } = monthRange(period)
+  const uploadsPlaylist = await getYoutubeUploadsPlaylistId(channelValue, apiKey)
+  if (!uploadsPlaylist) return []
+
+  const events: PlatformEvent[] = []
+  let pageToken = ''
+  let keepGoing = true
+
+  while (keepGoing) {
+    const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylist}&maxResults=50&key=${apiKey}${pageToken ? `&pageToken=${pageToken}` : ''}`
+    const res = await fetch(url)
+    const data = await res.json()
+    const items = data.items || []
+    if (items.length === 0) break
+
+    for (const item of items) {
+      const publishedAt = item.snippet?.publishedAt
+      if (!publishedAt) continue
+      const published = new Date(publishedAt)
+      const videoId = item.snippet?.resourceId?.videoId
+      if (published >= monthStart && published < monthEnd && videoId) {
+        events.push({ externalId: videoId, eventDate: publishedAt.slice(0, 10), title: item.snippet?.title || '' })
+      }
+      if (published < monthStart) keepGoing = false
+    }
+
+    pageToken = data.nextPageToken
+    if (!pageToken) keepGoing = false
+  }
+
+  return events
+}
+
+function periodsBack(count: number): string[] {
+  const periods: string[] = []
+  const now = new Date()
+  for (let i = count - 1; i >= 0; i--) {
+    const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - i, 1))
+    periods.push(`${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`)
+  }
+  return periods
 }
 
 export async function POST(req: NextRequest) {
@@ -137,7 +205,7 @@ export async function POST(req: NextRequest) {
     <tr>
       <td align="center">
         <table width="600" cellpadding="0" cellspacing="0" style="background:#141414;border:1px solid rgba(255,255,255,0.08);max-width:600px;width:100%;">
-          
+
           <!-- Red top bar -->
           <tr>
             <td style="background:#E8191A;height:4px;"></td>
@@ -242,93 +310,219 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true })
     }
 
-    case 'getComplianceEntries': {
+    case 'getRosterMembers': {
       const { data } = await supabase
-        .from('roster_compliance')
+        .from('roster_members')
         .select('*')
-        .eq('period', body.period)
+        .eq('active', true)
         .order('person_name', { ascending: true })
       return NextResponse.json({ data })
     }
 
-    case 'upsertComplianceEntry': {
-      const { data, error } = await supabase
-        .from('roster_compliance')
+    case 'addRosterMember': {
+      const { error } = await supabase
+        .from('roster_members')
         .upsert({
           person_name: body.person_name,
           role_type: body.role_type,
           twitch_login: body.twitch_login || '',
-          period: body.period,
-          twitch_streams: body.twitch_streams ?? 0,
-          tiktok_posts: body.tiktok_posts ?? 0,
-          yt_shorts: body.yt_shorts ?? 0,
-          notes: body.notes || '',
-          updated_at: new Date().toISOString(),
-        }, { onConflict: 'person_name,period' })
-        .select()
+          youtube_channel: body.youtube_channel || '',
+          active: true,
+        }, { onConflict: 'person_name' })
 
       if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-      return NextResponse.json({ data })
+
+      // Kick off an immediate sync for just this person so their stats start populating right away
+      const period = body.period || `${new Date().getUTCFullYear()}-${String(new Date().getUTCMonth() + 1).padStart(2, '0')}`
+      const results: any = { twitch: 0, youtube: 0 }
+
+      if (body.twitch_login) {
+        try {
+          const token = await getTwitchToken()
+          const events = await getTwitchVideosInMonth(body.twitch_login, period, token)
+          if (events.length > 0) {
+            await supabase.from('activity_events').upsert(
+              events.map(e => ({ person_name: body.person_name, platform: 'twitch', event_date: e.eventDate, external_id: e.externalId, title: e.title })),
+              { onConflict: 'platform,external_id', ignoreDuplicates: true }
+            )
+          }
+          results.twitch = events.length
+        } catch {}
+      }
+
+      if (body.youtube_channel) {
+        try {
+          const events = await getYoutubeVideosInMonth(body.youtube_channel, period, process.env.YOUTUBE_API_KEY!)
+          if (events.length > 0) {
+            await supabase.from('activity_events').upsert(
+              events.map(e => ({ person_name: body.person_name, platform: 'youtube', event_date: e.eventDate, external_id: e.externalId, title: e.title })),
+              { onConflict: 'platform,external_id', ignoreDuplicates: true }
+            )
+          }
+          results.youtube = events.length
+        } catch {}
+      }
+
+      return NextResponse.json({ success: true, synced: results })
     }
 
-    case 'deleteComplianceEntry': {
-      await supabase.from('roster_compliance').delete().eq('id', body.id)
+    case 'updateRosterMember': {
+      const { error } = await supabase
+        .from('roster_members')
+        .update({
+          role_type: body.role_type,
+          twitch_login: body.twitch_login || '',
+          youtube_channel: body.youtube_channel || '',
+        })
+        .eq('person_name', body.person_name)
+
+      if (error) return NextResponse.json({ error: error.message }, { status: 500 })
       return NextResponse.json({ success: true })
     }
 
-    case 'copyRosterToPeriod': {
-      const { data: source } = await supabase
-        .from('roster_compliance')
+    case 'removeRosterMember': {
+      await supabase.from('roster_members').update({ active: false }).eq('person_name', body.person_name)
+      return NextResponse.json({ success: true })
+    }
+
+    case 'getActivityEvents': {
+      const { monthStart, monthEnd } = monthRange(body.period)
+      const { data } = await supabase
+        .from('activity_events')
         .select('*')
-        .eq('period', body.fromPeriod)
+        .gte('event_date', monthStart.toISOString().slice(0, 10))
+        .lt('event_date', monthEnd.toISOString().slice(0, 10))
+        .order('event_date', { ascending: true })
+      return NextResponse.json({ data })
+    }
 
-      if (source && source.length > 0) {
-        const rows = source.map((r: any) => ({
-          person_name: r.person_name,
-          role_type: r.role_type,
-          twitch_login: r.twitch_login,
-          period: body.toPeriod,
-          twitch_streams: 0,
-          tiktok_posts: 0,
-          yt_shorts: 0,
-          notes: '',
-        }))
-        await supabase
-          .from('roster_compliance')
-          .upsert(rows, { onConflict: 'person_name,period', ignoreDuplicates: true })
-      }
+    case 'getTiktokCounts': {
+      const { data } = await supabase
+        .from('tiktok_manual_counts')
+        .select('*')
+        .eq('period', body.period)
+      return NextResponse.json({ data })
+    }
 
+    case 'upsertTiktokCount': {
+      const { error } = await supabase
+        .from('tiktok_manual_counts')
+        .upsert({
+          person_name: body.person_name,
+          period: body.period,
+          tiktok_posts: body.tiktok_posts ?? 0,
+          notes: body.notes || '',
+          updated_at: new Date().toISOString(),
+        }, { onConflict: 'person_name,period' })
+
+      if (error) return NextResponse.json({ error: error.message }, { status: 500 })
       return NextResponse.json({ success: true })
     }
 
     case 'syncTwitchStreams': {
-      const { data: rows } = await supabase
-        .from('roster_compliance')
-        .select('*')
-        .eq('period', body.period)
-        .neq('twitch_login', '')
+      let query = supabase.from('roster_members').select('*').eq('active', true).neq('twitch_login', '')
+      if (body.personName) query = query.eq('person_name', body.personName)
+      const { data: members } = await query
 
-      if (!rows || rows.length === 0) {
-        return NextResponse.json({ success: true, updated: 0 })
+      if (!members || members.length === 0) {
+        return NextResponse.json({ success: true, updated: 0, eventsAdded: 0 })
       }
 
       const token = await getTwitchToken()
       let updated = 0
+      let eventsAdded = 0
 
-      for (const row of rows) {
+      for (const member of members) {
         try {
-          const count = await countTwitchStreamsInMonth(row.twitch_login, body.period, token)
-          await supabase
-            .from('roster_compliance')
-            .update({ twitch_streams: count, updated_at: new Date().toISOString() })
-            .eq('id', row.id)
+          const events = await getTwitchVideosInMonth(member.twitch_login, body.period, token)
+          if (events.length > 0) {
+            await supabase.from('activity_events').upsert(
+              events.map(e => ({ person_name: member.person_name, platform: 'twitch', event_date: e.eventDate, external_id: e.externalId, title: e.title })),
+              { onConflict: 'platform,external_id', ignoreDuplicates: true }
+            )
+          }
+          eventsAdded += events.length
           updated++
         } catch {
           // skip this creator, keep going
         }
       }
 
-      return NextResponse.json({ success: true, updated })
+      return NextResponse.json({ success: true, updated, eventsAdded })
+    }
+
+    case 'syncYoutubeUploads': {
+      let query = supabase.from('roster_members').select('*').eq('active', true).neq('youtube_channel', '')
+      if (body.personName) query = query.eq('person_name', body.personName)
+      const { data: members } = await query
+
+      if (!members || members.length === 0) {
+        return NextResponse.json({ success: true, updated: 0, eventsAdded: 0 })
+      }
+
+      let updated = 0
+      let eventsAdded = 0
+
+      for (const member of members) {
+        try {
+          const events = await getYoutubeVideosInMonth(member.youtube_channel, body.period, process.env.YOUTUBE_API_KEY!)
+          if (events.length > 0) {
+            await supabase.from('activity_events').upsert(
+              events.map(e => ({ person_name: member.person_name, platform: 'youtube', event_date: e.eventDate, external_id: e.externalId, title: e.title })),
+              { onConflict: 'platform,external_id', ignoreDuplicates: true }
+            )
+          }
+          eventsAdded += events.length
+          updated++
+        } catch {
+          // skip this creator, keep going
+        }
+      }
+
+      return NextResponse.json({ success: true, updated, eventsAdded })
+    }
+
+    case 'getTrendData': {
+      const months = body.months || 3
+      const periods = periodsBack(months)
+      const earliest = monthRange(periods[0]).monthStart.toISOString().slice(0, 10)
+
+      const { data: events } = await supabase
+        .from('activity_events')
+        .select('person_name, platform, event_date')
+        .gte('event_date', earliest)
+
+      const { data: tiktokRows } = await supabase
+        .from('tiktok_manual_counts')
+        .select('person_name, period, tiktok_posts')
+        .in('period', periods)
+
+      const buckets: Record<string, Record<string, { twitch: number; youtube: number; tiktok: number }>> = {}
+      for (const period of periods) buckets[period] = {}
+
+      for (const ev of events || []) {
+        const period = ev.event_date.slice(0, 7)
+        if (!buckets[period]) continue
+        if (!buckets[period][ev.person_name]) buckets[period][ev.person_name] = { twitch: 0, youtube: 0, tiktok: 0 }
+        if (ev.platform === 'twitch') buckets[period][ev.person_name].twitch++
+        if (ev.platform === 'youtube') buckets[period][ev.person_name].youtube++
+      }
+
+      for (const row of tiktokRows || []) {
+        if (!buckets[row.period]) continue
+        if (!buckets[row.period][row.person_name]) buckets[row.period][row.person_name] = { twitch: 0, youtube: 0, tiktok: 0 }
+        buckets[row.period][row.person_name].tiktok = row.tiktok_posts
+      }
+
+      const rows: any[] = []
+      for (const period of periods) {
+        for (const person_name of Object.keys(buckets[period])) {
+          const b = buckets[period][person_name]
+          rows.push({ period, person_name, twitch: b.twitch, youtube: b.youtube, tiktok: b.tiktok, total: b.twitch + b.youtube + b.tiktok })
+        }
+      }
+
+      return NextResponse.json({ data: rows, periods })
     }
 
     default:
