@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Plus, Trash2, Copy, ExternalLink, Tag, Link, BarChart2, LogOut, Check, Mail, Send, Clock } from 'lucide-react'
+import { Plus, Trash2, Copy, ExternalLink, Tag, Link, BarChart2, LogOut, Check, Mail, Send, Clock, Users, RefreshCw, Save, CopyPlus } from 'lucide-react'
 
 type DiscountCode = {
   id: string
@@ -27,6 +27,19 @@ type TrackingLink = {
   created_at: string
 }
 
+type ComplianceEntry = {
+  id: string
+  person_name: string
+  role_type: 'streamer' | 'tiktok_creator' | 'creator'
+  twitch_login: string
+  period: string
+  twitch_streams: number
+  tiktok_posts: number
+  yt_shorts: number
+  notes: string
+  updated_at: string
+}
+
 type OrderEmail = {
   id: string
   customer_name: string
@@ -37,9 +50,47 @@ type OrderEmail = {
   notes: string
 }
 
+const ROLE_LABELS: Record<string, string> = {
+  streamer: 'Streamer',
+  tiktok_creator: 'TikTok Creator',
+  creator: 'Creator (TikTok/YT)',
+}
+
+const ROLE_REQUIREMENTS: Record<string, string> = {
+  streamer: 'Twitch: 10–12 streams / month',
+  tiktok_creator: 'TikTok: 5–7 posts / week',
+  creator: '8–10 TikTok + YT Shorts uploads / month',
+}
+
+const ROLE_TARGET: Record<string, number> = {
+  streamer: 10,
+  tiktok_creator: 20,
+  creator: 8,
+}
+
+function getActual(entry: ComplianceEntry) {
+  if (entry.role_type === 'streamer') return entry.twitch_streams
+  if (entry.role_type === 'tiktok_creator') return entry.tiktok_posts
+  return entry.tiktok_posts + entry.yt_shorts
+}
+
+function getCurrentPeriod() {
+  const d = new Date()
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+}
+
+function getStatus(entry: ComplianceEntry) {
+  const target = ROLE_TARGET[entry.role_type]
+  const actual = getActual(entry)
+  const ratio = target > 0 ? actual / target : 0
+  if (ratio >= 1) return { label: 'On Track', color: '#00A878' }
+  if (ratio >= 0.6) return { label: 'Behind', color: '#F0A500' }
+  return { label: 'Non-Compliant', color: '#E8191A' }
+}
+
 export default function AdminDashboard() {
   const router = useRouter()
-  const [tab, setTab] = useState<'codes' | 'links' | 'email'>('codes')
+  const [tab, setTab] = useState<'codes' | 'links' | 'email' | 'compliance'>('codes')
   const [codes, setCodes] = useState<DiscountCode[]>([])
   const [links, setLinks] = useState<TrackingLink[]>([])
   const [orderEmails, setOrderEmails] = useState<OrderEmail[]>([])
@@ -48,6 +99,13 @@ export default function AdminDashboard() {
   const [sending, setSending] = useState(false)
   const [emailSent, setEmailSent] = useState(false)
   const [emailError, setEmailError] = useState('')
+
+  const [complianceEntries, setComplianceEntries] = useState<ComplianceEntry[]>([])
+  const [period, setPeriod] = useState(getCurrentPeriod())
+  const [complianceLoading, setComplianceLoading] = useState(false)
+  const [syncingTwitch, setSyncingTwitch] = useState(false)
+  const [savingRow, setSavingRow] = useState<string | null>(null)
+  const [newPerson, setNewPerson] = useState({ person_name: '', role_type: 'streamer', twitch_login: '' })
 
   const [newCode, setNewCode] = useState({ code: '', type: 'percent', value: '', max_uses: '', expires_at: '', notes: '' })
   const [newLink, setNewLink] = useState({ name: '', slug: '', destination_url: '', sent_to: '', notes: '' })
@@ -60,6 +118,10 @@ export default function AdminDashboard() {
     if (!auth) { router.push('/admin'); return }
     fetchAll()
   }, [])
+
+  useEffect(() => {
+    if (tab === 'compliance') fetchCompliance()
+  }, [tab, period])
 
   const api = async (body: object) => {
     const res = await fetch('/api/admin', {
@@ -81,6 +143,63 @@ export default function AdminDashboard() {
     setLinks(l.data || [])
     setOrderEmails(e.data || [])
     setLoading(false)
+  }
+
+  const fetchCompliance = async () => {
+    setComplianceLoading(true)
+    const res = await api({ action: 'getComplianceEntries', period })
+    setComplianceEntries(res.data || [])
+    setComplianceLoading(false)
+  }
+
+  const addPerson = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newPerson.person_name.trim()) return
+    await api({ action: 'upsertComplianceEntry', ...newPerson, period, twitch_streams: 0, tiktok_posts: 0, yt_shorts: 0, notes: '' })
+    setNewPerson({ person_name: '', role_type: 'streamer', twitch_login: '' })
+    fetchCompliance()
+  }
+
+  const updateRowField = (id: string, field: keyof ComplianceEntry, value: string | number) => {
+    setComplianceEntries(prev => prev.map(row => row.id === id ? { ...row, [field]: value } : row))
+  }
+
+  const saveRow = async (row: ComplianceEntry) => {
+    setSavingRow(row.id)
+    await api({
+      action: 'upsertComplianceEntry',
+      person_name: row.person_name,
+      role_type: row.role_type,
+      twitch_login: row.twitch_login,
+      period: row.period,
+      twitch_streams: Number(row.twitch_streams) || 0,
+      tiktok_posts: Number(row.tiktok_posts) || 0,
+      yt_shorts: Number(row.yt_shorts) || 0,
+      notes: row.notes,
+    })
+    setSavingRow(null)
+    fetchCompliance()
+  }
+
+  const deleteRow = async (id: string) => {
+    if (!confirm('Remove this person from this period?')) return
+    await api({ action: 'deleteComplianceEntry', id })
+    fetchCompliance()
+  }
+
+  const syncTwitch = async () => {
+    setSyncingTwitch(true)
+    await api({ action: 'syncTwitchStreams', period })
+    await fetchCompliance()
+    setSyncingTwitch(false)
+  }
+
+  const copyPreviousPeriod = async () => {
+    const [y, m] = period.split('-').map(Number)
+    const prevDate = new Date(Date.UTC(y, m - 2, 1))
+    const fromPeriod = `${prevDate.getUTCFullYear()}-${String(prevDate.getUTCMonth() + 1).padStart(2, '0')}`
+    await api({ action: 'copyRosterToPeriod', fromPeriod, toPeriod: period })
+    fetchCompliance()
   }
 
   const createCode = async (e: React.FormEvent) => {
@@ -179,6 +298,11 @@ export default function AdminDashboard() {
             <span className="text-white/40 text-sm font-mono">Emails Sent</span>
             <span className="font-display font-black text-xl text-white" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{orderEmails.length}</span>
           </div>
+          <div className="flex items-center gap-3">
+            <Users size={16} className="text-[#E8191A]" />
+            <span className="text-white/40 text-sm font-mono">Tracked This Period</span>
+            <span className="font-display font-black text-xl text-white" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{complianceEntries.length}</span>
+          </div>
         </div>
       </div>
 
@@ -189,6 +313,7 @@ export default function AdminDashboard() {
             { id: 'codes', label: 'Discount Codes', icon: Tag },
             { id: 'links', label: 'Tracking Links', icon: Link },
             { id: 'email', label: 'Send Tracking Email', icon: Mail },
+            { id: 'compliance', label: 'Creator Compliance', icon: Users },
           ].map(({ id, label, icon: Icon }) => (
             <button key={id} onClick={() => setTab(id as any)}
               className="flex items-center gap-2 px-6 py-3 text-sm font-black uppercase tracking-widest transition-all border-b-2"
@@ -499,6 +624,156 @@ export default function AdminDashboard() {
                   </div>
                 ))}
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* CREATOR COMPLIANCE TAB */}
+        {tab === 'compliance' && (
+          <div className="space-y-8">
+            {/* Controls */}
+            <div className="bg-[#141414] border border-white/5 p-6">
+              <div className="flex flex-wrap items-end justify-between gap-4 mb-2">
+                <div>
+                  <h2 className="font-display font-black text-xl text-white uppercase mb-1"
+                    style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>Creator Compliance</h2>
+                  <p className="text-white/40 text-sm font-mono">Tracks streaming/posting activity against org requirements, by month.</p>
+                </div>
+                <div className="flex flex-wrap items-center gap-3">
+                  <div>
+                    <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Period</label>
+                    <input type="month" value={period} onChange={e => setPeriod(e.target.value)}
+                      className="bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-2.5 text-white font-mono text-sm outline-none transition-colors" />
+                  </div>
+                  <button onClick={copyPreviousPeriod}
+                    className="flex items-center gap-2 px-4 py-2.5 border border-white/10 hover:border-white/30 text-white/40 hover:text-white text-xs font-mono uppercase tracking-widest transition-all mt-5">
+                    <CopyPlus size={14} /> Copy Roster From Prior Month
+                  </button>
+                  <button onClick={syncTwitch} disabled={syncingTwitch}
+                    className="flex items-center gap-2 bg-[#E8191A] hover:bg-[#B81011] px-4 py-2.5 font-black tracking-widest uppercase text-xs transition-all text-white clip-corner disabled:opacity-50 mt-5">
+                    <RefreshCw size={14} className={syncingTwitch ? 'animate-spin' : ''} /> {syncingTwitch ? 'Syncing...' : 'Sync Twitch Streams'}
+                  </button>
+                </div>
+              </div>
+              <p className="text-white/25 text-xs font-mono">
+                Twitch stream counts pull automatically from the Twitch API for anyone with a Twitch handle on file. TikTok posts and YT Shorts are entered manually until TikTok auto-sync is set up.
+              </p>
+            </div>
+
+            {/* Add person form */}
+            <div className="bg-[#141414] border border-white/5 p-6">
+              <h3 className="font-display font-black text-lg text-white uppercase mb-4"
+                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>Add Person To This Period</h3>
+              <form onSubmit={addPerson} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div>
+                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Name *</label>
+                  <input required value={newPerson.person_name} onChange={e => setNewPerson({ ...newPerson, person_name: e.target.value })}
+                    placeholder="Dynasty"
+                    className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
+                </div>
+                <div>
+                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Role *</label>
+                  <select value={newPerson.role_type} onChange={e => setNewPerson({ ...newPerson, role_type: e.target.value })}
+                    className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors">
+                    <option value="streamer">Streamer (Twitch)</option>
+                    <option value="tiktok_creator">TikTok Creator</option>
+                    <option value="creator">Creator (TikTok/YT)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Twitch Login (optional, enables auto-sync)</label>
+                  <input value={newPerson.twitch_login} onChange={e => setNewPerson({ ...newPerson, twitch_login: e.target.value.toLowerCase() })}
+                    placeholder="dynasty_k1ng"
+                    className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
+                </div>
+                <div className="flex items-end">
+                  <button type="submit"
+                    className="flex items-center gap-2 bg-[#E8191A] hover:bg-[#B81011] px-6 py-3 font-black tracking-widest uppercase text-sm transition-all text-white clip-corner w-full justify-center"
+                    style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                    <Plus size={14} /> Add
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            {/* Roster table */}
+            <div className="space-y-3">
+              {complianceLoading && (
+                <div className="bg-[#141414] border border-white/5 p-8 text-center">
+                  <p className="text-white/30 font-mono text-sm animate-pulse">Loading roster...</p>
+                </div>
+              )}
+              {!complianceLoading && complianceEntries.length === 0 && (
+                <div className="bg-[#141414] border border-white/5 p-8 text-center">
+                  <p className="text-white/30 font-mono text-sm">No one tracked for this period yet. Add someone above, or copy last month's roster.</p>
+                </div>
+              )}
+              {!complianceLoading && complianceEntries.map((row) => {
+                const status = getStatus(row)
+                const target = ROLE_TARGET[row.role_type]
+                const actual = getActual(row)
+                return (
+                  <div key={row.id} className="bg-[#141414] border border-white/5 p-5">
+                    <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
+                      <div>
+                        <div className="flex items-center gap-3 mb-1">
+                          <span className="font-display font-black text-2xl text-white uppercase"
+                            style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{row.person_name}</span>
+                          <span className="text-xs font-mono px-2 py-0.5 border"
+                            style={{ color: '#00D4FF', borderColor: '#00D4FF40', background: '#00D4FF10' }}>
+                            {ROLE_LABELS[row.role_type]}
+                          </span>
+                          <span className="text-xs font-mono px-2 py-0.5 border"
+                            style={{ color: status.color, borderColor: `${status.color}40`, background: `${status.color}10` }}>
+                            {status.label} ({actual}/{target})
+                          </span>
+                        </div>
+                        <p className="text-white/30 text-xs font-mono">{ROLE_REQUIREMENTS[row.role_type]}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button onClick={() => saveRow(row)} disabled={savingRow === row.id}
+                          className="flex items-center gap-1.5 px-3 py-2 border border-white/10 hover:border-white/30 text-white/40 hover:text-white text-xs font-mono uppercase tracking-widest transition-all disabled:opacity-50">
+                          {savingRow === row.id ? <Clock size={12} className="animate-spin" /> : <Save size={12} />}
+                          Save
+                        </button>
+                        <button onClick={() => deleteRow(row.id)}
+                          className="flex items-center gap-1.5 px-3 py-2 border border-white/10 hover:border-[#E8191A]/50 text-white/40 hover:text-[#E8191A] text-xs font-mono uppercase tracking-widest transition-all">
+                          <Trash2 size={12} />
+                        </button>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
+                      <div>
+                        <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Twitch Login</label>
+                        <input value={row.twitch_login} onChange={e => updateRowField(row.id, 'twitch_login', e.target.value.toLowerCase())}
+                          placeholder="not set"
+                          className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-3 py-2 text-white font-mono text-sm outline-none transition-colors" />
+                      </div>
+                      <div>
+                        <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Twitch Streams</label>
+                        <input type="number" min={0} value={row.twitch_streams} onChange={e => updateRowField(row.id, 'twitch_streams', e.target.value)}
+                          className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-3 py-2 text-white font-mono text-sm outline-none transition-colors" />
+                      </div>
+                      <div>
+                        <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">TikTok Posts</label>
+                        <input type="number" min={0} value={row.tiktok_posts} onChange={e => updateRowField(row.id, 'tiktok_posts', e.target.value)}
+                          className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-3 py-2 text-white font-mono text-sm outline-none transition-colors" />
+                      </div>
+                      <div>
+                        <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">YT Shorts</label>
+                        <input type="number" min={0} value={row.yt_shorts} onChange={e => updateRowField(row.id, 'yt_shorts', e.target.value)}
+                          className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-3 py-2 text-white font-mono text-sm outline-none transition-colors" />
+                      </div>
+                      <div>
+                        <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Notes</label>
+                        <input value={row.notes} onChange={e => updateRowField(row.id, 'notes', e.target.value)}
+                          placeholder="e.g. out sick this week"
+                          className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-3 py-2 text-white font-mono text-sm outline-none transition-colors" />
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
             </div>
           </div>
         )}
