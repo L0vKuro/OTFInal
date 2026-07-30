@@ -11,6 +11,53 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 
 const checkAuth = (password: string) => password === process.env.ADMIN_PASSWORD
 
+async function getTwitchToken() {
+  const res = await fetch(
+    `https://id.twitch.tv/oauth2/token?client_id=${process.env.TWITCH_CLIENT_ID}&client_secret=${process.env.TWITCH_CLIENT_SECRET}&grant_type=client_credentials`,
+    { method: 'POST' }
+  )
+  const data = await res.json()
+  return data.access_token as string
+}
+
+async function countTwitchStreamsInMonth(login: string, period: string, token: string) {
+  const [year, month] = period.split('-').map(Number)
+  const monthStart = new Date(Date.UTC(year, month - 1, 1))
+  const monthEnd = new Date(Date.UTC(year, month, 1))
+
+  const userRes = await fetch(`https://api.twitch.tv/helix/users?login=${login}`, {
+    headers: { 'Client-ID': process.env.TWITCH_CLIENT_ID!, 'Authorization': `Bearer ${token}` },
+  })
+  const userData = await userRes.json()
+  const userId = userData.data?.[0]?.id
+  if (!userId) return 0
+
+  let count = 0
+  let cursor = ''
+  let keepGoing = true
+
+  while (keepGoing) {
+    const url = `https://api.twitch.tv/helix/videos?user_id=${userId}&type=archive&first=100${cursor ? `&after=${cursor}` : ''}`
+    const res = await fetch(url, {
+      headers: { 'Client-ID': process.env.TWITCH_CLIENT_ID!, 'Authorization': `Bearer ${token}` },
+    })
+    const data = await res.json()
+    const videos = data.data || []
+    if (videos.length === 0) break
+
+    for (const v of videos) {
+      const created = new Date(v.created_at)
+      if (created >= monthStart && created < monthEnd) count++
+      if (created < monthStart) keepGoing = false
+    }
+
+    cursor = data.pagination?.cursor
+    if (!cursor) keepGoing = false
+  }
+
+  return count
+}
+
 export async function POST(req: NextRequest) {
   const body = await req.json()
   const { action, password } = body
@@ -193,6 +240,95 @@ export async function POST(req: NextRequest) {
       })
 
       return NextResponse.json({ success: true })
+    }
+
+    case 'getComplianceEntries': {
+      const { data } = await supabase
+        .from('roster_compliance')
+        .select('*')
+        .eq('period', body.period)
+        .order('person_name', { ascending: true })
+      return NextResponse.json({ data })
+    }
+
+    case 'upsertComplianceEntry': {
+      const { data, error } = await supabase
+        .from('roster_compliance')
+        .upsert({
+          person_name: body.person_name,
+          role_type: body.role_type,
+          twitch_login: body.twitch_login || '',
+          period: body.period,
+          twitch_streams: body.twitch_streams ?? 0,
+          tiktok_posts: body.tiktok_posts ?? 0,
+          yt_shorts: body.yt_shorts ?? 0,
+          notes: body.notes || '',
+          updated_at: new Date().toISOString(),
+        }, { onConflict: 'person_name,period' })
+        .select()
+
+      if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+      return NextResponse.json({ data })
+    }
+
+    case 'deleteComplianceEntry': {
+      await supabase.from('roster_compliance').delete().eq('id', body.id)
+      return NextResponse.json({ success: true })
+    }
+
+    case 'copyRosterToPeriod': {
+      const { data: source } = await supabase
+        .from('roster_compliance')
+        .select('*')
+        .eq('period', body.fromPeriod)
+
+      if (source && source.length > 0) {
+        const rows = source.map((r: any) => ({
+          person_name: r.person_name,
+          role_type: r.role_type,
+          twitch_login: r.twitch_login,
+          period: body.toPeriod,
+          twitch_streams: 0,
+          tiktok_posts: 0,
+          yt_shorts: 0,
+          notes: '',
+        }))
+        await supabase
+          .from('roster_compliance')
+          .upsert(rows, { onConflict: 'person_name,period', ignoreDuplicates: true })
+      }
+
+      return NextResponse.json({ success: true })
+    }
+
+    case 'syncTwitchStreams': {
+      const { data: rows } = await supabase
+        .from('roster_compliance')
+        .select('*')
+        .eq('period', body.period)
+        .neq('twitch_login', '')
+
+      if (!rows || rows.length === 0) {
+        return NextResponse.json({ success: true, updated: 0 })
+      }
+
+      const token = await getTwitchToken()
+      let updated = 0
+
+      for (const row of rows) {
+        try {
+          const count = await countTwitchStreamsInMonth(row.twitch_login, body.period, token)
+          await supabase
+            .from('roster_compliance')
+            .update({ twitch_streams: count, updated_at: new Date().toISOString() })
+            .eq('id', row.id)
+          updated++
+        } catch {
+          // skip this creator, keep going
+        }
+      }
+
+      return NextResponse.json({ success: true, updated })
     }
 
     default:
