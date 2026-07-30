@@ -33,7 +33,6 @@ const PLAYER_PHOTOS: Record<string, string> = {
 const TRACKER_LINKS: Record<string, string> = {
   counterstrike: 'https://www.hltv.org/team/13855/overtake-sector',
   deadlock: '',
-  'r6-main': 'https://liquipedia.net/rainbowsix/Overtake_Sector',
 }
 
 function getPlayerPhoto(name: string): string {
@@ -49,7 +48,6 @@ const filteredTeams = teams
   const team = activeTeam as any
   const trackerLink = team.id in TRACKER_LINKS ? TRACKER_LINKS[team.id] : null
   const desc = TEAM_DESCRIPTIONS[team.game] || ''
-  const isFemaleTeam = team.id === 'r6-FEMALE'
 
   return (
     <div className="relative min-h-screen">
@@ -60,31 +58,18 @@ const filteredTeams = teams
         <div className="absolute inset-0 bg-gradient-to-b from-[#E8191A]/5 to-transparent" />
         <div className="relative max-w-7xl mx-auto px-6">
           <p className="text-[#E8191A] text-xs font-mono tracking-widest uppercase mb-4">// Competitive Rosters</p>
-          <div className="flex items-start justify-between gap-4">
-            <h1 className="font-display font-black text-7xl md:text-9xl uppercase text-[#F2F2F2] leading-none"
-              style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-              OUR<br />ROSTERS
-            </h1>
-            <a href="/teams/fortnite"
-              className="flex-shrink-0 flex items-center gap-2 px-6 py-3 font-black tracking-widest uppercase text-sm transition-all duration-300 mt-6 group animate-pulse hover:animate-none"
-              style={{
-                fontFamily: 'Barlow Condensed, sans-serif',
-                color: '#00D4FF',
-                border: '1px solid rgba(0,212,255,0.4)',
-                background: 'rgba(0,212,255,0.08)',
-                clipPath: 'polygon(0 0, 100% 0, 100% 60%, 92% 100%, 0 100%)',
-              }}>
-              Fortnite Division <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
-            </a>
-          </div>
+          <h1 className="font-display font-black text-7xl md:text-9xl uppercase text-[#F2F2F2] leading-none"
+            style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+            OUR<br />ROSTERS
+          </h1>
           <p className="text-[#F2F2F2]/40 text-lg mt-6 max-w-lg">
-            Eight rosters. Eight disciplines. One standard of excellence.
+            Two rosters. One standard of excellence.
           </p>
           <div className="flex flex-wrap gap-4 mt-8">
             {[
-              { label: 'Active Rosters', value: '8' },
+              { label: 'Active Rosters', value: '2' },
               { label: 'Tournament Wins', value: '20+' },
-              { label: 'Active Players', value: '40+' },
+              { label: 'Active Players', value: '11' },
             ].map(({ label, value }) => (
               <div key={label} className="flex items-center gap-3 border border-white/8 px-5 py-3 bg-white/2">
                 <span className="text-[#F2F2F2]/40 text-sm">{label}</span>
@@ -193,7 +178,7 @@ const filteredTeams = teams
               const photo = getPlayerPhoto(player.name)
               const isRedCard = ['NATHAN', 'SHIYO', 'ABYCE'].includes(player.name)
               const isFemaleCoach = ['GINGY', 'JOGORKU'].includes(player.name)
-              const cardColor = isRedCard || isFemaleCoach ? '#E8191A' : isFemaleTeam ? '#FF69B4' : team.color
+              const cardColor = isRedCard || isFemaleCoach ? '#E8191A' : team.color
               const playerSlug = player.name.toLowerCase().replace(/[^a-z0-9]/g, '-')
 
               return (
