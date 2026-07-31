@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Plus, Trash2, Copy, ExternalLink, Tag, Link, BarChart2, LogOut, Check, Mail, Send, Clock, Users, RefreshCw, Save, CopyPlus, Calendar, TrendingUp, UserMinus } from 'lucide-react'
+import { Plus, Trash2, Copy, ExternalLink, Tag, Link, BarChart2, LogOut, Check, Mail, Send, Clock, Users, RefreshCw, Save, CopyPlus, Calendar, TrendingUp, UserMinus, Pencil, X } from 'lucide-react'
 import { teams, creators } from '@/lib/data'
 
 type DiscountCode = {
@@ -34,6 +34,7 @@ type RosterMember = {
   role_type: 'streamer' | 'tiktok_creator' | 'creator'
   twitch_login: string
   youtube_channel: string
+  photo_url: string
   active: boolean
   created_at: string
 }
@@ -94,10 +95,70 @@ const ROLE_TARGET: Record<string, number> = {
 
 const CHART_COLORS = ['#E8191A', '#00D4FF', '#F0A500', '#00A878', '#FF6FB5', '#7A7AFF', '#FF9E4A', '#4AE0C9']
 
-const ROSTER_NAME_OPTIONS = Array.from(new Set([
-  ...teams.flatMap((t: any) => t.roster.map((p: any) => p.name)),
-  ...creators.map((c: any) => c.handle),
-])).sort()
+// Photo filenames for team roster players that don't follow the default
+// `player-{name}.jpg` convention — mirrors the map used on /teams.
+const PLAYER_PHOTOS: Record<string, string> = {
+  ein: 'player-e-in.png',
+  vcipher: 'player-vcipher.png',
+  kiingkooopa: 'player-kiinkooopa.jpg',
+  final: 'player-finalkiss.jpg',
+  gingy: 'coach-gingy.jpg',
+  jogorku: 'coach-jogorku.jpg',
+  emma: 'player-emma.jpg',
+  azzyriax: 'player-azzy.jpg',
+  flip: 'player-flip.jpg',
+  swisz: 'player-Swisz.jpg',
+  ghost: 'player-ghost.jpg',
+  holdmypollo: 'player-pollo.jpg',
+}
+
+function getPlayerPhotoPath(name: string): string {
+  const key = name.toLowerCase().replace(/[^a-z0-9]/g, '')
+  return PLAYER_PHOTOS[key] || `player-${key}.jpg`
+}
+
+function inferCreatorRole(c: any): 'streamer' | 'tiktok_creator' | 'creator' {
+  if (c.socials?.twitch) return 'streamer'
+  if (c.socials?.youtube) return 'creator'
+  return 'tiktok_creator'
+}
+
+// Everyone from lib/data.ts gets auto-tracked — this is sent to the backend on
+// every visit to the tab, and the backend only inserts whoever isn't already there.
+const ROSTER_CANDIDATES = [
+  ...creators.map((c: any) => ({
+    person_name: c.handle,
+    role_type: inferCreatorRole(c),
+    twitch_login: c.socials?.twitch || '',
+    youtube_channel: c.socials?.youtube || '',
+    photo_url: c.photo ? `/${c.photo}` : '',
+  })),
+  ...teams.flatMap((t: any) => t.roster.map((p: any) => ({
+    person_name: p.name,
+    role_type: 'streamer' as const,
+    twitch_login: '',
+    youtube_channel: '',
+    photo_url: `/${getPlayerPhotoPath(p.name)}`,
+  }))),
+]
+
+function Avatar({ src, name, size = 48 }: { src?: string; name: string; size?: number }) {
+  const [failed, setFailed] = useState(false)
+  const initials = name.slice(0, 2).toUpperCase()
+  if (!src || failed) {
+    return (
+      <div className="flex items-center justify-center rounded-full bg-white/10 text-white/50 font-mono font-bold flex-shrink-0"
+        style={{ width: size, height: size, fontSize: size * 0.32 }}>
+        {initials}
+      </div>
+    )
+  }
+  return (
+    <img src={src} alt={name} onError={() => setFailed(true)}
+      className="rounded-full object-cover flex-shrink-0"
+      style={{ width: size, height: size }} />
+  )
+}
 
 function getActual(member: RosterMember, twitchCount: number, youtubeCount: number, tiktokCount: number) {
   if (member.role_type === 'streamer') return twitchCount
@@ -146,7 +207,10 @@ export default function AdminDashboard() {
   const [addingPerson, setAddingPerson] = useState(false)
   const [savingTiktok, setSavingTiktok] = useState<string | null>(null)
   const [tiktokDraft, setTiktokDraft] = useState<Record<string, string>>({})
-  const [newPerson, setNewPerson] = useState({ person_name: '', role_type: 'streamer', twitch_login: '', youtube_channel: '' })
+  const [newPerson, setNewPerson] = useState({ person_name: '', role_type: 'streamer', twitch_login: '', youtube_channel: '', photo_url: '' })
+  const [editingPerson, setEditingPerson] = useState<string | null>(null)
+  const [editDraft, setEditDraft] = useState({ role_type: 'streamer', twitch_login: '', youtube_channel: '', photo_url: '' })
+  const [savingEdit, setSavingEdit] = useState(false)
 
   const [newCode, setNewCode] = useState({ code: '', type: 'percent', value: '', max_uses: '', expires_at: '', notes: '' })
   const [newLink, setNewLink] = useState({ name: '', slug: '', destination_url: '', sent_to: '', notes: '' })
@@ -161,7 +225,15 @@ export default function AdminDashboard() {
   }, [])
 
   useEffect(() => {
-    if (tab === 'compliance') fetchCompliance()
+    if (tab === 'compliance') {
+      (async () => {
+        setComplianceLoading(true)
+        try {
+          await api({ action: 'bulkSeedRoster', candidates: ROSTER_CANDIDATES, period })
+        } catch {}
+        await fetchCompliance()
+      })()
+    }
   }, [tab, period])
 
   const api = async (body: object) => {
@@ -209,7 +281,7 @@ export default function AdminDashboard() {
     if (!newPerson.person_name.trim()) return
     setAddingPerson(true)
     await api({ action: 'addRosterMember', ...newPerson, period })
-    setNewPerson({ person_name: '', role_type: 'streamer', twitch_login: '', youtube_channel: '' })
+    setNewPerson({ person_name: '', role_type: 'streamer', twitch_login: '', youtube_channel: '', photo_url: '' })
     await fetchCompliance()
     setAddingPerson(false)
   }
@@ -218,6 +290,28 @@ export default function AdminDashboard() {
     if (!confirm(`Remove ${person_name} from tracking? Their history stays on record.`)) return
     await api({ action: 'removeRosterMember', person_name })
     fetchCompliance()
+  }
+
+  const startEdit = (member: RosterMember) => {
+    setEditingPerson(member.person_name)
+    setEditDraft({
+      role_type: member.role_type,
+      twitch_login: member.twitch_login || '',
+      youtube_channel: member.youtube_channel || '',
+      photo_url: member.photo_url || '',
+    })
+  }
+
+  const saveEdit = async (person_name: string) => {
+    setSavingEdit(true)
+    await api({ action: 'updateRosterMember', person_name, ...editDraft })
+    await Promise.all([
+      api({ action: 'syncTwitchStreams', period, personName: person_name }),
+      api({ action: 'syncYoutubeUploads', period, personName: person_name }),
+    ])
+    setEditingPerson(null)
+    await fetchCompliance()
+    setSavingEdit(false)
   }
 
   const syncAll = async () => {
@@ -692,20 +786,20 @@ export default function AdminDashboard() {
               </p>
             </div>
 
-            {/* Add person form */}
+            {/* Add person form — only for people NOT already in the site's teams/creators data.
+                Everyone already listed on /teams and /creators is added automatically. */}
             <div className="bg-[#141414] border border-white/5 p-6">
-              <h3 className="font-display font-black text-lg text-white uppercase mb-4"
-                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>Add Person To Tracking</h3>
+              <h3 className="font-display font-black text-lg text-white uppercase mb-1"
+                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>Add New Creator</h3>
+              <p className="text-white/30 text-xs font-mono mb-4">
+                Everyone already on /teams and /creators is tracked automatically above, with their site photo. Only use this for someone new who isn't in the site's roster yet.
+              </p>
               <form onSubmit={addPerson} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                 <div>
                   <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Name *</label>
-                  <select required value={newPerson.person_name} onChange={e => setNewPerson({ ...newPerson, person_name: e.target.value })}
-                    className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors">
-                    <option value="">Select from roster...</option>
-                    {ROSTER_NAME_OPTIONS.filter(name => !rosterMembers.some(m => m.person_name === name)).map(name => (
-                      <option key={name} value={name}>{name}</option>
-                    ))}
-                  </select>
+                  <input required value={newPerson.person_name} onChange={e => setNewPerson({ ...newPerson, person_name: e.target.value })}
+                    placeholder="New Creator Name"
+                    className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
                 </div>
                 <div>
                   <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Role *</label>
@@ -728,9 +822,15 @@ export default function AdminDashboard() {
                     placeholder="UCxxxx or @handle"
                     className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
                 </div>
-                <div className="flex items-end">
+                <div>
+                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Photo URL (optional)</label>
+                  <input value={newPerson.photo_url} onChange={e => setNewPerson({ ...newPerson, photo_url: e.target.value })}
+                    placeholder="Auto-fills from Twitch/YT"
+                    className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
+                </div>
+                <div className="flex items-end sm:col-span-2 lg:col-span-5">
                   <button type="submit" disabled={addingPerson}
-                    className="flex items-center gap-2 bg-[#E8191A] hover:bg-[#B81011] px-6 py-3 font-black tracking-widest uppercase text-sm transition-all text-white clip-corner w-full justify-center disabled:opacity-50"
+                    className="flex items-center gap-2 bg-[#E8191A] hover:bg-[#B81011] px-6 py-3 font-black tracking-widest uppercase text-sm transition-all text-white clip-corner justify-center disabled:opacity-50"
                     style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
                     {addingPerson ? <><Clock size={14} className="animate-spin" /> Adding...</> : <><Plus size={14} /> Add & Track</>}
                   </button>
@@ -757,62 +857,111 @@ export default function AdminDashboard() {
                 const target = ROLE_TARGET[member.role_type]
                 const actual = getActual(member, twitchCount, youtubeCount, tiktokCount)
                 const status = getStatus(actual, target)
+                const isEditing = editingPerson === member.person_name
                 return (
                   <div key={member.id} className="bg-[#141414] border border-white/5 p-5">
                     <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-                      <div>
-                        <div className="flex items-center gap-3 mb-1">
-                          <span className="font-display font-black text-2xl text-white uppercase"
-                            style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{member.person_name}</span>
-                          <span className="text-xs font-mono px-2 py-0.5 border"
-                            style={{ color: '#00D4FF', borderColor: '#00D4FF40', background: '#00D4FF10' }}>
-                            {ROLE_LABELS[member.role_type]}
-                          </span>
-                          <span className="text-xs font-mono px-2 py-0.5 border"
-                            style={{ color: status.color, borderColor: `${status.color}40`, background: `${status.color}10` }}>
-                            {status.label} ({actual}/{target})
-                          </span>
+                      <div className="flex items-start gap-4">
+                        <Avatar src={member.photo_url} name={member.person_name} size={56} />
+                        <div>
+                          <div className="flex items-center gap-3 mb-1">
+                            <span className="font-display font-black text-2xl text-white uppercase"
+                              style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{member.person_name}</span>
+                            <span className="text-xs font-mono px-2 py-0.5 border"
+                              style={{ color: '#00D4FF', borderColor: '#00D4FF40', background: '#00D4FF10' }}>
+                              {ROLE_LABELS[member.role_type]}
+                            </span>
+                            <span className="text-xs font-mono px-2 py-0.5 border"
+                              style={{ color: status.color, borderColor: `${status.color}40`, background: `${status.color}10` }}>
+                              {status.label} ({actual}/{target})
+                            </span>
+                          </div>
+                          <p className="text-white/30 text-xs font-mono">{ROLE_REQUIREMENTS[member.role_type]}</p>
                         </div>
-                        <p className="text-white/30 text-xs font-mono">{ROLE_REQUIREMENTS[member.role_type]}</p>
                       </div>
-                      <button onClick={() => removePerson(member.person_name)}
-                        className="flex items-center gap-1.5 px-3 py-2 border border-white/10 hover:border-[#E8191A]/50 text-white/40 hover:text-[#E8191A] text-xs font-mono uppercase tracking-widest transition-all">
-                        <UserMinus size={12} /> Remove
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button onClick={() => isEditing ? setEditingPerson(null) : startEdit(member)}
+                          className="flex items-center gap-1.5 px-3 py-2 border border-white/10 hover:border-white/30 text-white/40 hover:text-white text-xs font-mono uppercase tracking-widest transition-all">
+                          {isEditing ? <X size={12} /> : <Pencil size={12} />} {isEditing ? 'Cancel' : 'Edit'}
+                        </button>
+                        <button onClick={() => removePerson(member.person_name)}
+                          className="flex items-center gap-1.5 px-3 py-2 border border-white/10 hover:border-[#E8191A]/50 text-white/40 hover:text-[#E8191A] text-xs font-mono uppercase tracking-widest transition-all">
+                          <UserMinus size={12} /> Remove
+                        </button>
+                      </div>
                     </div>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                      <div className="bg-[#0D0D0D] border border-white/5 px-4 py-3">
-                        <p className="text-white/30 text-[10px] font-mono uppercase tracking-widest mb-1">Twitch Streams (auto)</p>
-                        <p className="font-display font-black text-2xl text-white" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-                          {member.twitch_login ? twitchCount : <span className="text-white/20 text-sm font-mono">no handle</span>}
-                        </p>
-                      </div>
-                      <div className="bg-[#0D0D0D] border border-white/5 px-4 py-3">
-                        <p className="text-white/30 text-[10px] font-mono uppercase tracking-widest mb-1">YouTube Uploads (auto)</p>
-                        <p className="font-display font-black text-2xl text-white" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-                          {member.youtube_channel ? youtubeCount : <span className="text-white/20 text-sm font-mono">no channel</span>}
-                        </p>
-                      </div>
-                      <div className="bg-[#0D0D0D] border border-white/5 px-4 py-3">
-                        <p className="text-white/30 text-[10px] font-mono uppercase tracking-widest mb-1">TikTok Posts (manual)</p>
-                        <div className="flex items-center gap-2">
-                          <input type="number" min={0} value={tiktokDraft[member.person_name] ?? '0'}
-                            onChange={e => setTiktokDraft({ ...tiktokDraft, [member.person_name]: e.target.value })}
-                            className="w-16 bg-transparent border-b border-white/20 focus:border-[#E8191A]/60 text-white font-display font-black text-2xl outline-none"
-                            style={{ fontFamily: 'Barlow Condensed, sans-serif' }} />
-                          <button onClick={() => saveTiktok(member.person_name)} disabled={savingTiktok === member.person_name}
-                            className="flex items-center gap-1 px-2 py-1 border border-white/10 hover:border-white/30 text-white/40 hover:text-white text-[10px] font-mono uppercase tracking-widest transition-all disabled:opacity-50">
-                            {savingTiktok === member.person_name ? <Clock size={10} className="animate-spin" /> : <Save size={10} />}
+
+                    {isEditing ? (
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 items-end">
+                        <div>
+                          <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Role</label>
+                          <select value={editDraft.role_type} onChange={e => setEditDraft({ ...editDraft, role_type: e.target.value })}
+                            className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-3 py-2 text-white font-mono text-sm outline-none transition-colors">
+                            <option value="streamer">Streamer (Twitch)</option>
+                            <option value="tiktok_creator">TikTok Creator</option>
+                            <option value="creator">Creator (TikTok/YT)</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Twitch Login</label>
+                          <input value={editDraft.twitch_login} onChange={e => setEditDraft({ ...editDraft, twitch_login: e.target.value.toLowerCase() })}
+                            placeholder="not set"
+                            className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-3 py-2 text-white font-mono text-sm outline-none transition-colors" />
+                        </div>
+                        <div>
+                          <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">YouTube Channel</label>
+                          <input value={editDraft.youtube_channel} onChange={e => setEditDraft({ ...editDraft, youtube_channel: e.target.value })}
+                            placeholder="UCxxxx or @handle"
+                            className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-3 py-2 text-white font-mono text-sm outline-none transition-colors" />
+                        </div>
+                        <div>
+                          <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Photo URL</label>
+                          <input value={editDraft.photo_url} onChange={e => setEditDraft({ ...editDraft, photo_url: e.target.value })}
+                            placeholder="Paste a TikTok/Twitch/YT photo URL"
+                            className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-3 py-2 text-white font-mono text-sm outline-none transition-colors" />
+                        </div>
+                        <div className="col-span-2 sm:col-span-4">
+                          <button onClick={() => saveEdit(member.person_name)} disabled={savingEdit}
+                            className="flex items-center gap-2 bg-[#E8191A] hover:bg-[#B81011] px-6 py-2.5 font-black tracking-widest uppercase text-xs transition-all text-white clip-corner disabled:opacity-50">
+                            {savingEdit ? <><Clock size={12} className="animate-spin" /> Saving...</> : <><Save size={12} /> Save & Re-sync</>}
                           </button>
                         </div>
                       </div>
-                      <div className="bg-[#0D0D0D] border border-white/5 px-4 py-3">
-                        <p className="text-white/30 text-[10px] font-mono uppercase tracking-widest mb-1">Total Activity</p>
-                        <p className="font-display font-black text-2xl text-white" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-                          {twitchCount + youtubeCount + tiktokCount}
-                        </p>
+                    ) : (
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div className="bg-[#0D0D0D] border border-white/5 px-4 py-3">
+                          <p className="text-white/30 text-[10px] font-mono uppercase tracking-widest mb-1">Twitch Streams (auto)</p>
+                          <p className="font-display font-black text-2xl text-white" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                            {member.twitch_login ? twitchCount : <span className="text-white/20 text-sm font-mono">no handle</span>}
+                          </p>
+                        </div>
+                        <div className="bg-[#0D0D0D] border border-white/5 px-4 py-3">
+                          <p className="text-white/30 text-[10px] font-mono uppercase tracking-widest mb-1">YouTube Uploads (auto)</p>
+                          <p className="font-display font-black text-2xl text-white" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                            {member.youtube_channel ? youtubeCount : <span className="text-white/20 text-sm font-mono">no channel</span>}
+                          </p>
+                        </div>
+                        <div className="bg-[#0D0D0D] border border-white/5 px-4 py-3">
+                          <p className="text-white/30 text-[10px] font-mono uppercase tracking-widest mb-1">TikTok Posts (manual)</p>
+                          <div className="flex items-center gap-2">
+                            <input type="number" min={0} value={tiktokDraft[member.person_name] ?? '0'}
+                              onChange={e => setTiktokDraft({ ...tiktokDraft, [member.person_name]: e.target.value })}
+                              className="w-16 bg-transparent border-b border-white/20 focus:border-[#E8191A]/60 text-white font-display font-black text-2xl outline-none"
+                              style={{ fontFamily: 'Barlow Condensed, sans-serif' }} />
+                            <button onClick={() => saveTiktok(member.person_name)} disabled={savingTiktok === member.person_name}
+                              className="flex items-center gap-1 px-2 py-1 border border-white/10 hover:border-white/30 text-white/40 hover:text-white text-[10px] font-mono uppercase tracking-widest transition-all disabled:opacity-50">
+                              {savingTiktok === member.person_name ? <Clock size={10} className="animate-spin" /> : <Save size={10} />}
+                            </button>
+                          </div>
+                        </div>
+                        <div className="bg-[#0D0D0D] border border-white/5 px-4 py-3">
+                          <p className="text-white/30 text-[10px] font-mono uppercase tracking-widest mb-1">Total Activity</p>
+                          <p className="font-display font-black text-2xl text-white" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                            {twitchCount + youtubeCount + tiktokCount}
+                          </p>
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                 )
               })}
