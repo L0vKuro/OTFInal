@@ -82,6 +82,39 @@ async function getYoutubeUploadsPlaylistId(channelValue: string, apiKey: string)
   return data.items?.[0]?.contentDetails?.relatedPlaylists?.uploads || null
 }
 
+// Like getYoutubeUploadsPlaylistId, but also grabs the channel's avatar so we can
+// auto-fill a roster member's photo without the admin having to find/paste one.
+async function getYoutubeChannelInfo(channelValue: string, apiKey: string): Promise<{ uploadsPlaylist: string | null; thumbnailUrl: string | null }> {
+  const value = channelValue.trim()
+  let url = ''
+  if (value.startsWith('UC')) {
+    url = `https://www.googleapis.com/youtube/v3/channels?part=snippet,contentDetails&id=${value}&key=${apiKey}`
+  } else if (value.startsWith('@')) {
+    url = `https://www.googleapis.com/youtube/v3/channels?part=snippet,contentDetails&forHandle=${value}&key=${apiKey}`
+  } else {
+    url = `https://www.googleapis.com/youtube/v3/channels?part=snippet,contentDetails&forUsername=${value}&key=${apiKey}`
+  }
+  const res = await fetch(url)
+  const data = await res.json()
+  const item = data.items?.[0]
+  return {
+    uploadsPlaylist: item?.contentDetails?.relatedPlaylists?.uploads || null,
+    thumbnailUrl: item?.snippet?.thumbnails?.medium?.url || item?.snippet?.thumbnails?.default?.url || null,
+  }
+}
+
+async function getTwitchAvatar(login: string, token: string): Promise<string> {
+  try {
+    const res = await fetch(`https://api.twitch.tv/helix/users?login=${encodeURIComponent(login)}`, {
+      headers: { 'Client-ID': process.env.TWITCH_CLIENT_ID!, 'Authorization': `Bearer ${token}` },
+    })
+    const data = await res.json()
+    return data.data?.[0]?.profile_image_url || ''
+  } catch {
+    return ''
+  }
+}
+
 async function getYoutubeVideosInMonth(channelValue: string, period: string, apiKey: string): Promise<PlatformEvent[]> {
   const { monthStart, monthEnd } = monthRange(period)
   const uploadsPlaylist = await getYoutubeUploadsPlaylistId(channelValue, apiKey)
@@ -320,6 +353,25 @@ export async function POST(req: NextRequest) {
     }
 
     case 'addRosterMember': {
+      const period = body.period || `${new Date().getUTCFullYear()}-${String(new Date().getUTCMonth() + 1).padStart(2, '0')}`
+      const results: any = { twitch: 0, youtube: 0 }
+      let photo_url = body.photo_url || ''
+      let token = ''
+
+      if (body.twitch_login) {
+        try {
+          token = await getTwitchToken()
+          if (!photo_url) photo_url = await getTwitchAvatar(body.twitch_login, token)
+        } catch {}
+      }
+
+      if (!photo_url && body.youtube_channel) {
+        try {
+          const info = await getYoutubeChannelInfo(body.youtube_channel, process.env.YOUTUBE_API_KEY!)
+          photo_url = info.thumbnailUrl || ''
+        } catch {}
+      }
+
       const { error } = await supabase
         .from('roster_members')
         .upsert({
@@ -327,18 +379,16 @@ export async function POST(req: NextRequest) {
           role_type: body.role_type,
           twitch_login: body.twitch_login || '',
           youtube_channel: body.youtube_channel || '',
+          photo_url,
           active: true,
         }, { onConflict: 'person_name' })
 
       if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
       // Kick off an immediate sync for just this person so their stats start populating right away
-      const period = body.period || `${new Date().getUTCFullYear()}-${String(new Date().getUTCMonth() + 1).padStart(2, '0')}`
-      const results: any = { twitch: 0, youtube: 0 }
-
       if (body.twitch_login) {
         try {
-          const token = await getTwitchToken()
+          if (!token) token = await getTwitchToken()
           const events = await getTwitchVideosInMonth(body.twitch_login, period, token)
           if (events.length > 0) {
             await supabase.from('activity_events').upsert(
@@ -363,17 +413,20 @@ export async function POST(req: NextRequest) {
         } catch {}
       }
 
-      return NextResponse.json({ success: true, synced: results })
+      return NextResponse.json({ success: true, synced: results, photo_url })
     }
 
     case 'updateRosterMember': {
+      const update: any = {
+        role_type: body.role_type,
+        twitch_login: body.twitch_login || '',
+        youtube_channel: body.youtube_channel || '',
+      }
+      if (body.photo_url !== undefined) update.photo_url = body.photo_url || ''
+
       const { error } = await supabase
         .from('roster_members')
-        .update({
-          role_type: body.role_type,
-          twitch_login: body.twitch_login || '',
-          youtube_channel: body.youtube_channel || '',
-        })
+        .update(update)
         .eq('person_name', body.person_name)
 
       if (error) return NextResponse.json({ error: error.message }, { status: 500 })
@@ -383,6 +436,93 @@ export async function POST(req: NextRequest) {
     case 'removeRosterMember': {
       await supabase.from('roster_members').update({ active: false }).eq('person_name', body.person_name)
       return NextResponse.json({ success: true })
+    }
+
+    case 'bulkSeedRoster': {
+      // Auto-adds anyone from the site's teams/creators data who isn't already tracked.
+      // Never touches existing rows (including ones the admin removed), so edits and
+      // removals always stick.
+      const { data: existing } = await supabase.from('roster_members').select('person_name')
+      const existingNames = new Set((existing || []).map((r: any) => r.person_name))
+      const candidates = (body.candidates || []) as any[]
+      const toInsert = candidates.filter(c => c.person_name && !existingNames.has(c.person_name))
+
+      if (toInsert.length === 0) {
+        return NextResponse.json({ success: true, added: [] })
+      }
+
+      const period = body.period || `${new Date().getUTCFullYear()}-${String(new Date().getUTCMonth() + 1).padStart(2, '0')}`
+
+      // Batch-resolve Twitch avatars for anyone missing a photo but with a Twitch login
+      let twitchToken = ''
+      const needsTwitchPhoto = toInsert.filter(c => c.twitch_login && !c.photo_url)
+      const twitchAvatars: Record<string, string> = {}
+      if (needsTwitchPhoto.length > 0) {
+        try {
+          twitchToken = await getTwitchToken()
+          const logins = needsTwitchPhoto.map(c => String(c.twitch_login).toLowerCase())
+          const q = logins.map(l => `login=${encodeURIComponent(l)}`).join('&')
+          const res = await fetch(`https://api.twitch.tv/helix/users?${q}`, {
+            headers: { 'Client-ID': process.env.TWITCH_CLIENT_ID!, 'Authorization': `Bearer ${twitchToken}` },
+          })
+          const data = await res.json()
+          for (const u of data.data || []) twitchAvatars[u.login.toLowerCase()] = u.profile_image_url
+        } catch {}
+      }
+
+      const rowsToInsert: any[] = []
+      for (const c of toInsert) {
+        let photo_url = c.photo_url || ''
+        if (!photo_url && c.twitch_login) photo_url = twitchAvatars[String(c.twitch_login).toLowerCase()] || ''
+        if (!photo_url && c.youtube_channel) {
+          try {
+            const info = await getYoutubeChannelInfo(c.youtube_channel, process.env.YOUTUBE_API_KEY!)
+            photo_url = info.thumbnailUrl || ''
+          } catch {}
+        }
+        rowsToInsert.push({
+          person_name: c.person_name,
+          role_type: c.role_type || 'creator',
+          twitch_login: c.twitch_login || '',
+          youtube_channel: c.youtube_channel || '',
+          photo_url,
+          active: true,
+        })
+      }
+
+      const { error } = await supabase.from('roster_members').insert(rowsToInsert)
+      if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+
+      // Sync activity for anyone with handles so stats populate immediately
+      if (!twitchToken && rowsToInsert.some(r => r.twitch_login)) {
+        try { twitchToken = await getTwitchToken() } catch {}
+      }
+      for (const row of rowsToInsert) {
+        if (row.twitch_login && twitchToken) {
+          try {
+            const events = await getTwitchVideosInMonth(row.twitch_login, period, twitchToken)
+            if (events.length > 0) {
+              await supabase.from('activity_events').upsert(
+                events.map(e => ({ person_name: row.person_name, platform: 'twitch', event_date: e.eventDate, external_id: e.externalId, title: e.title })),
+                { onConflict: 'platform,external_id', ignoreDuplicates: true }
+              )
+            }
+          } catch {}
+        }
+        if (row.youtube_channel) {
+          try {
+            const events = await getYoutubeVideosInMonth(row.youtube_channel, period, process.env.YOUTUBE_API_KEY!)
+            if (events.length > 0) {
+              await supabase.from('activity_events').upsert(
+                events.map(e => ({ person_name: row.person_name, platform: 'youtube', event_date: e.eventDate, external_id: e.externalId, title: e.title })),
+                { onConflict: 'platform,external_id', ignoreDuplicates: true }
+              )
+            }
+          } catch {}
+        }
+      }
+
+      return NextResponse.json({ success: true, added: rowsToInsert.map(r => r.person_name) })
     }
 
     case 'getActivityEvents': {
