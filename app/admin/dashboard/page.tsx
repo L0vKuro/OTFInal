@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Plus, Trash2, Copy, ExternalLink, Tag, Link, BarChart2, LogOut, Check, Mail, Send, Clock, Users, RefreshCw, Save, CopyPlus, Calendar, TrendingUp, UserMinus, Pencil, X } from 'lucide-react'
-import { teams, creators } from '@/lib/data'
+import { creators } from '@/lib/data'
 
 type DiscountCode = {
   id: string
@@ -95,52 +95,28 @@ const ROLE_TARGET: Record<string, number> = {
 
 const CHART_COLORS = ['#E8191A', '#00D4FF', '#F0A500', '#00A878', '#FF6FB5', '#7A7AFF', '#FF9E4A', '#4AE0C9']
 
-// Photo filenames for team roster players that don't follow the default
-// `player-{name}.jpg` convention — mirrors the map used on /teams.
-const PLAYER_PHOTOS: Record<string, string> = {
-  ein: 'player-e-in.png',
-  vcipher: 'player-vcipher.png',
-  kiingkooopa: 'player-kiinkooopa.jpg',
-  final: 'player-finalkiss.jpg',
-  gingy: 'coach-gingy.jpg',
-  jogorku: 'coach-jogorku.jpg',
-  emma: 'player-emma.jpg',
-  azzyriax: 'player-azzy.jpg',
-  flip: 'player-flip.jpg',
-  swisz: 'player-Swisz.jpg',
-  ghost: 'player-ghost.jpg',
-  holdmypollo: 'player-pollo.jpg',
-}
-
-function getPlayerPhotoPath(name: string): string {
-  const key = name.toLowerCase().replace(/[^a-z0-9]/g, '')
-  return PLAYER_PHOTOS[key] || `player-${key}.jpg`
-}
-
 function inferCreatorRole(c: any): 'streamer' | 'tiktok_creator' | 'creator' {
   if (c.socials?.twitch) return 'streamer'
   if (c.socials?.youtube) return 'creator'
   return 'tiktok_creator'
 }
 
-// Everyone from lib/data.ts gets auto-tracked — this is sent to the backend on
-// every visit to the tab, and the backend only inserts whoever isn't already there.
-const ROSTER_CANDIDATES = [
-  ...creators.map((c: any) => ({
-    person_name: c.handle,
-    role_type: inferCreatorRole(c),
-    twitch_login: c.socials?.twitch || '',
-    youtube_channel: c.socials?.youtube || '',
-    photo_url: c.photo ? `/${c.photo}` : '',
-  })),
-  ...teams.flatMap((t: any) => t.roster.map((p: any) => ({
-    person_name: p.name,
-    role_type: 'streamer' as const,
-    twitch_login: '',
-    youtube_channel: '',
-    photo_url: `/${getPlayerPhotoPath(p.name)}`,
-  }))),
-]
+// Only the /creators roster gets auto-tracked (not competitive team players) — this
+// is sent to the backend on every visit to the tab, and the backend only inserts
+// whoever isn't already there.
+const ROSTER_CANDIDATES = creators.map((c: any) => ({
+  person_name: c.handle,
+  role_type: inferCreatorRole(c),
+  twitch_login: c.socials?.twitch || '',
+  youtube_channel: c.socials?.youtube || '',
+  photo_url: c.photo ? `/${c.photo}` : '',
+}))
+
+function eventUrl(ev: { platform: string; external_id: string }): string {
+  return ev.platform === 'twitch'
+    ? `https://www.twitch.tv/videos/${ev.external_id}`
+    : `https://www.youtube.com/watch?v=${ev.external_id}`
+}
 
 function Avatar({ src, name, size = 48 }: { src?: string; name: string; size?: number }) {
   const [failed, setFailed] = useState(false)
@@ -786,13 +762,13 @@ export default function AdminDashboard() {
               </p>
             </div>
 
-            {/* Add person form — only for people NOT already in the site's teams/creators data.
-                Everyone already listed on /teams and /creators is added automatically. */}
+            {/* Add person form — only for people NOT already in the site's /creators data.
+                Everyone already listed on /creators is added automatically. */}
             <div className="bg-[#141414] border border-white/5 p-6">
               <h3 className="font-display font-black text-lg text-white uppercase mb-1"
                 style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>Add New Creator</h3>
               <p className="text-white/30 text-xs font-mono mb-4">
-                Everyone already on /teams and /creators is tracked automatically above, with their site photo. Only use this for someone new who isn't in the site's roster yet.
+                Everyone already on /creators is tracked automatically above, with their site photo. Only use this for someone new who isn't listed there yet.
               </p>
               <form onSubmit={addPerson} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                 <div>
@@ -992,14 +968,16 @@ export default function AdminDashboard() {
                           <p className="text-white/30 text-[10px] font-mono mb-1">{day}</p>
                           <div className="space-y-0.5">
                             {dayEvents.slice(0, 3).map(ev => (
-                              <div key={ev.id} title={`${ev.person_name} — ${ev.title}`}
-                                className="text-[9px] font-mono px-1 py-0.5 truncate"
+                              <a key={ev.id} href={eventUrl(ev)} target="_blank" rel="noopener noreferrer"
+                                title={`${ev.person_name} — ${ev.platform === 'twitch' ? 'Twitch stream' : 'YouTube upload'}${ev.title ? ` — ${ev.title}` : ''}`}
+                                className="flex items-center gap-1 text-[9px] font-mono px-1 py-0.5 truncate hover:underline"
                                 style={{
                                   color: ev.platform === 'twitch' ? '#7A7AFF' : '#FF4444',
                                   background: ev.platform === 'twitch' ? '#7A7AFF15' : '#FF444415',
                                 }}>
-                                {ev.person_name}
-                              </div>
+                                <span className="font-bold" style={{ opacity: 0.8 }}>{ev.platform === 'twitch' ? 'TW' : 'YT'}</span>
+                                <span className="truncate">{ev.person_name}</span>
+                              </a>
                             ))}
                             {dayEvents.length > 3 && (
                               <p className="text-white/20 text-[9px] font-mono">+{dayEvents.length - 3} more</p>
