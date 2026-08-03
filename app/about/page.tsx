@@ -39,7 +39,6 @@ const milestones = [
 const leadership = [
   { name: 'Lazur', role: 'CEO / Founder', bio: 'Visionary behind Overtake Sector. Building the org from the ground up with passion and purpose.', twitter: 'wydlazur' },
   { name: 'Kuro', role: 'COO', bio: 'Oversees day-to-day operations and keeps the organization running at its best.', twitter: 'L0vKuro' },
-  { name: 'Isaac', role: 'Esports Director', bio: 'Oversees competitive teams, players, coaches, recruitment, tournament participation, and overall esports operations.', twitter: 'IsaaacBlitz' },
   { name: 'Ghxst', role: 'General Manager & Relations', bio: 'Manages the overall direction of teams and ensures competitive excellence across all titles.', twitter: 'JohnWickFPS' },
   { name: 'Ghost', role: 'Project Manager', bio: 'Coordinates projects and initiatives across the organization to keep everything on track.', twitter: 'GraveGhost_1' },
   { name: 'Dynasty', role: 'Content Manager', bio: 'Leads the content strategy and creative direction for Overtake across all platforms.', twitter: 'DynastyK1NG' },
@@ -52,7 +51,6 @@ const leadership = [
 const quotes = [
   { name: 'Lazur', role: 'CEO / Founder', quote: "Don't worry about failure; you only have to be right once." },
   { name: 'Kuro', role: 'COO', quote: 'Doubt kills more dreams than failure ever will.' },
-  { name: 'Isaac', role: 'Esports Director', quote: 'Good company is the company of clever, well-informed people who have a great deal of conversation — that is what moves things forward.' },
   { name: 'Ghxst', role: 'General Manager & Relations', quote: 'To be a goat, you must learn and overcome the failures and struggles that go along with the dreams you foresee.' },
   { name: 'Ghost', role: 'Project Manager', quote: 'It is during our darkest moments that we must focus to see the light.' },
   { name: 'Dynasty', role: 'Content Manager', quote: 'Life is like a video game, it gets hard because you leveled up.' },
