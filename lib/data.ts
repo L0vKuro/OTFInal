@@ -28,6 +28,35 @@ export const teams = [
       { name: 'MAXX', role: 'PLAYER', country: '🇺🇸', real: '@MaxxTF2', twitter: 'https://x.com/MaxxTF2' },
     ],
   },
+  {
+    id: 'r6academy',
+    game: 'RAINBOW SIX ACADEMY',
+    tag: 'OT',
+    color: '#00D4FF',
+    region: 'NA',
+    roster: [
+      { name: 'KEO', role: 'PLAYER', country: '🇺🇸', real: '@keo197', twitter: 'https://x.com/keo197' },
+      { name: 'CAMO', role: 'PLAYER', country: '🇺🇸', real: '@Camo_R6', twitter: 'https://x.com/Camo_R6' },
+      { name: 'FINAL', role: 'PLAYER', country: '🇺🇸', real: '@finalkiss_', twitter: 'https://x.com/finalkiss_' },
+      { name: 'AJ', role: 'PLAYER', country: '🇺🇸', real: '@applejuice1007', twitter: 'https://x.com/applejuice1007' },
+      { name: 'SWISZ', role: 'PLAYER', country: '🇺🇸', real: '@SwiszKVX', twitter: 'https://x.com/SwiszKVX' },
+    ],
+  },
+  {
+    id: 'r6female',
+    game: 'RAINBOW SIX FEMALE',
+    tag: 'OT',
+    color: '#FF6FB5',
+    region: 'NA',
+    roster: [
+      { name: 'NOTCIERRA', role: 'PLAYER', country: '🇺🇸', real: '@nottCierra', twitter: 'https://x.com/nottCierra' },
+      { name: 'EMMAMUAH', role: 'PLAYER', country: '🇺🇸', real: '@emmamuahh', twitter: 'https://x.com/emmamuahh' },
+      { name: 'AZZYRIAX', role: 'PLAYER', country: '🇺🇸', real: '@azzyriax', twitter: 'https://x.com/azzyriax' },
+      { name: 'ERMIMPALA', role: 'PLAYER', country: '🇺🇸', real: '@ErmImpala', twitter: 'https://x.com/ErmImpala' },
+      { name: 'ZEROWASGONE', role: 'PLAYER', country: '🇺🇸', real: '@zerowasgone', twitter: 'https://x.com/zerowasgone' },
+      { name: 'ITSTHR1LL', role: 'SUB', country: '🇺🇸', real: '@itsTHR1LL', twitter: 'https://x.com/itsTHR1LL' },
+    ],
+  },
 ]
 
 export const creators = [
