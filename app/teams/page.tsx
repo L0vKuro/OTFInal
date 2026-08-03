@@ -8,11 +8,15 @@ import { ChevronRight, ExternalLink } from 'lucide-react'
 const GAME_SHORT: Record<string, string> = {
   'COUNTER-STRIKE': 'CS2',
   'DEADLOCK': 'DL',
+  'RAINBOW SIX ACADEMY': 'R6A',
+  'RAINBOW SIX FEMALE': 'R6F',
 }
 
 const TEAM_DESCRIPTIONS: Record<string, string> = {
   'COUNTER-STRIKE': 'Old school discipline, new era results. Our CS roster brings grit and game sense to every server they touch.',
   'DEADLOCK': 'First movers in a new era. Overtake entered Deadlock early and we\'re here to dominate it.',
+  'RAINBOW SIX ACADEMY': 'The next generation in development. Our R6 Academy squad grinds the fundamentals and climbs the ranks toward the main stage.',
+  'RAINBOW SIX FEMALE': "Competing at the top of the Women's League. Our R6 Female roster brings precision, communication, and results.",
 }
 
 const PLAYER_PHOTOS: Record<string, string> = {
@@ -28,6 +32,8 @@ const PLAYER_PHOTOS: Record<string, string> = {
   swisz: 'player-Swisz.jpg',
   ghost: 'player-ghost.jpg',
   holdmypollo: 'player-pollo.jpg',
+  notcierra: 'player-cierra.jpg',
+  emmamuah: 'player-emma.jpg',
 }
 
 const TRACKER_LINKS: Record<string, string> = {
@@ -63,13 +69,13 @@ const filteredTeams = teams
             OUR<br />ROSTERS
           </h1>
           <p className="text-[#F2F2F2]/40 text-lg mt-6 max-w-lg">
-            Two rosters. One standard of excellence.
+            Four rosters. One standard of excellence.
           </p>
           <div className="flex flex-wrap gap-4 mt-8">
             {[
-              { label: 'Active Rosters', value: '2' },
+              { label: 'Active Rosters', value: '4' },
               { label: 'Tournament Wins', value: '20+' },
-              { label: 'Active Players', value: '11' },
+              { label: 'Active Players', value: '22' },
             ].map(({ label, value }) => (
               <div key={label} className="flex items-center gap-3 border border-white/8 px-5 py-3 bg-white/2">
                 <span className="text-[#F2F2F2]/40 text-sm">{label}</span>
