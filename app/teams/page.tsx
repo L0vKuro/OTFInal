@@ -13,10 +13,10 @@ const GAME_SHORT: Record<string, string> = {
 }
 
 const TEAM_DESCRIPTIONS: Record<string, string> = {
-  'COUNTER-STRIKE': 'Old school discipline, new era results. Our CS roster brings grit and game sense to every server they touch.',
-  'DEADLOCK': 'First movers in a new era. Overtake entered Deadlock early and we\'re here to dominate it.',
-  'RAINBOW SIX ACADEMY': 'The next generation in development. Our R6 Academy squad grinds the fundamentals and climbs the ranks toward the main stage.',
-  'RAINBOW SIX FEMALE': "Competing at the top of the Women's League. Our R6 Female roster brings precision, communication, and results.",
+  'COUNTER-STRIKE': 'No fear, no reset. We show up to end your run.',
+  'DEADLOCK': 'We were here before it was cool. Now we own it.',
+  'RAINBOW SIX ACADEMY': 'Hungry, sharp, and coming for your spot.',
+  'RAINBOW SIX FEMALE': 'Top of the league and not slowing down.',
 }
 
 const PLAYER_PHOTOS: Record<string, string> = {
