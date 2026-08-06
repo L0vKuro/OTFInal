@@ -26,6 +26,7 @@ const PLAYER_PHOTOS: Record<string, string> = {
   final: 'player-finalkiss.jpg',
   gingy: 'coach-gingy.jpg',
   jogorku: 'coach-jogorku.jpg',
+  tumorous: 'coach-TumorousXD.jpg',
   emma: 'player-emma.jpg',
   azzyriax: 'player-azzy.jpg',
   flip: 'player-flip.jpg',
