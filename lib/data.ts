@@ -42,7 +42,7 @@ export const teams = [
       { name: 'SWISZ', role: 'PLAYER', country: '🇺🇸', real: '@SwiszKVX', twitter: 'https://x.com/SwiszKVX' },
     ],
   },
-  {
+ {
     id: 'r6female',
     game: 'RAINBOW SIX FEMALE',
     tag: 'OT',
@@ -55,6 +55,9 @@ export const teams = [
       { name: 'ERMIMPALA', role: 'PLAYER', country: '🇺🇸', real: '@ErmImpala', twitter: 'https://x.com/ErmImpala' },
       { name: 'ZEROWASGONE', role: 'PLAYER', country: '🇺🇸', real: '@zerowasgone', twitter: 'https://x.com/zerowasgone' },
       { name: 'ITSTHR1LL', role: 'SUB', country: '🇺🇸', real: '@itsTHR1LL', twitter: 'https://x.com/itsTHR1LL' },
+      { name: 'GINGY', role: 'HEAD COACH', country: '🇺🇸', real: '@not_gingy', twitter: 'https://x.com/not_gingy' },
+      { name: 'TUMOROUS', role: 'ASSISTANT COACH', country: '🇺🇸', real: '@TumorousXD', twitter: 'https://x.com/TumorousXD' },
+      { name: 'JOGORKU', role: 'ANALYST', country: '🇨🇦', real: '@jogorku', twitter: 'https://x.com/jogorku' },
     ],
   },
 ]
