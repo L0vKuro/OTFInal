@@ -184,7 +184,7 @@ const filteredTeams = teams
             {team.roster.map((player: any, pi: number) => {
               const photo = getPlayerPhoto(player.name)
               const isRedCard = ['NATHAN', 'SHIYO', 'ABYCE'].includes(player.name)
-              const isFemaleCoach = ['GINGY', 'JOGORKU'].includes(player.name)
+              const isFemaleCoach = ['GINGY', 'JOGORKU', 'TUMOROUS'].includes(player.name)
               const cardColor = isRedCard || isFemaleCoach ? '#E8191A' : team.color
               const playerSlug = player.name.toLowerCase().replace(/[^a-z0-9]/g, '-')
 
