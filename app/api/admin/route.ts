@@ -17,6 +17,9 @@ async function getTwitchToken() {
     { method: 'POST' }
   )
   const data = await res.json()
+  if (!res.ok || !data.access_token) {
+    throw new Error(`Twitch auth failed (${res.status}): ${data.message || JSON.stringify(data)}`)
+  }
   return data.access_token as string
 }
 
@@ -36,8 +39,13 @@ async function getTwitchVideosInMonth(login: string, period: string, token: stri
     headers: { 'Client-ID': process.env.TWITCH_CLIENT_ID!, 'Authorization': `Bearer ${token}` },
   })
   const userData = await userRes.json()
+  if (!userRes.ok) {
+    throw new Error(`Twitch user lookup failed for "${login}" (${userRes.status}): ${userData.message || JSON.stringify(userData)}`)
+  }
   const userId = userData.data?.[0]?.id
-  if (!userId) return []
+  if (!userId) {
+    throw new Error(`Twitch login "${login}" not found — check for typos`)
+  }
 
   const events: PlatformEvent[] = []
   let cursor = ''
@@ -49,6 +57,9 @@ async function getTwitchVideosInMonth(login: string, period: string, token: stri
       headers: { 'Client-ID': process.env.TWITCH_CLIENT_ID!, 'Authorization': `Bearer ${token}` },
     })
     const data = await res.json()
+    if (!res.ok) {
+      throw new Error(`Twitch videos lookup failed for "${login}" (${res.status}): ${data.message || JSON.stringify(data)}`)
+    }
     const videos = data.data || []
     if (videos.length === 0) break
 
@@ -67,7 +78,7 @@ async function getTwitchVideosInMonth(login: string, period: string, token: stri
   return events
 }
 
-async function getYoutubeUploadsPlaylistId(channelValue: string, apiKey: string): Promise<string | null> {
+async function getYoutubeUploadsPlaylistId(channelValue: string, apiKey: string): Promise<string> {
   const value = channelValue.trim()
   let url = ''
   if (value.startsWith('UC')) {
@@ -79,7 +90,14 @@ async function getYoutubeUploadsPlaylistId(channelValue: string, apiKey: string)
   }
   const res = await fetch(url)
   const data = await res.json()
-  return data.items?.[0]?.contentDetails?.relatedPlaylists?.uploads || null
+  if (!res.ok) {
+    throw new Error(`YouTube channel lookup failed for "${channelValue}" (${res.status}): ${data.error?.message || JSON.stringify(data)}`)
+  }
+  const playlist = data.items?.[0]?.contentDetails?.relatedPlaylists?.uploads
+  if (!playlist) {
+    throw new Error(`YouTube channel "${channelValue}" not found — check the channel ID/handle for typos`)
+  }
+  return playlist
 }
 
 // Like getYoutubeUploadsPlaylistId, but also grabs the channel's avatar so we can
@@ -118,7 +136,6 @@ async function getTwitchAvatar(login: string, token: string): Promise<string> {
 async function getYoutubeVideosInMonth(channelValue: string, period: string, apiKey: string): Promise<PlatformEvent[]> {
   const { monthStart, monthEnd } = monthRange(period)
   const uploadsPlaylist = await getYoutubeUploadsPlaylistId(channelValue, apiKey)
-  if (!uploadsPlaylist) return []
 
   const events: PlatformEvent[] = []
   let pageToken = ''
@@ -128,6 +145,9 @@ async function getYoutubeVideosInMonth(channelValue: string, period: string, api
     const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylist}&maxResults=50&key=${apiKey}${pageToken ? `&pageToken=${pageToken}` : ''}`
     const res = await fetch(url)
     const data = await res.json()
+    if (!res.ok) {
+      throw new Error(`YouTube playlist lookup failed for "${channelValue}" (${res.status}): ${data.error?.message || JSON.stringify(data)}`)
+    }
     const items = data.items || []
     if (items.length === 0) break
 
@@ -565,12 +585,19 @@ export async function POST(req: NextRequest) {
       const { data: members } = await query
 
       if (!members || members.length === 0) {
-        return NextResponse.json({ success: true, updated: 0, eventsAdded: 0 })
+        return NextResponse.json({ success: true, updated: 0, eventsAdded: 0, errors: [] })
       }
 
-      const token = await getTwitchToken()
+      let token = ''
+      try {
+        token = await getTwitchToken()
+      } catch (err: any) {
+        return NextResponse.json({ error: err.message }, { status: 500 })
+      }
+
       let updated = 0
       let eventsAdded = 0
+      const errors: { person_name: string; error: string }[] = []
 
       for (const member of members) {
         try {
@@ -583,12 +610,12 @@ export async function POST(req: NextRequest) {
           }
           eventsAdded += events.length
           updated++
-        } catch {
-          // skip this creator, keep going
+        } catch (err: any) {
+          errors.push({ person_name: member.person_name, error: err.message })
         }
       }
 
-      return NextResponse.json({ success: true, updated, eventsAdded })
+      return NextResponse.json({ success: true, updated, eventsAdded, errors })
     }
 
     case 'syncYoutubeUploads': {
@@ -597,11 +624,12 @@ export async function POST(req: NextRequest) {
       const { data: members } = await query
 
       if (!members || members.length === 0) {
-        return NextResponse.json({ success: true, updated: 0, eventsAdded: 0 })
+        return NextResponse.json({ success: true, updated: 0, eventsAdded: 0, errors: [] })
       }
 
       let updated = 0
       let eventsAdded = 0
+      const errors: { person_name: string; error: string }[] = []
 
       for (const member of members) {
         try {
@@ -614,12 +642,12 @@ export async function POST(req: NextRequest) {
           }
           eventsAdded += events.length
           updated++
-        } catch {
-          // skip this creator, keep going
+        } catch (err: any) {
+          errors.push({ person_name: member.person_name, error: err.message })
         }
       }
 
-      return NextResponse.json({ success: true, updated, eventsAdded })
+      return NextResponse.json({ success: true, updated, eventsAdded, errors })
     }
 
     case 'getTrendData': {
