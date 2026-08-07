@@ -180,6 +180,7 @@ export default function AdminDashboard() {
   const [period, setPeriod] = useState(getCurrentPeriod())
   const [complianceLoading, setComplianceLoading] = useState(false)
   const [syncing, setSyncing] = useState(false)
+  const [syncErrors, setSyncErrors] = useState<string[]>([])
   const [addingPerson, setAddingPerson] = useState(false)
   const [savingTiktok, setSavingTiktok] = useState<string | null>(null)
   const [tiktokDraft, setTiktokDraft] = useState<Record<string, string>>({})
@@ -292,10 +293,17 @@ export default function AdminDashboard() {
 
   const syncAll = async () => {
     setSyncing(true)
-    await Promise.all([
+    setSyncErrors([])
+    const [twitchRes, youtubeRes] = await Promise.all([
       api({ action: 'syncTwitchStreams', period }),
       api({ action: 'syncYoutubeUploads', period }),
     ])
+    const errs: string[] = []
+    if (twitchRes.error) errs.push(`Twitch auth: ${twitchRes.error}`)
+    if (youtubeRes.error) errs.push(`YouTube auth: ${youtubeRes.error}`)
+    for (const e of (twitchRes.errors || [])) errs.push(`${e.person_name} (Twitch): ${e.error}`)
+    for (const e of (youtubeRes.errors || [])) errs.push(`${e.person_name} (YouTube): ${e.error}`)
+    setSyncErrors(errs)
     await fetchCompliance()
     setSyncing(false)
   }
@@ -760,6 +768,14 @@ export default function AdminDashboard() {
               <p className="text-white/25 text-xs font-mono">
                 Twitch and YouTube activity pull automatically from their APIs for anyone with a handle on file. TikTok posts are entered manually until a TikTok API connection is set up.
               </p>
+              {syncErrors.length > 0 && (
+                <div className="mt-4 bg-[#E8191A]/10 border border-[#E8191A]/30 px-4 py-3 space-y-1">
+                  <p className="text-[#E8191A] text-xs font-mono font-bold uppercase tracking-widest mb-1">Sync issues ({syncErrors.length})</p>
+                  {syncErrors.map((e, i) => (
+                    <p key={i} className="text-[#E8191A]/80 text-xs font-mono">{e}</p>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Add person form — only for people NOT already in the site's /creators data.
