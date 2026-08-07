@@ -23,14 +23,17 @@ function CheckoutContent() {
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(false)
   const [discountCode, setDiscountCode] = useState('')
-  const [discountPercent, setDiscountPercent] = useState(0)
+  const [discountType, setDiscountType] = useState<'percent' | 'fixed'>('percent')
+  const [discountValue, setDiscountValue] = useState(0)
   const [discountError, setDiscountError] = useState('')
   const [discountApplied, setDiscountApplied] = useState(false)
   const [discountLoading, setDiscountLoading] = useState(false)
 
-  const discountedTotal = Math.round(total * (1 - discountPercent / 100) * 100) / 100
+  const discountedTotal = discountType === 'percent'
+    ? Math.round(total * (1 - discountValue / 100) * 100) / 100
+    : Math.max(0, Math.round((total - discountValue) * 100) / 100)
   const savings = Math.round((total - discountedTotal) * 100) / 100
-  const finalTotal = discountPercent > 0 ? discountedTotal : total
+  const finalTotal = discountApplied ? discountedTotal : total
 
   const applyDiscount = async () => {
     if (!discountCode.trim()) return
@@ -44,12 +47,13 @@ function CheckoutContent() {
       })
       const data = await res.json()
       if (data.valid) {
-        setDiscountPercent(data.percent)
+        setDiscountType(data.type)
+        setDiscountValue(data.value)
         setDiscountApplied(true)
         setDiscountError('')
       } else {
         setDiscountError(data.message)
-        setDiscountPercent(0)
+        setDiscountValue(0)
         setDiscountApplied(false)
       }
     } catch {
@@ -90,7 +94,7 @@ function CheckoutContent() {
             nameOnBack: item.nameOnBack,
             numberOnBack: item.numberOnBack,
             price: `$${item.price}.00`,
-            discount: discountPercent > 0 ? `${discountPercent}% off (${discountCode})` : 'None',
+            discount: discountApplied ? `${discountType === 'percent' ? discountValue + '%' : '$' + discountValue} off (${discountCode})` : 'None',
             finalTotal: `$${finalTotal.toFixed(2)}`,
             paypalOrderId,
           }),
@@ -267,7 +271,7 @@ function CheckoutContent() {
                     {discountError && <p className="text-[#E8191A] text-xs font-mono mt-2">{discountError}</p>}
                     {discountApplied && (
                       <p className="text-[#00A878] text-xs font-mono mt-2">
-                        ✓ {discountPercent}% discount applied — you save ${savings.toFixed(2)}!
+                        ✓ {discountType === 'percent' ? `${discountValue}% discount` : `$${discountValue} off`} applied — you save ${savings.toFixed(2)}!
                       </p>
                     )}
                   </div>
@@ -360,7 +364,7 @@ function CheckoutContent() {
                   {discountApplied && (
                     <div className="flex items-center justify-between">
                       <span className="text-[#00A878] text-sm font-mono uppercase flex items-center gap-1">
-                        <Tag size={10} /> {discountPercent}% Off
+                        <Tag size={10} /> {discountType === 'percent' ? `${discountValue}% Off` : `$${discountValue} Off`}
                       </span>
                       <span className="text-[#00A878] text-sm font-mono">-${savings.toFixed(2)}</span>
                     </div>
