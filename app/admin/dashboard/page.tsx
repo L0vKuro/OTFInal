@@ -1122,6 +1122,62 @@ export default function AdminDashboard() {
                 )
               })()}
             </div>
+
+            {/* How this works */}
+            <div className="bg-[#141414] border border-white/5 p-6">
+              <h3 className="font-display font-black text-lg text-white uppercase mb-4"
+                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>How This Tool Works</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5 text-sm">
+                <div>
+                  <p className="text-[#00D4FF] text-xs font-mono uppercase tracking-widest mb-1">Who gets tracked</p>
+                  <p className="text-white/50 leading-relaxed">
+                    Everyone listed on the public /creators page is added here automatically, using their site photo and whatever Twitch/YouTube handles are on file. You only need the "Add New Creator" form for someone new who isn't on /creators yet — anyone already there will just show up on its own next time you open this tab.
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[#00D4FF] text-xs font-mono uppercase tracking-widest mb-1">Periods are monthly</p>
+                  <p className="text-white/50 leading-relaxed">
+                    The "Period" field controls which month you're viewing — codes, streams, uploads, and the calendar all scope to it. Switching periods doesn't delete or change anything, it just changes what you're looking at.
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[#00D4FF] text-xs font-mono uppercase tracking-widest mb-1">Twitch & YouTube are automatic — but not live</p>
+                  <p className="text-white/50 leading-relaxed">
+                    Stream and upload counts pull straight from the Twitch/YouTube APIs, but only when you click "Sync Twitch & YouTube." Nothing runs in the background — if it's been a while since the last sync, the numbers you see are stale, not necessarily zero. If a sync fails for someone, it shows up as a red error under the sync button with the exact reason (usually a wrong or misspelled handle).
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[#00D4FF] text-xs font-mono uppercase tracking-widest mb-1">TikTok is manual</p>
+                  <p className="text-white/50 leading-relaxed">
+                    There's no TikTok API connection yet, so post counts have to be typed in by hand per person, per month, using the number field on their card. Nothing else needs to be touched for TikTok — just the number.
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[#00D4FF] text-xs font-mono uppercase tracking-widest mb-1">Editing a handle re-syncs immediately</p>
+                  <p className="text-white/50 leading-relaxed">
+                    Hitting "Save & Re-sync" after editing someone's Twitch login or YouTube channel pulls their activity again right away, so a typo fix shows updated numbers within a few seconds — no need to hit the big Sync button separately.
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[#00D4FF] text-xs font-mono uppercase tracking-widest mb-1">"Remove" is safe — nothing is deleted</p>
+                  <p className="text-white/50 leading-relaxed">
+                    Removing someone just stops tracking them going forward; their past activity and history stay in the system. If they're still listed on /creators, they'll get auto-added back the next time you open this tab — so removal is really meant for people who've left, not a way to permanently wipe someone.
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[#00D4FF] text-xs font-mono uppercase tracking-widest mb-1">This data also powers the public leaderboard</p>
+                  <p className="text-white/50 leading-relaxed">
+                    The "This Month's Leaders" board on the public /creators page reads directly from the same synced data shown here. If someone's numbers look wrong here, they'll look wrong there too — fixing it in this tab (handle, then re-sync) fixes both places at once.
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[#00D4FF] text-xs font-mono uppercase tracking-widest mb-1">Calendar & trend chart are just visualizations</p>
+                  <p className="text-white/50 leading-relaxed">
+                    Both are read-only — they can't be edited directly, they just reflect whatever's already been synced or entered above. Use the calendar's All/Twitch/YouTube tabs to see who's been active on a given platform, and the trend chart to spot who's ramping up or falling off week to week.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>
