@@ -26,6 +26,7 @@ const CREATOR_LOGINS = [
   'l0ki_xjg',
   'nitromadnes',
   'otnexus',
+  'clawr6s',
 ]
 
 async function getToken() {
