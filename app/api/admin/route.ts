@@ -35,7 +35,11 @@ function monthRange(period: string) {
 async function getTwitchVideosInMonth(login: string, period: string, token: string): Promise<PlatformEvent[]> {
   const { monthStart, monthEnd } = monthRange(period)
 
-  const userRes = await fetch(`https://api.twitch.tv/helix/users?login=${login}`, {
+  // Twitch's API only matches the exact lowercase login — mixed-case handles (as
+  // typed into the site's creator data) will silently fail to resolve otherwise.
+  const loginLower = login.trim().toLowerCase()
+
+  const userRes = await fetch(`https://api.twitch.tv/helix/users?login=${encodeURIComponent(loginLower)}`, {
     headers: { 'Client-ID': process.env.TWITCH_CLIENT_ID!, 'Authorization': `Bearer ${token}` },
   })
   const userData = await userRes.json()
@@ -78,24 +82,59 @@ async function getTwitchVideosInMonth(login: string, period: string, token: stri
   return events
 }
 
-async function getYoutubeUploadsPlaylistId(channelValue: string, apiKey: string): Promise<string> {
-  const value = channelValue.trim()
-  let url = ''
+// Site data has stored YouTube channels in inconsistent formats over time — some as
+// bare channel IDs, some with a "channel/" prefix, some as full URLs, some as a
+// handle missing its leading "@". This normalizes+resolves all of them by trying
+// every plausible lookup strategy until one returns a real channel.
+async function fetchYoutubeChannelItem(channelValue: string, apiKey: string, part: string): Promise<{ item: any | null; lastError: string | null }> {
+  let value = channelValue.trim()
+  if (value.startsWith('channel/')) value = value.slice('channel/'.length)
+  if (value.startsWith('http')) {
+    try {
+      const u = new URL(value)
+      const segments = u.pathname.split('/').filter(Boolean)
+      if (segments[0] === 'channel' && segments[1]) value = segments[1]
+      else if (segments[0]?.startsWith('@')) value = segments[0]
+      else if ((segments[0] === 'c' || segments[0] === 'user') && segments[1]) value = segments[1]
+    } catch {}
+  }
+
+  const tryFetch = async (url: string) => {
+    const res = await fetch(url)
+    const data = await res.json()
+    if (!res.ok) return { item: null, error: data.error?.message || `HTTP ${res.status}` }
+    return { item: data.items?.[0] || null, error: null }
+  }
+
+  let lastError: string | null = null
+
   if (value.startsWith('UC')) {
-    url = `https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${value}&key=${apiKey}`
+    const r = await tryFetch(`https://www.googleapis.com/youtube/v3/channels?part=${part}&id=${value}&key=${apiKey}`)
+    if (r.item) return { item: r.item, lastError: null }
+    lastError = r.error
   } else if (value.startsWith('@')) {
-    url = `https://www.googleapis.com/youtube/v3/channels?part=contentDetails&forHandle=${value}&key=${apiKey}`
+    const r = await tryFetch(`https://www.googleapis.com/youtube/v3/channels?part=${part}&forHandle=${value}&key=${apiKey}`)
+    if (r.item) return { item: r.item, lastError: null }
+    lastError = r.error
   } else {
-    url = `https://www.googleapis.com/youtube/v3/channels?part=contentDetails&forUsername=${value}&key=${apiKey}`
+    // Bare username with no prefix — try the legacy username lookup first, then
+    // fall back to treating it as a handle that's just missing its "@".
+    const r1 = await tryFetch(`https://www.googleapis.com/youtube/v3/channels?part=${part}&forUsername=${value}&key=${apiKey}`)
+    if (r1.item) return { item: r1.item, lastError: null }
+    lastError = r1.error
+    const r2 = await tryFetch(`https://www.googleapis.com/youtube/v3/channels?part=${part}&forHandle=@${value}&key=${apiKey}`)
+    if (r2.item) return { item: r2.item, lastError: null }
+    lastError = r2.error || lastError
   }
-  const res = await fetch(url)
-  const data = await res.json()
-  if (!res.ok) {
-    throw new Error(`YouTube channel lookup failed for "${channelValue}" (${res.status}): ${data.error?.message || JSON.stringify(data)}`)
-  }
-  const playlist = data.items?.[0]?.contentDetails?.relatedPlaylists?.uploads
+
+  return { item: null, lastError }
+}
+
+async function getYoutubeUploadsPlaylistId(channelValue: string, apiKey: string): Promise<string> {
+  const { item, lastError } = await fetchYoutubeChannelItem(channelValue, apiKey, 'contentDetails')
+  const playlist = item?.contentDetails?.relatedPlaylists?.uploads
   if (!playlist) {
-    throw new Error(`YouTube channel "${channelValue}" not found — check the channel ID/handle for typos`)
+    throw new Error(`YouTube channel "${channelValue}" not found${lastError ? ` (${lastError})` : ''} — check the channel ID/handle for typos`)
   }
   return playlist
 }
@@ -103,18 +142,7 @@ async function getYoutubeUploadsPlaylistId(channelValue: string, apiKey: string)
 // Like getYoutubeUploadsPlaylistId, but also grabs the channel's avatar so we can
 // auto-fill a roster member's photo without the admin having to find/paste one.
 async function getYoutubeChannelInfo(channelValue: string, apiKey: string): Promise<{ uploadsPlaylist: string | null; thumbnailUrl: string | null }> {
-  const value = channelValue.trim()
-  let url = ''
-  if (value.startsWith('UC')) {
-    url = `https://www.googleapis.com/youtube/v3/channels?part=snippet,contentDetails&id=${value}&key=${apiKey}`
-  } else if (value.startsWith('@')) {
-    url = `https://www.googleapis.com/youtube/v3/channels?part=snippet,contentDetails&forHandle=${value}&key=${apiKey}`
-  } else {
-    url = `https://www.googleapis.com/youtube/v3/channels?part=snippet,contentDetails&forUsername=${value}&key=${apiKey}`
-  }
-  const res = await fetch(url)
-  const data = await res.json()
-  const item = data.items?.[0]
+  const { item } = await fetchYoutubeChannelItem(channelValue, apiKey, 'snippet,contentDetails')
   return {
     uploadsPlaylist: item?.contentDetails?.relatedPlaylists?.uploads || null,
     thumbnailUrl: item?.snippet?.thumbnails?.medium?.url || item?.snippet?.thumbnails?.default?.url || null,
@@ -123,7 +151,7 @@ async function getYoutubeChannelInfo(channelValue: string, apiKey: string): Prom
 
 async function getTwitchAvatar(login: string, token: string): Promise<string> {
   try {
-    const res = await fetch(`https://api.twitch.tv/helix/users?login=${encodeURIComponent(login)}`, {
+    const res = await fetch(`https://api.twitch.tv/helix/users?login=${encodeURIComponent(login.trim().toLowerCase())}`, {
       headers: { 'Client-ID': process.env.TWITCH_CLIENT_ID!, 'Authorization': `Bearer ${token}` },
     })
     const data = await res.json()
