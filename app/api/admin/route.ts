@@ -23,7 +23,7 @@ async function getTwitchToken() {
   return data.access_token as string
 }
 
-type PlatformEvent = { externalId: string; eventDate: string; title: string }
+type PlatformEvent = { externalId: string; eventDate: string; title: string; viewCount: number }
 
 function monthRange(period: string) {
   const [year, month] = period.split('-').map(Number)
@@ -70,7 +70,7 @@ async function getTwitchVideosInMonth(login: string, period: string, token: stri
     for (const v of videos) {
       const created = new Date(v.created_at)
       if (created >= monthStart && created < monthEnd) {
-        events.push({ externalId: v.id, eventDate: v.created_at.slice(0, 10), title: v.title || '' })
+        events.push({ externalId: v.id, eventDate: v.created_at.slice(0, 10), title: v.title || '', viewCount: v.view_count || 0 })
       }
       if (created < monthStart) keepGoing = false
     }
@@ -185,7 +185,7 @@ async function getYoutubeVideosInMonth(channelValue: string, period: string, api
       const published = new Date(publishedAt)
       const videoId = item.snippet?.resourceId?.videoId
       if (published >= monthStart && published < monthEnd && videoId) {
-        events.push({ externalId: videoId, eventDate: publishedAt.slice(0, 10), title: item.snippet?.title || '' })
+        events.push({ externalId: videoId, eventDate: publishedAt.slice(0, 10), title: item.snippet?.title || '', viewCount: 0 })
       }
       if (published < monthStart) keepGoing = false
     }
@@ -194,17 +194,40 @@ async function getYoutubeVideosInMonth(channelValue: string, period: string, api
     if (!pageToken) keepGoing = false
   }
 
+  // playlistItems doesn't include view counts — batch-fetch them separately
+  // (YouTube allows up to 50 video IDs per call).
+  for (let i = 0; i < events.length; i += 50) {
+    const chunk = events.slice(i, i + 50)
+    const ids = chunk.map(e => e.externalId).join(',')
+    try {
+      const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${ids}&key=${apiKey}`)
+      const data = await res.json()
+      const viewMap: Record<string, number> = {}
+      for (const item of data.items || []) viewMap[item.id] = parseInt(item.statistics?.viewCount || '0', 10) || 0
+      for (const e of chunk) e.viewCount = viewMap[e.externalId] || 0
+    } catch {}
+  }
+
   return events
 }
 
-function periodsBack(count: number): string[] {
-  const periods: string[] = []
+// Returns 'count' Monday-aligned week buckets, oldest first, ending on the most
+// recent Monday-started week that contains today.
+function weeksBack(count: number): { start: Date; end: Date; label: string }[] {
+  const weeks: { start: Date; end: Date; label: string }[] = []
   const now = new Date()
+  const day = now.getUTCDay()
+  const diffToMonday = (day + 6) % 7
+  const thisMonday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - diffToMonday))
   for (let i = count - 1; i >= 0; i--) {
-    const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - i, 1))
-    periods.push(`${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`)
+    const start = new Date(thisMonday)
+    start.setUTCDate(thisMonday.getUTCDate() - i * 7)
+    const end = new Date(start)
+    end.setUTCDate(start.getUTCDate() + 7)
+    const label = `${String(start.getUTCMonth() + 1).padStart(2, '0')}/${String(start.getUTCDate()).padStart(2, '0')}`
+    weeks.push({ start, end, label })
   }
-  return periods
+  return weeks
 }
 
 export async function POST(req: NextRequest) {
@@ -440,7 +463,7 @@ export async function POST(req: NextRequest) {
           const events = await getTwitchVideosInMonth(body.twitch_login, period, token)
           if (events.length > 0) {
             await supabase.from('activity_events').upsert(
-              events.map(e => ({ person_name: body.person_name, platform: 'twitch', event_date: e.eventDate, external_id: e.externalId, title: e.title })),
+              events.map(e => ({ person_name: body.person_name, platform: 'twitch', event_date: e.eventDate, external_id: e.externalId, title: e.title, view_count: e.viewCount })),
               { onConflict: 'platform,external_id', ignoreDuplicates: true }
             )
           }
@@ -453,7 +476,7 @@ export async function POST(req: NextRequest) {
           const events = await getYoutubeVideosInMonth(body.youtube_channel, period, process.env.YOUTUBE_API_KEY!)
           if (events.length > 0) {
             await supabase.from('activity_events').upsert(
-              events.map(e => ({ person_name: body.person_name, platform: 'youtube', event_date: e.eventDate, external_id: e.externalId, title: e.title })),
+              events.map(e => ({ person_name: body.person_name, platform: 'youtube', event_date: e.eventDate, external_id: e.externalId, title: e.title, view_count: e.viewCount })),
               { onConflict: 'platform,external_id', ignoreDuplicates: true }
             )
           }
@@ -551,7 +574,7 @@ export async function POST(req: NextRequest) {
             const events = await getTwitchVideosInMonth(row.twitch_login, period, twitchToken)
             if (events.length > 0) {
               await supabase.from('activity_events').upsert(
-                events.map(e => ({ person_name: row.person_name, platform: 'twitch', event_date: e.eventDate, external_id: e.externalId, title: e.title })),
+                events.map(e => ({ person_name: row.person_name, platform: 'twitch', event_date: e.eventDate, external_id: e.externalId, title: e.title, view_count: e.viewCount })),
                 { onConflict: 'platform,external_id', ignoreDuplicates: true }
               )
             }
@@ -562,7 +585,7 @@ export async function POST(req: NextRequest) {
             const events = await getYoutubeVideosInMonth(row.youtube_channel, period, process.env.YOUTUBE_API_KEY!)
             if (events.length > 0) {
               await supabase.from('activity_events').upsert(
-                events.map(e => ({ person_name: row.person_name, platform: 'youtube', event_date: e.eventDate, external_id: e.externalId, title: e.title })),
+                events.map(e => ({ person_name: row.person_name, platform: 'youtube', event_date: e.eventDate, external_id: e.externalId, title: e.title, view_count: e.viewCount })),
                 { onConflict: 'platform,external_id', ignoreDuplicates: true }
               )
             }
@@ -632,7 +655,7 @@ export async function POST(req: NextRequest) {
           const events = await getTwitchVideosInMonth(member.twitch_login, body.period, token)
           if (events.length > 0) {
             await supabase.from('activity_events').upsert(
-              events.map(e => ({ person_name: member.person_name, platform: 'twitch', event_date: e.eventDate, external_id: e.externalId, title: e.title })),
+              events.map(e => ({ person_name: member.person_name, platform: 'twitch', event_date: e.eventDate, external_id: e.externalId, title: e.title, view_count: e.viewCount })),
               { onConflict: 'platform,external_id', ignoreDuplicates: true }
             )
           }
@@ -664,7 +687,7 @@ export async function POST(req: NextRequest) {
           const events = await getYoutubeVideosInMonth(member.youtube_channel, body.period, process.env.YOUTUBE_API_KEY!)
           if (events.length > 0) {
             await supabase.from('activity_events').upsert(
-              events.map(e => ({ person_name: member.person_name, platform: 'youtube', event_date: e.eventDate, external_id: e.externalId, title: e.title })),
+              events.map(e => ({ person_name: member.person_name, platform: 'youtube', event_date: e.eventDate, external_id: e.externalId, title: e.title, view_count: e.viewCount })),
               { onConflict: 'platform,external_id', ignoreDuplicates: true }
             )
           }
@@ -679,46 +702,65 @@ export async function POST(req: NextRequest) {
     }
 
     case 'getTrendData': {
-      const months = body.months || 3
-      const periods = periodsBack(months)
-      const earliest = monthRange(periods[0]).monthStart.toISOString().slice(0, 10)
+      const weeksCount = body.weeks || 12
+      const weeks = weeksBack(weeksCount)
+      const earliest = weeks[0].start.toISOString().slice(0, 10)
 
       const { data: events } = await supabase
         .from('activity_events')
         .select('person_name, platform, event_date')
         .gte('event_date', earliest)
 
+      // TikTok is only tracked as a monthly manual count, not per-day — spread each
+      // month's total evenly across whichever weeks in this window fall in that month.
+      const monthPeriods = new Set<string>()
+      for (const w of weeks) {
+        monthPeriods.add(`${w.start.getUTCFullYear()}-${String(w.start.getUTCMonth() + 1).padStart(2, '0')}`)
+      }
       const { data: tiktokRows } = await supabase
         .from('tiktok_manual_counts')
         .select('person_name, period, tiktok_posts')
-        .in('period', periods)
+        .in('period', Array.from(monthPeriods))
+
+      const weeksInMonth: Record<string, number> = {}
+      for (const w of weeks) {
+        const m = `${w.start.getUTCFullYear()}-${String(w.start.getUTCMonth() + 1).padStart(2, '0')}`
+        weeksInMonth[m] = (weeksInMonth[m] || 0) + 1
+      }
 
       const buckets: Record<string, Record<string, { twitch: number; youtube: number; tiktok: number }>> = {}
-      for (const period of periods) buckets[period] = {}
+      for (const w of weeks) buckets[w.label] = {}
 
       for (const ev of events || []) {
-        const period = ev.event_date.slice(0, 7)
-        if (!buckets[period]) continue
-        if (!buckets[period][ev.person_name]) buckets[period][ev.person_name] = { twitch: 0, youtube: 0, tiktok: 0 }
-        if (ev.platform === 'twitch') buckets[period][ev.person_name].twitch++
-        if (ev.platform === 'youtube') buckets[period][ev.person_name].youtube++
+        const evDate = new Date(ev.event_date + 'T00:00:00Z')
+        const w = weeks.find(w => evDate >= w.start && evDate < w.end)
+        if (!w) continue
+        if (!buckets[w.label][ev.person_name]) buckets[w.label][ev.person_name] = { twitch: 0, youtube: 0, tiktok: 0 }
+        if (ev.platform === 'twitch') buckets[w.label][ev.person_name].twitch++
+        if (ev.platform === 'youtube') buckets[w.label][ev.person_name].youtube++
       }
 
       for (const row of tiktokRows || []) {
-        if (!buckets[row.period]) continue
-        if (!buckets[row.period][row.person_name]) buckets[row.period][row.person_name] = { twitch: 0, youtube: 0, tiktok: 0 }
-        buckets[row.period][row.person_name].tiktok = row.tiktok_posts
-      }
-
-      const rows: any[] = []
-      for (const period of periods) {
-        for (const person_name of Object.keys(buckets[period])) {
-          const b = buckets[period][person_name]
-          rows.push({ period, person_name, twitch: b.twitch, youtube: b.youtube, tiktok: b.tiktok, total: b.twitch + b.youtube + b.tiktok })
+        const count = weeksInMonth[row.period] || 1
+        const perWeek = row.tiktok_posts / count
+        for (const w of weeks) {
+          const m = `${w.start.getUTCFullYear()}-${String(w.start.getUTCMonth() + 1).padStart(2, '0')}`
+          if (m !== row.period) continue
+          if (!buckets[w.label][row.person_name]) buckets[w.label][row.person_name] = { twitch: 0, youtube: 0, tiktok: 0 }
+          buckets[w.label][row.person_name].tiktok += perWeek
         }
       }
 
-      return NextResponse.json({ data: rows, periods })
+      const rows: any[] = []
+      for (const w of weeks) {
+        for (const person_name of Object.keys(buckets[w.label])) {
+          const b = buckets[w.label][person_name]
+          const tiktok = Math.round(b.tiktok * 10) / 10
+          rows.push({ period: w.label, person_name, twitch: b.twitch, youtube: b.youtube, tiktok, total: Math.round((b.twitch + b.youtube + tiktok) * 10) / 10 })
+        }
+      }
+
+      return NextResponse.json({ data: rows, periods: weeks.map(w => w.label) })
     }
 
     default:
