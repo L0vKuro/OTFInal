@@ -1,16 +1,17 @@
 'use client'
 
 import { useState, Suspense } from 'react'
-import { useRouter } from 'next/navigation'
-import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js'
-import { ChevronRight, Lock, ShoppingBag, Trash2, Tag, Check } from 'lucide-react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { ChevronRight, Lock, ShoppingBag, Trash2, Tag, Check, CreditCard } from 'lucide-react'
 import { useCart } from '@/components/CartContext'
 
 function CheckoutContent() {
   const router = useRouter()
-  const { items, removeItem, total, clearCart, loaded } = useCart()
+  const searchParams = useSearchParams()
+  const canceled = searchParams.get('canceled') === 'true'
+  const { items, removeItem, total, loaded } = useCart()
 
-  const [step, setStep] = useState<'info' | 'payment' | 'success'>('info')
+  const [step, setStep] = useState<'info' | 'payment'>('info')
   const [form, setForm] = useState({
     customerName: '',
     customerEmail: '',
@@ -22,6 +23,7 @@ function CheckoutContent() {
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(false)
+  const [checkoutError, setCheckoutError] = useState('')
   const [discountCode, setDiscountCode] = useState('')
   const [discountType, setDiscountType] = useState<'percent' | 'fixed'>('percent')
   const [discountValue, setDiscountValue] = useState(0)
@@ -80,62 +82,37 @@ function CheckoutContent() {
     if (validate()) setStep('payment')
   }
 
-  const handleApprove = async (paypalOrderId: string) => {
+  const startStripeCheckout = async () => {
     setLoading(true)
+    setCheckoutError('')
     try {
-      for (const item of items) {
-        await fetch('/api/orders', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            ...form,
-            product: item.name,
-            size: item.size,
-            nameOnBack: item.nameOnBack,
-            numberOnBack: item.numberOnBack,
-            price: `$${item.price}.00`,
-            discount: discountApplied ? `${discountType === 'percent' ? discountValue + '%' : '$' + discountValue} off (${discountCode})` : 'None',
-            finalTotal: `$${finalTotal.toFixed(2)}`,
-            paypalOrderId,
-          }),
-        })
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items,
+          form,
+          discountCode: discountApplied ? discountCode : '',
+        }),
+      })
+      const data = await res.json()
+      if (data.url) {
+        // Full navigation to Stripe's hosted checkout — cart state resets on return,
+        // which is fine since the order is already captured by then.
+        window.location.href = data.url
+      } else {
+        setCheckoutError(data.error || 'Could not start checkout. Please try again.')
+        setLoading(false)
       }
-      clearCart()
-      setStep('success')
     } catch (err) {
       console.error(err)
-    } finally {
+      setCheckoutError('Could not start checkout. Please try again.')
       setLoading(false)
     }
   }
 
   const inputClass = (field: string) =>
     `w-full bg-[#0D0D0D] border ${errors[field] ? 'border-[#E8191A]' : 'border-white/10'} px-4 py-3 text-[#F2F2F2] text-sm font-mono focus:outline-none focus:border-[#E8191A]/60 transition-colors`
-
-  if (step === 'success') {
-    return (
-      <div className="relative min-h-screen pt-36 pb-20">
-        <div className="absolute inset-0 bg-grid opacity-20 pointer-events-none" />
-        <div className="relative max-w-2xl mx-auto px-6">
-          <div className="bg-[#141414] border border-[#00A878]/30 p-12 text-center">
-            <div className="h-px w-full bg-gradient-to-r from-[#00A878] to-transparent mb-8" />
-            <div className="w-16 h-16 mx-auto mb-6 flex items-center justify-center bg-[#00A878]/10 border border-[#00A878]/30 rounded-full">
-              <span className="text-3xl">✓</span>
-            </div>
-            <h2 className="font-display font-black text-4xl uppercase text-[#F2F2F2] mb-3"
-              style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>Order Confirmed!</h2>
-            <p className="text-[#F2F2F2]/50 mb-2">Thanks for repping Overtake, {form.customerName}.</p>
-            <p className="text-[#F2F2F2]/30 text-sm font-mono mb-8">A confirmation email has been sent to {form.customerEmail}</p>
-            <button onClick={() => router.push('/store')}
-              className="inline-flex items-center gap-2 bg-[#E8191A] hover:bg-[#B81011] px-8 py-4 font-black tracking-widest uppercase text-sm transition-all text-white clip-corner"
-              style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-              Back to Store <ChevronRight size={14} />
-            </button>
-          </div>
-        </div>
-      </div>
-    )
-  }
 
   if (!loaded) {
     return (
@@ -160,6 +137,12 @@ function CheckoutContent() {
             Complete Your Order
           </h1>
         </div>
+
+        {canceled && (
+          <div className="bg-[#F0A500]/10 border border-[#F0A500]/30 px-5 py-3 mb-6">
+            <p className="text-[#F0A500] text-sm font-mono">Payment was canceled — your cart items are still below, nothing was charged.</p>
+          </div>
+        )}
 
         {items.length === 0 ? (
           <div className="bg-[#141414] border border-white/5 p-12 text-center">
@@ -296,32 +279,31 @@ function CheckoutContent() {
                     className="text-[#F2F2F2]/30 hover:text-[#F2F2F2] text-xs font-mono uppercase tracking-widest mb-6 block transition-colors">
                     ← Back to Info
                   </button>
-                  <PayPalScriptProvider options={{
-                    clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID!,
-                    currency: 'USD',
-                  }}>
-                    <PayPalButtons
-                      style={{ layout: 'vertical', color: 'gold', shape: 'rect', label: 'pay' }}
-                      createOrder={(data, actions) => {
-                        return actions.order.create({
-                          intent: 'CAPTURE',
-                          purchase_units: [{
-                            amount: {
-                              currency_code: 'USD',
-                              value: finalTotal.toFixed(2),
-                            },
-                            description: items.map(i => `${i.name} (${i.size})`).join(', '),
-                          }],
-                        })
-                      }}
-                      onApprove={async (data, actions) => {
-                        if (actions.order) {
-                          await actions.order.capture()
-                          await handleApprove(data.orderID)
-                        }
-                      }}
-                    />
-                  </PayPalScriptProvider>
+
+                  <p className="text-[#F2F2F2]/50 text-sm leading-relaxed mb-6">
+                    You'll be taken to Stripe's secure checkout page to enter your card details. Nothing is charged until you complete payment there.
+                  </p>
+
+                  {checkoutError && (
+                    <div className="bg-[#E8191A]/10 border border-[#E8191A]/30 px-4 py-3 mb-6">
+                      <p className="text-[#E8191A] text-sm font-mono">{checkoutError}</p>
+                    </div>
+                  )}
+
+                  <button onClick={startStripeCheckout} disabled={loading}
+                    className="w-full flex items-center justify-center gap-3 bg-[#635BFF] hover:bg-[#4F46E5] px-10 py-5 font-black tracking-widest uppercase text-base transition-all clip-corner text-white disabled:opacity-50"
+                    style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                    {loading ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                        Redirecting...
+                      </>
+                    ) : (
+                      <>
+                        <CreditCard size={18} /> Pay ${finalTotal.toFixed(2)} with Stripe
+                      </>
+                    )}
+                  </button>
                 </div>
               )}
             </div>
@@ -376,7 +358,7 @@ function CheckoutContent() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2 mt-4 text-[#F2F2F2]/20 text-xs font-mono">
-                  <Lock size={10} /> Secured by PayPal
+                  <Lock size={10} /> Secured by Stripe
                 </div>
               </div>
             </div>
