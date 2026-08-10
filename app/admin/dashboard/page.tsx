@@ -161,6 +161,36 @@ function daysInPeriod(period: string) {
   return { dayCount, firstWeekday }
 }
 
+// Smooth Catmull-Rom-to-Bezier curve through a set of points, instead of a jagged
+// straight-line polyline — makes sparse weekly data actually look like a trend line.
+function smoothLinePath(points: { x: number; y: number }[]): string {
+  if (points.length === 0) return ''
+  if (points.length === 1) return `M${points[0].x},${points[0].y}`
+  if (points.length === 2) return `M${points[0].x},${points[0].y} L${points[1].x},${points[1].y}`
+  let d = `M${points[0].x},${points[0].y}`
+  for (let i = 0; i < points.length - 1; i++) {
+    const p0 = points[i === 0 ? i : i - 1]
+    const p1 = points[i]
+    const p2 = points[i + 1]
+    const p3 = points[i + 2 < points.length ? i + 2 : i + 1]
+    const cp1x = p1.x + (p2.x - p0.x) / 6
+    const cp1y = p1.y + (p2.y - p0.y) / 6
+    const cp2x = p2.x - (p3.x - p1.x) / 6
+    const cp2y = p2.y - (p3.y - p1.y) / 6
+    d += ` C${cp1x},${cp1y} ${cp2x},${cp2y} ${p2.x},${p2.y}`
+  }
+  return d
+}
+
+// Closes a smoothed line down to a baseline to make a soft filled area beneath it.
+function smoothAreaPath(points: { x: number; y: number }[], baselineY: number): string {
+  const line = smoothLinePath(points)
+  if (!line || points.length === 0) return ''
+  const last = points[points.length - 1]
+  const first = points[0]
+  return `${line} L${last.x},${baselineY} L${first.x},${baselineY} Z`
+}
+
 export default function AdminDashboard() {
   const router = useRouter()
   const [tab, setTab] = useState<'codes' | 'links' | 'email' | 'compliance'>('codes')
@@ -177,6 +207,8 @@ export default function AdminDashboard() {
   const [activityEvents, setActivityEvents] = useState<ActivityEvent[]>([])
   const [tiktokCounts, setTiktokCounts] = useState<TiktokCount[]>([])
   const [trendData, setTrendData] = useState<TrendRow[]>([])
+  const [trendPeriodsOrder, setTrendPeriodsOrder] = useState<string[]>([])
+  const [calendarFilter, setCalendarFilter] = useState<'all' | 'twitch' | 'youtube'>('all')
   const [period, setPeriod] = useState(getCurrentPeriod())
   const [complianceLoading, setComplianceLoading] = useState(false)
   const [syncing, setSyncing] = useState(false)
@@ -241,12 +273,13 @@ export default function AdminDashboard() {
       api({ action: 'getRosterMembers' }),
       api({ action: 'getActivityEvents', period }),
       api({ action: 'getTiktokCounts', period }),
-      api({ action: 'getTrendData', months: 3 }),
+      api({ action: 'getTrendData', weeks: 12 }),
     ])
     setRosterMembers(members.data || [])
     setActivityEvents(events.data || [])
     setTiktokCounts(tiktok.data || [])
     setTrendData(trend.data || [])
+    setTrendPeriodsOrder(trend.periods || [])
     const draft: Record<string, string> = {}
     for (const t of (tiktok.data || [])) draft[t.person_name] = String(t.tiktok_posts)
     setTiktokDraft(draft)
@@ -961,11 +994,25 @@ export default function AdminDashboard() {
 
             {/* Calendar */}
             <div className="bg-[#141414] border border-white/5 p-6">
-              <div className="flex items-center gap-3 mb-6">
+              <div className="flex flex-wrap items-center gap-3 mb-6">
                 <Calendar size={18} className="text-[#E8191A]" />
                 <h3 className="font-display font-black text-lg text-white uppercase"
                   style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>Activity Calendar</h3>
-                <span className="text-white/30 text-xs font-mono">Twitch streams + YouTube uploads by day (TikTok not date-tracked yet)</span>
+                <div className="flex items-center gap-1 ml-auto">
+                  {(['all', 'twitch', 'youtube'] as const).map(f => (
+                    <button key={f} onClick={() => setCalendarFilter(f)}
+                      className="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest transition-all border"
+                      style={{
+                        fontFamily: 'Barlow Condensed, sans-serif',
+                        color: calendarFilter === f ? '#F2F2F2' : 'rgba(242,242,242,0.3)',
+                        borderColor: calendarFilter === f ? (f === 'twitch' ? '#7A7AFF' : f === 'youtube' ? '#FF4444' : 'rgba(255,255,255,0.2)') : 'rgba(255,255,255,0.05)',
+                        background: calendarFilter === f ? (f === 'twitch' ? '#7A7AFF15' : f === 'youtube' ? '#FF444415' : 'rgba(255,255,255,0.05)') : 'transparent',
+                      }}>
+                      {f === 'all' ? 'All' : f === 'twitch' ? 'Twitch' : 'YouTube'}
+                    </button>
+                  ))}
+                </div>
+                <span className="text-white/30 text-xs font-mono w-full">Twitch streams + YouTube uploads by day (TikTok not date-tracked yet)</span>
               </div>
               {(() => {
                 const { dayCount, firstWeekday } = daysInPeriod(period)
@@ -978,7 +1025,7 @@ export default function AdminDashboard() {
                     {cells.map((day, i) => {
                       if (day === null) return <div key={`blank-${i}`} />
                       const dateStr = `${period}-${String(day).padStart(2, '0')}`
-                      const dayEvents = activityEvents.filter(e => e.event_date === dateStr)
+                      const dayEvents = activityEvents.filter(e => e.event_date === dateStr && (calendarFilter === 'all' || e.platform === calendarFilter))
                       return (
                         <div key={dateStr} className="bg-[#0D0D0D] border border-white/5 min-h-[64px] p-1.5">
                           <p className="text-white/30 text-[10px] font-mono mb-1">{day}</p>
@@ -1012,47 +1059,53 @@ export default function AdminDashboard() {
               <div className="flex items-center gap-3 mb-6">
                 <TrendingUp size={18} className="text-[#E8191A]" />
                 <h3 className="font-display font-black text-lg text-white uppercase"
-                  style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>3-Month Trend</h3>
-                <span className="text-white/30 text-xs font-mono">Total monthly activity per person — use this to spot who's improving or falling off</span>
+                  style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>12-Week Trend</h3>
+                <span className="text-white/30 text-xs font-mono">Total weekly activity per person — use this to spot who's improving or falling off</span>
               </div>
               {(() => {
-                const trendPeriods = Array.from(new Set(trendData.map(r => r.period))).sort()
+                const trendPeriods = trendPeriodsOrder.length > 0 ? trendPeriodsOrder : Array.from(new Set(trendData.map(r => r.period)))
                 const personNames = Array.from(new Set(trendData.map(r => r.person_name))).sort()
                 if (trendPeriods.length === 0 || personNames.length === 0) {
                   return <p className="text-white/30 font-mono text-sm">Not enough data yet — sync some activity first.</p>
                 }
                 const maxVal = Math.max(1, ...trendData.map(r => r.total))
                 const chartW = 640
-                const chartH = 220
+                const chartH = 240
                 const padL = 30
                 const padB = 24
+                const padT = 14
                 const plotW = chartW - padL - 10
-                const plotH = chartH - padB - 10
+                const plotH = chartH - padB - padT
+                const baselineY = padT + plotH
                 const xFor = (i: number) => padL + (trendPeriods.length > 1 ? (i / (trendPeriods.length - 1)) * plotW : plotW / 2)
-                const yFor = (v: number) => 10 + plotH - (v / maxVal) * plotH
+                const yFor = (v: number) => padT + plotH - (v / maxVal) * plotH
+                // Only label every other week if there are a lot of them, so labels don't collide
+                const labelStep = trendPeriods.length > 8 ? 2 : 1
                 return (
                   <div>
-                    <svg viewBox={`0 0 ${chartW} ${chartH}`} className="w-full" style={{ maxHeight: '280px' }}>
+                    <svg viewBox={`0 0 ${chartW} ${chartH}`} className="w-full" style={{ maxHeight: '300px' }}>
                       {[0, 0.5, 1].map(f => (
-                        <line key={f} x1={padL} x2={chartW - 10} y1={10 + plotH * (1 - f)} y2={10 + plotH * (1 - f)}
+                        <line key={f} x1={padL} x2={chartW - 10} y1={padT + plotH * (1 - f)} y2={padT + plotH * (1 - f)}
                           stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
                       ))}
                       {trendPeriods.map((p, i) => (
-                        <text key={p} x={xFor(i)} y={chartH - 6} fill="rgba(255,255,255,0.3)" fontSize="9" textAnchor="middle" fontFamily="monospace">{p}</text>
+                        i % labelStep === 0 ? (
+                          <text key={p} x={xFor(i)} y={chartH - 6} fill="rgba(255,255,255,0.3)" fontSize="9" textAnchor="middle" fontFamily="monospace">{p}</text>
+                        ) : null
                       ))}
                       {personNames.map((name, pi) => {
                         const color = CHART_COLORS[pi % CHART_COLORS.length]
                         const points = trendPeriods.map((p, i) => {
                           const row = trendData.find(r => r.person_name === name && r.period === p)
-                          return `${xFor(i)},${yFor(row ? row.total : 0)}`
-                        }).join(' ')
+                          return { x: xFor(i), y: yFor(row ? row.total : 0) }
+                        })
                         return (
                           <g key={name}>
-                            <polyline points={points} fill="none" stroke={color} strokeWidth="2" />
-                            {trendPeriods.map((p, i) => {
-                              const row = trendData.find(r => r.person_name === name && r.period === p)
-                              return <circle key={p} cx={xFor(i)} cy={yFor(row ? row.total : 0)} r="2.5" fill={color} />
-                            })}
+                            <path d={smoothAreaPath(points, baselineY)} fill={color} opacity={0.08} stroke="none" />
+                            <path d={smoothLinePath(points)} fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" />
+                            {points.map((pt, i) => (
+                              <circle key={i} cx={pt.x} cy={pt.y} r="3" fill="#141414" stroke={color} strokeWidth="2" />
+                            ))}
                           </g>
                         )
                       })}
