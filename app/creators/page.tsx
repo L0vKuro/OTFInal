@@ -73,7 +73,7 @@ function LeaderAvatar({ src, name }: { src?: string; name: string }) {
   )
 }
 
-function LeaderboardBoard({ title, icon: Icon, color, rows, unit }: { title: string; icon: any; color: string; rows: LeaderRow[]; getValue?: never; unit: (r: LeaderRow) => number }) {
+function LeaderboardBoard({ title, icon: Icon, color, rows, unit, platformLabel }: { title: string; icon: any; color: string; rows: LeaderRow[]; getValue?: never; unit: (r: LeaderRow) => number; platformLabel: string }) {
   return (
     <div className="bg-[#141414] border border-white/5 overflow-hidden">
       <div className="h-px w-full" style={{ background: `linear-gradient(90deg, ${color}, transparent)` }} />
@@ -81,6 +81,8 @@ function LeaderboardBoard({ title, icon: Icon, color, rows, unit }: { title: str
         <Icon size={14} style={{ color }} />
         <h3 className="font-display font-black text-sm text-[#F2F2F2] uppercase tracking-wide"
           style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{title}</h3>
+        <span className="text-[9px] font-mono uppercase tracking-widest px-1.5 py-0.5 border ml-auto"
+          style={{ color, borderColor: `${color}40`, background: `${color}10` }}>{platformLabel}</span>
       </div>
       {rows.length === 0 ? (
         <p className="text-white/20 text-xs font-mono px-5 pb-5">No data yet this month.</p>
@@ -249,9 +251,9 @@ export default function CreatorsPage() {
               <span className="text-white/25 text-xs font-mono">{leaderboard!.period}</span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <LeaderboardBoard title="Most Streams" icon={Video} color="#9146FF" rows={leaderboard!.topStreams} unit={r => r.streams} />
-              <LeaderboardBoard title="Most Uploads" icon={Upload} color="#FF0000" rows={leaderboard!.topUploads} unit={r => r.uploads} />
-              <LeaderboardBoard title="Most Views" icon={Eye} color="#E8191A" rows={leaderboard!.topViews} unit={r => r.views} />
+              <LeaderboardBoard title="Most Streams" icon={Video} color="#9146FF" rows={leaderboard!.topStreams} unit={r => r.streams} platformLabel="Twitch" />
+              <LeaderboardBoard title="Most Uploads" icon={Upload} color="#FF0000" rows={leaderboard!.topUploads} unit={r => r.uploads} platformLabel="YouTube" />
+              <LeaderboardBoard title="Most Views" icon={Eye} color="#E8191A" rows={leaderboard!.topViews} unit={r => r.views} platformLabel="Twitch + YouTube" />
             </div>
           </div>
         </div>
