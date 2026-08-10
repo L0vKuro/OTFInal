@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { creators } from '@/lib/data'
-import { ExternalLink, Users, TrendingUp, Tv } from 'lucide-react'
+import { ExternalLink, Users, TrendingUp, Tv, Video, Upload, Eye, Trophy } from 'lucide-react'
 
 type TwitchStream = {
   user_login: string
@@ -21,6 +21,21 @@ type YouTubeStream = {
   url: string
 }
 
+type LeaderRow = {
+  person_name: string
+  photo_url: string
+  streams: number
+  uploads: number
+  views: number
+}
+
+type LeaderboardData = {
+  period: string
+  topStreams: LeaderRow[]
+  topUploads: LeaderRow[]
+  topViews: LeaderRow[]
+}
+
 const PLATFORM_COLORS: Record<string, string> = {
   Twitch: '#9146FF',
   YouTube: '#FF0000',
@@ -34,9 +49,65 @@ const TIER_LABELS: Record<number, string> = {
   3: 'Tier 3',
 }
 
+function formatNum(n: number): string {
+  if (n >= 1000000) return `${(n / 1000000).toFixed(1)}M`
+  if (n >= 1000) return `${(n / 1000).toFixed(1)}k`
+  return String(n)
+}
+
+function LeaderAvatar({ src, name }: { src?: string; name: string }) {
+  const [failed, setFailed] = useState(false)
+  const initials = name.slice(0, 2).toUpperCase()
+  if (!src || failed) {
+    return (
+      <div className="flex items-center justify-center rounded-full bg-white/10 text-white/50 font-mono font-bold flex-shrink-0"
+        style={{ width: 36, height: 36, fontSize: 12 }}>
+        {initials}
+      </div>
+    )
+  }
+  return (
+    <img src={src} alt={name} onError={() => setFailed(true)}
+      className="rounded-full object-cover flex-shrink-0"
+      style={{ width: 36, height: 36 }} />
+  )
+}
+
+function LeaderboardBoard({ title, icon: Icon, color, rows, unit }: { title: string; icon: any; color: string; rows: LeaderRow[]; getValue?: never; unit: (r: LeaderRow) => number }) {
+  return (
+    <div className="bg-[#141414] border border-white/5 overflow-hidden">
+      <div className="h-px w-full" style={{ background: `linear-gradient(90deg, ${color}, transparent)` }} />
+      <div className="flex items-center gap-2 px-5 pt-5 pb-3">
+        <Icon size={14} style={{ color }} />
+        <h3 className="font-display font-black text-sm text-[#F2F2F2] uppercase tracking-wide"
+          style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{title}</h3>
+      </div>
+      {rows.length === 0 ? (
+        <p className="text-white/20 text-xs font-mono px-5 pb-5">No data yet this month.</p>
+      ) : (
+        <div className="px-2 pb-3">
+          {rows.map((r, i) => (
+            <div key={r.person_name} className="flex items-center gap-3 px-3 py-2">
+              <span className="font-display font-black text-lg w-5 text-center flex-shrink-0"
+                style={{ fontFamily: 'Barlow Condensed, sans-serif', color: i === 0 ? color : 'rgba(242,242,242,0.25)' }}>
+                {i + 1}
+              </span>
+              <LeaderAvatar src={r.photo_url} name={r.person_name} />
+              <span className="flex-1 min-w-0 truncate font-display font-black text-sm text-[#F2F2F2] uppercase"
+                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{r.person_name}</span>
+              <span className="text-xs font-mono flex-shrink-0" style={{ color }}>{formatNum(unit(r))}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function CreatorsPage() {
   const [twitchStreams, setTwitchStreams] = useState<TwitchStream[]>([])
   const [youtubeStreams, setYoutubeStreams] = useState<YouTubeStream[]>([])
+  const [leaderboard, setLeaderboard] = useState<LeaderboardData | null>(null)
   const [selected, setSelected] = useState<any>(null)
   const [filter, setFilter] = useState<'all' | 'live'>('all')
 
@@ -49,6 +120,11 @@ export default function CreatorsPage() {
     fetch('/api/youtube-live')
       .then(r => r.json())
       .then(d => setYoutubeStreams(d.streams || []))
+      .catch(() => {})
+
+    fetch('/api/leaderboard')
+      .then(r => r.json())
+      .then(d => setLeaderboard(d))
       .catch(() => {})
   }, [])
 
@@ -98,6 +174,8 @@ export default function CreatorsPage() {
 
   const liveCount = creators.filter(c => isLive(c)).length
   const displayed = filter === 'live' ? creators.filter(c => isLive(c)) : creators
+
+  const hasLeaderboardData = leaderboard && (leaderboard.topStreams.length > 0 || leaderboard.topUploads.length > 0 || leaderboard.topViews.length > 0)
 
   return (
     <div className="relative min-h-screen">
@@ -159,6 +237,25 @@ export default function CreatorsPage() {
           )}
         </div>
       </div>
+
+      {/* Leaderboard */}
+      {hasLeaderboardData && (
+        <div className="border-b border-white/5 bg-white/[0.015]">
+          <div className="max-w-7xl mx-auto px-6 py-16">
+            <div className="flex items-center gap-3 mb-8">
+              <Trophy size={18} className="text-[#E8191A]" />
+              <h2 className="font-display font-black text-3xl text-[#F2F2F2] uppercase"
+                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>This Month's Leaders</h2>
+              <span className="text-white/25 text-xs font-mono">{leaderboard!.period}</span>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <LeaderboardBoard title="Most Streams" icon={Video} color="#9146FF" rows={leaderboard!.topStreams} unit={r => r.streams} />
+              <LeaderboardBoard title="Most Uploads" icon={Upload} color="#FF0000" rows={leaderboard!.topUploads} unit={r => r.uploads} />
+              <LeaderboardBoard title="Most Views" icon={Eye} color="#E8191A" rows={leaderboard!.topViews} unit={r => r.views} />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Creator grid */}
       <div className="max-w-7xl mx-auto px-6 py-20">
