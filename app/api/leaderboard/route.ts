@@ -11,26 +11,58 @@ function currentPeriod() {
   return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`
 }
 
+function periodBounds(period: string) {
+  const [y, m] = period.split('-').map(Number)
+  return {
+    start: new Date(Date.UTC(y, m - 1, 1)).toISOString().slice(0, 10),
+    end: new Date(Date.UTC(y, m, 1)).toISOString().slice(0, 10),
+  }
+}
+
 // Public, unauthenticated — powers the leaderboard on /creators. Reads pre-synced
 // data from Supabase only (no live Twitch/YouTube API calls), so this stays fast
 // and never burns API quota on public traffic.
 export async function GET() {
   try {
-    const period = currentPeriod()
-    const [y, m] = period.split('-').map(Number)
-    const monthStart = new Date(Date.UTC(y, m - 1, 1)).toISOString().slice(0, 10)
-    const monthEnd = new Date(Date.UTC(y, m, 1)).toISOString().slice(0, 10)
+    let period = currentPeriod()
+    let { start: monthStart, end: monthEnd } = periodBounds(period)
+
+    let { data: events } = await supabase
+      .from('activity_events')
+      .select('person_name, platform, view_count, event_date')
+      .gte('event_date', monthStart)
+      .lt('event_date', monthEnd)
+
+    // Nothing synced for the current calendar month yet (early in the month, or the
+    // admin hasn't hit "Sync" since it rolled over) — fall back to whichever month
+    // actually has the most recent synced activity, so this always reflects real
+    // Creator Compliance data instead of going blank on a technicality.
+    if (!events || events.length === 0) {
+      const { data: latest } = await supabase
+        .from('activity_events')
+        .select('event_date')
+        .order('event_date', { ascending: false })
+        .limit(1)
+      const latestDate = latest?.[0]?.event_date
+      if (latestDate) {
+        const d = new Date(latestDate + 'T00:00:00Z')
+        period = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`
+        const bounds = periodBounds(period)
+        monthStart = bounds.start
+        monthEnd = bounds.end
+        const res = await supabase
+          .from('activity_events')
+          .select('person_name, platform, view_count, event_date')
+          .gte('event_date', monthStart)
+          .lt('event_date', monthEnd)
+        events = res.data
+      }
+    }
 
     const { data: members } = await supabase
       .from('roster_members')
       .select('person_name, photo_url')
       .eq('active', true)
-
-    const { data: events } = await supabase
-      .from('activity_events')
-      .select('person_name, platform, view_count')
-      .gte('event_date', monthStart)
-      .lt('event_date', monthEnd)
 
     const photoMap: Record<string, string> = {}
     for (const mem of members || []) photoMap[mem.person_name] = mem.photo_url || ''
