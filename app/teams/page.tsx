@@ -1,24 +1,20 @@
 'use client'
-
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { teams } from '@/lib/data'
 import { ChevronRight, ExternalLink } from 'lucide-react'
-
 const GAME_SHORT: Record<string, string> = {
   'COUNTER-STRIKE': 'CS2',
   'DEADLOCK': 'DL',
   'RAINBOW SIX ACADEMY': 'R6A',
   'RAINBOW SIX FEMALE': 'R6F',
 }
-
 const TEAM_DESCRIPTIONS: Record<string, string> = {
   'COUNTER-STRIKE': 'No fear, no reset. We show up to end your run.',
   'DEADLOCK': 'We were here before it was cool. Now we own it.',
   'RAINBOW SIX ACADEMY': 'Hungry, sharp, and coming for your spot.',
   'RAINBOW SIX FEMALE': 'Top of the league and not slowing down.',
 }
-
 const PLAYER_PHOTOS: Record<string, string> = {
   ein: 'player-e-in.png',
   vcipher: 'player-vcipher.png',
@@ -35,20 +31,16 @@ const PLAYER_PHOTOS: Record<string, string> = {
   holdmypollo: 'player-pollo.jpg',
   notcierra: 'player-cierra.jpg',
   emmamuah: 'player-emma.jpg',
-  itsThr1ll: 'player-itsthr1ll.jpg',
+  itsthrill: 'player-itsthr1ll.jpg',
 }
-
 const TRACKER_LINKS: Record<string, string> = {
   counterstrike: 'https://www.hltv.org/team/13855/overtake-sector',
   deadlock: '',
 }
-
 function getPlayerPhoto(name: string): string {
   const key = name.toLowerCase().replace(/[^a-z0-9]/g, '')
   return PLAYER_PHOTOS[key] || `player-${key}.jpg`
 }
-
-
 export default function TeamsPage() {
 const router = useRouter()
 const [activeTeam, setActiveTeam] = useState(teams[0])
@@ -56,11 +48,9 @@ const filteredTeams = teams
   const team = activeTeam as any
   const trackerLink = team.id in TRACKER_LINKS ? TRACKER_LINKS[team.id] : null
   const desc = TEAM_DESCRIPTIONS[team.game] || ''
-
   return (
     <div className="relative min-h-screen">
       <div className="absolute inset-0 bg-grid opacity-20 pointer-events-none" />
-
       {/* Hero */}
       <div className="relative pt-36 pb-16 border-b border-white/5 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-[#E8191A]/5 to-transparent" />
@@ -88,7 +78,6 @@ const filteredTeams = teams
           </div>
         </div>
       </div>
-
       {/* Tab nav */}
       <div className="sticky top-16 z-30 bg-[#0D0D0D]/95 backdrop-blur border-b border-white/5">
         <div className="max-w-7xl mx-auto px-6">
@@ -112,7 +101,6 @@ const filteredTeams = teams
           </div>
         </div>
       </div>
-
       {/* Active team section */}
       <div
         key={team.id}
@@ -121,9 +109,7 @@ const filteredTeams = teams
       >
         <div className="absolute inset-0 pointer-events-none"
           style={{ background: `linear-gradient(135deg, ${team.color}08 0%, transparent 60%)` }} />
-
         <div className="relative max-w-7xl mx-auto px-6 pt-16 pb-20">
-
           {/* Team header */}
           <div className="mb-10">
             <div className="flex items-start justify-between gap-4 mb-4">
@@ -179,7 +165,6 @@ const filteredTeams = teams
             <div className="h-px w-full mt-6"
               style={{ background: `linear-gradient(90deg, ${team.color}, transparent)` }} />
           </div>
-
           {/* Player cards */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {team.roster.map((player: any, pi: number) => {
@@ -188,7 +173,6 @@ const filteredTeams = teams
               const isFemaleCoach = ['GINGY', 'JOGORKU', 'TUMOROUS'].includes(player.name)
               const cardColor = isRedCard || isFemaleCoach ? '#E8191A' : team.color
               const playerSlug = player.name.toLowerCase().replace(/[^a-z0-9]/g, '-')
-
               return (
                 <div key={pi}
                   onClick={() => router.push(`/teams/${team.id}/${playerSlug}`)}
@@ -246,7 +230,6 @@ const filteredTeams = teams
           </div>
         </div>
       </div>
-
       {/* CTA */}
       <div className="bg-[#141414] border-t border-white/5 py-20">
         <div className="max-w-7xl mx-auto px-6 text-center">
@@ -262,7 +245,6 @@ const filteredTeams = teams
           </a>
         </div>
       </div>
-
       <style>{`
         .player-photo { transition: transform 0.4s ease; }
         .player-overlay { background: rgba(0,0,0,0.6); transition: opacity 0.3s ease; }
