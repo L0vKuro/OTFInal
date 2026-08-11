@@ -35,6 +35,7 @@ const PLAYER_PHOTOS: Record<string, string> = {
   holdmypollo: 'player-pollo.jpg',
   notcierra: 'player-cierra.jpg',
   emmamuah: 'player-emma.jpg',
+  ItsThr1ll: 'player-itsthr1ll.jpg',
 }
 
 const TRACKER_LINKS: Record<string, string> = {
