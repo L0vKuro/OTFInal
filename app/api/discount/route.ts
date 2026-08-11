@@ -6,11 +6,31 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
+// Origin can legitimately be missing on a same-origin POST — some privacy-hardened
+// browsers and extensions strip it. Falling back to Referer (and comparing against
+// this request's own Host instead of a hardcoded string) avoids blocking real users
+// while still rejecting requests that are clearly coming from somewhere else.
+function isAllowedRequest(req: NextRequest): boolean {
+  const host = req.headers.get('host') ?? ''
+  const origin = req.headers.get('origin')
+  const referer = req.headers.get('referer')
+
+  if (origin) {
+    if (origin.includes('overtakegg.com') || origin.includes('localhost')) return true
+    try { return new URL(origin).host === host } catch { return false }
+  }
+  if (referer) {
+    if (referer.includes('overtakegg.com') || referer.includes('localhost')) return true
+    try { return new URL(referer).host === host } catch { return false }
+  }
+  // Neither header present — unusual, but don't hard-block a real checkout over it.
+  return true
+}
+
 export async function POST(req: NextRequest) {
   try {
     // Referrer check
-    const origin = req.headers.get('origin') ?? ''
-    if (!origin.includes('overtakegg.com') && !origin.includes('localhost')) {
+    if (!isAllowedRequest(req)) {
       return NextResponse.json({ valid: false, message: 'Forbidden' }, { status: 403 })
     }
 
