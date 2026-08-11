@@ -39,7 +39,7 @@ async function revalidateDiscount(code: string): Promise<{ type: 'percent' | 'fi
 
   if (row) {
     if (row.expires_at && new Date() > new Date(row.expires_at)) return null
-    if (row.max_uses !== null && row.uses > row.max_uses) return null
+    if (row.max_uses !== null && row.uses >= row.max_uses) return null
     return { type: row.type, value: row.value, label: `${row.type === 'percent' ? row.value + '%' : '$' + row.value} off (${upper})` }
   }
 
