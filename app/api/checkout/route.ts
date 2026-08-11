@@ -23,6 +23,27 @@ type CartItem = {
   isVNeck: boolean
 }
 
+// Origin can legitimately be missing on a same-origin POST — some privacy-hardened
+// browsers and extensions strip it. Falling back to Referer (and comparing against
+// this request's own Host instead of a hardcoded string) avoids blocking real users
+// while still rejecting requests that are clearly coming from somewhere else.
+function isAllowedRequest(req: NextRequest): boolean {
+  const host = req.headers.get('host') ?? ''
+  const origin = req.headers.get('origin')
+  const referer = req.headers.get('referer')
+
+  if (origin) {
+    if (origin.includes('overtakegg.com') || origin.includes('localhost')) return true
+    try { return new URL(origin).host === host } catch { return false }
+  }
+  if (referer) {
+    if (referer.includes('overtakegg.com') || referer.includes('localhost')) return true
+    try { return new URL(referer).host === host } catch { return false }
+  }
+  // Neither header present — unusual, but don't hard-block a real checkout over it.
+  return true
+}
+
 // Re-checks a discount code server-side instead of trusting the type/value the
 // client sends — mirrors the lookup in /api/discount, but doesn't increment
 // `uses` again since that already happened when the code was applied at checkout.
@@ -53,10 +74,14 @@ async function revalidateDiscount(code: string): Promise<{ type: 'percent' | 'fi
 
 export async function POST(req: NextRequest) {
   try {
-    const origin = req.headers.get('origin') ?? ''
-    if (!origin.includes('overtakegg.com') && !origin.includes('localhost')) {
+    if (!isAllowedRequest(req)) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
+
+    // Used to build the Stripe redirect URLs below — prefer the configured site URL
+    // over the request's Origin header, since Origin isn't always present.
+    const host = req.headers.get('host') ?? 'overtakegg.com'
+    const origin = process.env.NEXT_PUBLIC_SITE_URL || req.headers.get('origin') || `https://${host}`
 
     const ip = req.headers.get('x-forwarded-for') ?? 'anonymous'
     const { success } = await ratelimit.limit(ip)
