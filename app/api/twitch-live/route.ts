@@ -1,33 +1,8 @@
 import { NextResponse } from 'next/server'
+import { creators } from '@/lib/data'
 
 const CLIENT_ID = process.env.TWITCH_CLIENT_ID!
 const CLIENT_SECRET = process.env.TWITCH_CLIENT_SECRET!
-
-const CREATOR_LOGINS = [
-  'x19_eh',
-  'luke_12345678932',
-  'zendigo_playz',
-  'lordrogue22',
-  '1umartv',
-  'delinquentfps',
-  'dynasty_k1ng',
-  'vanishhfps',
-  'godcookie_',
-  'jahwci',
-  'keotaress',
-  'kiiiingkooopa',
-  'soto_on_tt',
-  'trapzfv',
-  'xlluka',
-  'finl_gaz',
-  'd3xoh',
-  'jgknown',
-  'kvstrszn',
-  'l0ki_xjg',
-  'nitromadnes',
-  'otnexus',
-  'clawr6s',
-]
 
 async function getToken() {
   const res = await fetch(`https://id.twitch.tv/oauth2/token?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&grant_type=client_credentials`, {
@@ -39,8 +14,21 @@ async function getToken() {
 
 export async function GET() {
   try {
+    // Pulled live from the creators list instead of a separate hardcoded array.
+    // That array had drifted badly out of sync (several current creators missing
+    // entirely, a typo'd handle, a couple of stale/renamed logins, and even a
+    // couple of team-roster names mixed in) since nothing kept it in sync with
+    // lib/data.ts as creators were added, renamed, or removed.
+    const logins = creators
+      .map(c => c.socials?.twitch)
+      .filter((l): l is string => !!l)
+
+    if (logins.length === 0) {
+      return NextResponse.json({ streams: [] })
+    }
+
     const token = await getToken()
-    const query = CREATOR_LOGINS.map(l => `user_login=${l}`).join('&')
+    const query = logins.map(l => `user_login=${encodeURIComponent(l)}`).join('&')
     const res = await fetch(`https://api.twitch.tv/helix/streams?${query}`, {
       headers: {
         'Client-ID': CLIENT_ID,
