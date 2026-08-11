@@ -43,6 +43,38 @@ export async function POST(req: NextRequest) {
 
     const now = new Date()
 
+    // Custom codes created in Supabase (admin-created discount codes) are checked
+    // FIRST, before the 3 legacy hardcoded codes below — this table was never
+    // actually checked here before, so custom codes could never be applied no
+    // matter what you set them to. Checking Supabase first also means a custom
+    // code always wins if its name happens to collide with a legacy one (e.g.
+    // creating a new "DISCOUNT10"), instead of the old hardcoded/expired version
+    // silently intercepting it.
+    const { data: row } = await supabase
+      .from('discount_codes')
+      .select('*')
+      .eq('code', code)
+      .maybeSingle()
+
+    if (row) {
+      if (row.expires_at && now > new Date(row.expires_at)) {
+        return NextResponse.json({ valid: false, message: 'This discount code has expired' })
+      }
+      if (row.max_uses !== null && row.uses >= row.max_uses) {
+        return NextResponse.json({ valid: false, message: 'This discount code has reached its usage limit' })
+      }
+
+      // Count this as a use now that it's confirmed valid and is being applied
+      // to a cart. /api/checkout re-validates at final payment but intentionally
+      // doesn't increment again, since that already happens here.
+      await supabase
+        .from('discount_codes')
+        .update({ uses: row.uses + 1 })
+        .eq('code', code)
+
+      return NextResponse.json({ valid: true, type: row.type, value: row.value })
+    }
+
     // Legacy hardcoded codes — response shape matches what the checkout page
     // expects (type/value), not the old percent-only shape.
     if (code === 'MEMBER15') {
@@ -66,34 +98,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ valid: true, type: 'percent', value: 25 })
     }
 
-    // Custom codes created in Supabase (admin-created discount codes) — this
-    // table was never actually checked here before, so custom codes could
-    // never be applied no matter what you set them to.
-    const { data: row } = await supabase
-      .from('discount_codes')
-      .select('*')
-      .eq('code', code)
-      .maybeSingle()
-
-    if (!row) {
-      return NextResponse.json({ valid: false, message: 'Invalid discount code' })
-    }
-    if (row.expires_at && now > new Date(row.expires_at)) {
-      return NextResponse.json({ valid: false, message: 'This discount code has expired' })
-    }
-    if (row.max_uses !== null && row.uses >= row.max_uses) {
-      return NextResponse.json({ valid: false, message: 'This discount code has reached its usage limit' })
-    }
-
-    // Count this as a use now that it's confirmed valid and is being applied
-    // to a cart. /api/checkout re-validates at final payment but intentionally
-    // doesn't increment again, since that already happens here.
-    await supabase
-      .from('discount_codes')
-      .update({ uses: row.uses + 1 })
-      .eq('code', code)
-
-    return NextResponse.json({ valid: true, type: row.type, value: row.value })
+    return NextResponse.json({ valid: false, message: 'Invalid discount code' })
 
   } catch (err) {
     console.error('Discount API error:', err)
