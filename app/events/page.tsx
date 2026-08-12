@@ -136,6 +136,38 @@ const upcomingEvents = [
       },
     ],
   },
+  {
+    id: 4,
+    title: 'CALIFORNIA TIER LIST',
+    category: 'LAN',
+    game: 'CALL OF DUTY',
+    featured: false,
+    image: 'event-california-tier-list.jpg',
+    date: 'August 29–30, 2026',
+    location: '24331 Muirlands Blvd, Ste D, Lake Forest, CA 92630',
+    link: 'https://x.com/ValhallanLF',
+    prizePool: '$2,000',
+    description: 'Overtake heads to Lake Forest, CA for The Vintage SoCal’s California Tier List — a 4v4 2-day LAN hosted by @ValhallanLF. $2,000 true prize pool on the line, with the total scaling up or down based on sign-ups. Only 14 slots available.',
+    details: [
+      '$2,000 True Prize Pool (scales +/- based on sign-ups)',
+      '1st & 2nd Place Prizes',
+      '14 Slots Available',
+      'Entry Fee: $250 per team',
+      'Hosted by @ValhallanLF',
+    ],
+    days: [
+      {
+        day: 'DAY 1 — SATURDAY, AUG 29TH',
+        subtitle: 'DAY 1',
+        schedule: [{ time: 'TBA', event: 'Doors Open' }],
+      },
+      {
+        day: 'DAY 2 — SUNDAY, AUG 30TH',
+        subtitle: 'FINALS',
+        schedule: [{ time: 'TBA', event: 'Doors Open' }],
+      },
+    ],
+  },
 ]
 
 const archivedEvents = [
@@ -220,7 +252,7 @@ export default function EventsPage() {
           </p>
           <div className="flex flex-wrap gap-4 mt-8">
             {[
-              { label: 'Upcoming Events', value: '3' },
+              { label: 'Upcoming Events', value: '4' },
               { label: 'Active Teams', value: '10' },
               { label: 'Tournament Wins', value: '20+' },
             ].map(({ label, value }) => (
@@ -323,39 +355,54 @@ export default function EventsPage() {
                 return (
                   <div key={event.id} className="bg-[#141414] border border-white/5 hover:border-white/10 overflow-hidden transition-all">
                     <div className="h-px w-full" style={{ background: `linear-gradient(90deg, ${color}, transparent)` }} />
-                    <div className="p-6">
-                      <div className="flex flex-wrap items-center gap-2 mb-4">
-                        <span className="text-[10px] font-mono font-black px-2 py-1 uppercase tracking-widest"
-                          style={{ color, background: `${color}15`, border: `1px solid ${color}30` }}>
-                          {event.category}
-                        </span>
-                        <span className="text-[10px] font-mono px-2 py-1 bg-white/5 border border-white/10 text-[#F2F2F2]/40 uppercase tracking-widest">
-                          {event.game}
-                        </span>
-                      </div>
-                      <h3 className="font-display font-black text-2xl text-[#F2F2F2] uppercase mb-3"
-                        style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{event.title}</h3>
-                      <div className="flex flex-wrap gap-4 mb-3">
-                        <div className="flex items-center gap-2 text-[#F2F2F2]/40 text-xs font-mono">
-                          <Calendar size={12} style={{ color }} />{event.date}
+                    <div className={event.image ? 'flex flex-col sm:flex-row' : ''}>
+                      {/* Side image — only rendered when the event has a flyer/graphic. Sized to
+                          be a real presence next to the text (not a thumbnail), but never wider
+                          than the text column so the card stays readable. */}
+                      {event.image && (
+                        <div className="relative flex-shrink-0 w-full h-48 sm:h-auto sm:w-56 bg-[#0D0D0D] overflow-hidden">
+                          <img
+                            src={`/${event.image}`}
+                            alt={event.title}
+                            className="absolute inset-0 w-full h-full object-cover"
+                            onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
+                          />
                         </div>
-                        <div className="flex items-center gap-2 text-[#F2F2F2]/40 text-xs font-mono">
-                          <MapPin size={12} style={{ color }} />{event.location}
+                      )}
+                      <div className="p-6 flex-1 min-w-0">
+                        <div className="flex flex-wrap items-center gap-2 mb-4">
+                          <span className="text-[10px] font-mono font-black px-2 py-1 uppercase tracking-widest"
+                            style={{ color, background: `${color}15`, border: `1px solid ${color}30` }}>
+                            {event.category}
+                          </span>
+                          <span className="text-[10px] font-mono px-2 py-1 bg-white/5 border border-white/10 text-[#F2F2F2]/40 uppercase tracking-widest">
+                            {event.game}
+                          </span>
                         </div>
-                      </div>
-                      <p className="text-[#F2F2F2]/40 text-sm leading-relaxed mb-4">{event.description}</p>
-                      <div className="space-y-1 mb-5">
-                        {event.details.map((d, i) => (
-                          <div key={i} className="flex items-start gap-2">
-                            <div className="w-1 h-1 rounded-full mt-2 flex-shrink-0" style={{ background: color }} />
-                            <span className="text-[#F2F2F2]/30 text-xs font-mono">{d}</span>
+                        <h3 className="font-display font-black text-2xl text-[#F2F2F2] uppercase mb-3"
+                          style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{event.title}</h3>
+                        <div className="flex flex-wrap gap-4 mb-3">
+                          <div className="flex items-center gap-2 text-[#F2F2F2]/40 text-xs font-mono">
+                            <Calendar size={12} style={{ color }} />{event.date}
                           </div>
-                        ))}
+                          <div className="flex items-center gap-2 text-[#F2F2F2]/40 text-xs font-mono">
+                            <MapPin size={12} style={{ color }} />{event.location}
+                          </div>
+                        </div>
+                        <p className="text-[#F2F2F2]/40 text-sm leading-relaxed mb-4">{event.description}</p>
+                        <div className="space-y-1 mb-5">
+                          {event.details.map((d, i) => (
+                            <div key={i} className="flex items-start gap-2">
+                              <div className="w-1 h-1 rounded-full mt-2 flex-shrink-0" style={{ background: color }} />
+                              <span className="text-[#F2F2F2]/30 text-xs font-mono">{d}</span>
+                            </div>
+                          ))}
+                        </div>
+                        <a href={event.link} target="_blank" rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 border border-white/10 hover:border-[#E8191A]/50 px-5 py-2.5 text-xs font-mono uppercase tracking-widest text-[#F2F2F2]/50 hover:text-[#E8191A] transition-all">
+                          View Event <ChevronRight size={12} />
+                        </a>
                       </div>
-                      <a href={event.link} target="_blank" rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 border border-white/10 hover:border-[#E8191A]/50 px-5 py-2.5 text-xs font-mono uppercase tracking-widest text-[#F2F2F2]/50 hover:text-[#E8191A] transition-all">
-                        View Event <ChevronRight size={12} />
-                      </a>
                     </div>
                   </div>
                 )
