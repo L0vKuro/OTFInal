@@ -13,135 +13,15 @@ const CATEGORY_COLORS: Record<string, string> = {
   'LAN': '#F0A500',
 }
 
+// Only the California Tier List is still upcoming — Wild//West LAN, FRAG Midwest,
+// and the R6 NA Open Cup LAN have all already happened and now live in the archive below.
 const upcomingEvents = [
-  {
-    id: 3,
-    title: 'WILD//WEST: LAN',
-    category: 'LAN',
-    game: 'VALORANT',
-    featured: true,
-    date: 'July 23–26, 2026',
-    location: 'TBA',
-    link: 'https://wildwest.funhaver.gg/',
-    prizePool: '$10,000',
-    description: 'Overtake Valorant heads to the Wild//West LAN — a 4-day premier Valorant LAN event hosted by Funhaver.gg. $10,000 prize pool on the line with $575 entry fee per team. Signups close July 10th.',
-    details: [
-      '$10,000 Prize Pool',
-      '$575 Entry Fee per team',
-      'Signups close July 10th @ 9:00 AM PDT',
-      'Spectator passes purchased separately at store.funhaver.gg',
-      'Hosted by @funhaver_gg',
-    ],
-    days: [
-      {
-        day: 'DAY 1 — THURSDAY, JULY 23RD',
-        subtitle: 'DAY 1',
-        schedule: [
-          { time: '9:00 AM EDT', event: 'Doors Open' },
-        ],
-      },
-      {
-        day: 'DAY 2 — FRIDAY, JULY 24TH',
-        subtitle: 'DAY 2',
-        schedule: [
-          { time: '9:00 AM EDT', event: 'Doors Open' },
-        ],
-      },
-      {
-        day: 'DAY 3 — SATURDAY, JULY 25TH',
-        subtitle: 'DAY 3',
-        schedule: [
-          { time: '9:00 AM EDT', event: 'Doors Open' },
-        ],
-      },
-      {
-        day: 'DAY 4 — SUNDAY, JULY 26TH',
-        subtitle: 'FINALS',
-        schedule: [
-          { time: '9:00 AM EDT', event: 'Doors Open' },
-        ],
-      },
-    ],
-  },
-  {
-    id: 1,
-    title: 'FRAG MIDWEST: ST. LOUIS',
-    category: 'LAN',
-    game: 'COUNTER-STRIKE',
-    featured: false,
-    date: 'August 29–30, 2026',
-    location: 'Impact Gaming Center — Fairview Heights, IL',
-    link: 'https://x.com/fragadelphia',
-    prizePool: 'Up to $10,000',
-    description: 'Overtake Counter-Strike heads to St. Louis for FRAG Midwest — a 32-team LAN event hosted by FRAG at Impact Gaming Center. Up to $10,000 on the line with VRS eligible matches.',
-    details: [
-      'Prize Pool scales up to $10,000 at full tournament (32 teams)',
-      '1st: $5,500 | 2nd: $2,500 | 3rd: $1,300 | 4th: $700',
-      'No refunds or ticket transfers',
-      'VRS Eligible',
-      'Hosted by @fragadelphia',
-    ],
-    days: [
-      {
-        day: 'DAY 1 — FRIDAY, AUG 29TH',
-        subtitle: 'GROUPS',
-        schedule: [
-          { time: 'TBA', event: 'Check-in & Setup' },
-          { time: 'TBA', event: 'Group Stage Begins' },
-        ],
-      },
-      {
-        day: 'DAY 2 — SATURDAY, AUG 30TH',
-        subtitle: 'PLAYOFFS',
-        schedule: [
-          { time: 'TBA', event: 'Playoff Bracket' },
-          { time: 'TBA', event: 'Grand Finals' },
-        ],
-      },
-    ],
-  },
-  {
-    id: 2,
-    title: 'R6 NA OPEN CUP LAN — ST. LOUIS',
-    category: 'LAN',
-    game: 'RAINBOW 6',
-    featured: false,
-    date: 'August 21–23, 2026',
-    location: 'St. Louis, MO',
-    link: 'https://x.com/R6esportsNA',
-    prizePool: 'TBA',
-    description: 'Overtake Rainbow 6 competes in the NA Open Cup LAN series, heading to St. Louis for the third stop of the season. Hosted by Rainbow Six Esports NA.',
-    details: [
-      'Part of the NA Open Cup LAN series',
-      'Previous stops: Philadelphia PA (Jun 12–14), Windsor ON (Jul 17–19)',
-      'Upcoming: Palmetto Bay FL (Sept 25–27)',
-      'Finals: Salt Lake City UT (Oct 23–25)',
-      'Hosted by @R6esportsNA',
-    ],
-    days: [
-      {
-        day: 'DAY 1 — THURSDAY, AUG 21ST',
-        subtitle: 'GROUPS',
-        schedule: [{ time: 'TBA', event: 'Group Stage' }],
-      },
-      {
-        day: 'DAY 2 — FRIDAY, AUG 22ND',
-        subtitle: 'GROUPS',
-        schedule: [{ time: 'TBA', event: 'Group Stage Continues' }],
-      },
-      {
-        day: 'DAY 3 — SATURDAY, AUG 23RD',
-        subtitle: 'PLAYOFFS',
-        schedule: [{ time: 'TBA', event: 'Playoff Bracket & Finals' }],
-      },
-    ],
-  },
   {
     id: 4,
     title: 'CALIFORNIA TIER LIST',
     category: 'LAN',
     game: 'CALL OF DUTY',
-    featured: false,
+    featured: true,
     image: 'event-california-tier-list.jpg',
     date: 'August 29–30, 2026',
     location: '24331 Muirlands Blvd, Ste D, Lake Forest, CA 92630',
@@ -171,6 +51,96 @@ const upcomingEvents = [
 ]
 
 const archivedEvents = [
+  {
+    id: 15,
+    title: 'FRAG MIDWEST: ST. LOUIS',
+    category: 'LAN',
+    game: 'COUNTER-STRIKE',
+    date: 'August 29–30, 2026',
+    location: 'Impact Gaming Center — Fairview Heights, IL',
+    link: 'https://x.com/fragadelphia',
+    description: 'Overtake Counter-Strike competed in FRAG Midwest — a 32-team LAN event hosted by FRAG at Impact Gaming Center, with up to $10,000 on the line in VRS eligible matches.',
+    details: [],
+    days: [
+      {
+        day: 'DAY 1 — FRIDAY, AUG 29TH',
+        subtitle: 'GROUPS',
+        schedule: [
+          { time: 'TBA', event: 'Check-in & Setup' },
+          { time: 'TBA', event: 'Group Stage Begins' },
+        ],
+      },
+      {
+        day: 'DAY 2 — SATURDAY, AUG 30TH',
+        subtitle: 'PLAYOFFS',
+        schedule: [
+          { time: 'TBA', event: 'Playoff Bracket' },
+          { time: 'TBA', event: 'Grand Finals' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 16,
+    title: 'R6 NA OPEN CUP LAN — ST. LOUIS',
+    category: 'LAN',
+    game: 'RAINBOW 6',
+    date: 'August 21–23, 2026',
+    location: 'St. Louis, MO',
+    link: 'https://x.com/R6esportsNA',
+    description: 'Overtake Rainbow 6 competed in the NA Open Cup LAN series, heading to St. Louis for the third stop of the season, hosted by Rainbow Six Esports NA.',
+    details: [],
+    days: [
+      {
+        day: 'DAY 1 — THURSDAY, AUG 21ST',
+        subtitle: 'GROUPS',
+        schedule: [{ time: 'TBA', event: 'Group Stage' }],
+      },
+      {
+        day: 'DAY 2 — FRIDAY, AUG 22ND',
+        subtitle: 'GROUPS',
+        schedule: [{ time: 'TBA', event: 'Group Stage Continues' }],
+      },
+      {
+        day: 'DAY 3 — SATURDAY, AUG 23RD',
+        subtitle: 'PLAYOFFS',
+        schedule: [{ time: 'TBA', event: 'Playoff Bracket & Finals' }],
+      },
+    ],
+  },
+  {
+    id: 17,
+    title: 'WILD//WEST: LAN',
+    category: 'LAN',
+    game: 'VALORANT',
+    date: 'July 23–26, 2026',
+    location: 'TBA',
+    link: 'https://wildwest.funhaver.gg/',
+    description: 'Overtake Valorant competed at the Wild//West LAN — a 4-day premier Valorant LAN event hosted by Funhaver.gg with a $10,000 prize pool.',
+    details: [],
+    days: [
+      {
+        day: 'DAY 1 — THURSDAY, JULY 23RD',
+        subtitle: 'DAY 1',
+        schedule: [{ time: '9:00 AM EDT', event: 'Doors Open' }],
+      },
+      {
+        day: 'DAY 2 — FRIDAY, JULY 24TH',
+        subtitle: 'DAY 2',
+        schedule: [{ time: '9:00 AM EDT', event: 'Doors Open' }],
+      },
+      {
+        day: 'DAY 3 — SATURDAY, JULY 25TH',
+        subtitle: 'DAY 3',
+        schedule: [{ time: '9:00 AM EDT', event: 'Doors Open' }],
+      },
+      {
+        day: 'DAY 4 — SUNDAY, JULY 26TH',
+        subtitle: 'FINALS',
+        schedule: [{ time: '9:00 AM EDT', event: 'Doors Open' }],
+      },
+    ],
+  },
   {
     id: 10,
     title: 'WILD//WEST STAGE 2 — QUALIFIER 6',
@@ -252,7 +222,7 @@ export default function EventsPage() {
           </p>
           <div className="flex flex-wrap gap-4 mt-8">
             {[
-              { label: 'Upcoming Events', value: '4' },
+              { label: 'Upcoming Events', value: '1' },
               { label: 'Active Teams', value: '10' },
               { label: 'Tournament Wins', value: '20+' },
             ].map(({ label, value }) => (
@@ -278,65 +248,79 @@ export default function EventsPage() {
             </div>
             <div className="bg-[#141414] border border-[#E8191A]/20 overflow-hidden">
               <div className="h-px w-full bg-gradient-to-r from-[#E8191A] to-transparent" />
-              <div className="p-8 md:p-10">
-                <div className="flex flex-wrap items-center gap-3 mb-6">
-                  <span className="text-[10px] font-mono font-black px-3 py-1.5 uppercase tracking-widest"
-                    style={{ color: CATEGORY_COLORS[featured.category] || '#E8191A', background: `${CATEGORY_COLORS[featured.category] || '#E8191A'}15`, border: `1px solid ${CATEGORY_COLORS[featured.category] || '#E8191A'}30` }}>
-                    {featured.category}
-                  </span>
-                  <span className="text-[10px] font-mono px-3 py-1.5 bg-white/5 border border-white/10 text-[#F2F2F2]/60 uppercase tracking-widest">
-                    {featured.game}
-                  </span>
-                  <span className="text-[10px] font-mono px-3 py-1.5 bg-[#E8191A]/10 border border-[#E8191A]/20 text-[#E8191A] uppercase tracking-widest">
-                    {featured.prizePool} PRIZE POOL
-                  </span>
-                </div>
-                <h2 className="font-display font-black text-4xl md:text-6xl uppercase text-[#F2F2F2] mb-3"
-                  style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-                  {featured.title}
-                </h2>
-                <div className="flex flex-wrap gap-4 mb-6">
-                  <div className="flex items-center gap-2 text-[#F2F2F2]/40 text-sm">
-                    <Calendar size={14} className="text-[#E8191A]" />
-                    {featured.date}
+              <div className={featured.image ? 'flex flex-col lg:flex-row' : ''}>
+                {/* Side image — a real presence next to the featured copy, not a thumbnail,
+                    but capped in width so the write-up still has the majority of the card. */}
+                {featured.image && (
+                  <div className="relative w-full h-64 lg:h-auto lg:w-[380px] flex-shrink-0 bg-[#0D0D0D] overflow-hidden">
+                    <img
+                      src={`/${featured.image}`}
+                      alt={featured.title}
+                      className="absolute inset-0 w-full h-full object-cover"
+                      onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
+                    />
                   </div>
-                  <div className="flex items-center gap-2 text-[#F2F2F2]/40 text-sm">
-                    <MapPin size={14} className="text-[#E8191A]" />
-                    {featured.location}
+                )}
+                <div className="p-8 md:p-10 flex-1 min-w-0">
+                  <div className="flex flex-wrap items-center gap-3 mb-6">
+                    <span className="text-[10px] font-mono font-black px-3 py-1.5 uppercase tracking-widest"
+                      style={{ color: CATEGORY_COLORS[featured.category] || '#E8191A', background: `${CATEGORY_COLORS[featured.category] || '#E8191A'}15`, border: `1px solid ${CATEGORY_COLORS[featured.category] || '#E8191A'}30` }}>
+                      {featured.category}
+                    </span>
+                    <span className="text-[10px] font-mono px-3 py-1.5 bg-white/5 border border-white/10 text-[#F2F2F2]/60 uppercase tracking-widest">
+                      {featured.game}
+                    </span>
+                    <span className="text-[10px] font-mono px-3 py-1.5 bg-[#E8191A]/10 border border-[#E8191A]/20 text-[#E8191A] uppercase tracking-widest">
+                      {featured.prizePool} PRIZE POOL
+                    </span>
                   </div>
-                </div>
-                <p className="text-[#F2F2F2]/50 text-base leading-relaxed mb-6 max-w-2xl">{featured.description}</p>
-                <div className="space-y-2 mb-8">
-                  {featured.details.map((d, i) => (
-                    <div key={i} className="flex items-start gap-2">
-                      <div className="w-1 h-1 bg-[#E8191A] rounded-full mt-2 flex-shrink-0" />
-                      <span className="text-[#F2F2F2]/40 text-sm font-mono">{d}</span>
+                  <h2 className="font-display font-black text-4xl md:text-6xl uppercase text-[#F2F2F2] mb-3"
+                    style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                    {featured.title}
+                  </h2>
+                  <div className="flex flex-wrap gap-4 mb-6">
+                    <div className="flex items-center gap-2 text-[#F2F2F2]/40 text-sm">
+                      <Calendar size={14} className="text-[#E8191A]" />
+                      {featured.date}
                     </div>
-                  ))}
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-                  {featured.days.map((day, di) => (
-                    <div key={di} className="bg-[#0D0D0D] border border-white/5 p-5">
-                      <div className="h-px w-full bg-gradient-to-r from-[#E8191A] to-transparent mb-4" />
-                      <p className="font-display font-black text-sm text-[#F2F2F2] uppercase mb-1"
-                        style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{day.day}</p>
-                      <p className="text-[#E8191A] text-xs font-mono tracking-widest uppercase mb-4">{day.subtitle}</p>
-                      <div className="space-y-2">
-                        {day.schedule.map((item, si) => (
-                          <div key={si} className="flex items-start gap-3">
-                            <span className="text-[#E8191A] font-mono text-xs whitespace-nowrap mt-0.5">{item.time}</span>
-                            <span className="text-[#F2F2F2]/50 text-xs">{item.event}</span>
-                          </div>
-                        ))}
+                    <div className="flex items-center gap-2 text-[#F2F2F2]/40 text-sm">
+                      <MapPin size={14} className="text-[#E8191A]" />
+                      {featured.location}
+                    </div>
+                  </div>
+                  <p className="text-[#F2F2F2]/50 text-base leading-relaxed mb-6 max-w-2xl">{featured.description}</p>
+                  <div className="space-y-2 mb-8">
+                    {featured.details.map((d, i) => (
+                      <div key={i} className="flex items-start gap-2">
+                        <div className="w-1 h-1 bg-[#E8191A] rounded-full mt-2 flex-shrink-0" />
+                        <span className="text-[#F2F2F2]/40 text-sm font-mono">{d}</span>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                    {featured.days.map((day, di) => (
+                      <div key={di} className="bg-[#0D0D0D] border border-white/5 p-5">
+                        <div className="h-px w-full bg-gradient-to-r from-[#E8191A] to-transparent mb-4" />
+                        <p className="font-display font-black text-sm text-[#F2F2F2] uppercase mb-1"
+                          style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{day.day}</p>
+                        <p className="text-[#E8191A] text-xs font-mono tracking-widest uppercase mb-4">{day.subtitle}</p>
+                        <div className="space-y-2">
+                          {day.schedule.map((item, si) => (
+                            <div key={si} className="flex items-start gap-3">
+                              <span className="text-[#E8191A] font-mono text-xs whitespace-nowrap mt-0.5">{item.time}</span>
+                              <span className="text-[#F2F2F2]/50 text-xs">{item.event}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <a href={featured.link} target="_blank" rel="noopener noreferrer"
+                    className="inline-flex items-center gap-3 bg-[#E8191A] hover:bg-[#B81011] px-8 py-4 font-black tracking-widest uppercase text-sm transition-all hover:shadow-[0_0_30px_rgba(232,25,26,0.4)] clip-corner text-white"
+                    style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                    View Event <ChevronRight size={14} />
+                  </a>
                 </div>
-                <a href={featured.link} target="_blank" rel="noopener noreferrer"
-                  className="inline-flex items-center gap-3 bg-[#E8191A] hover:bg-[#B81011] px-8 py-4 font-black tracking-widest uppercase text-sm transition-all hover:shadow-[0_0_30px_rgba(232,25,26,0.4)] clip-corner text-white"
-                  style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-                  View Event <ChevronRight size={14} />
-                </a>
               </div>
             </div>
           </div>
@@ -356,9 +340,6 @@ export default function EventsPage() {
                   <div key={event.id} className="bg-[#141414] border border-white/5 hover:border-white/10 overflow-hidden transition-all">
                     <div className="h-px w-full" style={{ background: `linear-gradient(90deg, ${color}, transparent)` }} />
                     <div className={event.image ? 'flex flex-col sm:flex-row' : ''}>
-                      {/* Side image — only rendered when the event has a flyer/graphic. Sized to
-                          be a real presence next to the text (not a thumbnail), but never wider
-                          than the text column so the card stays readable. */}
                       {event.image && (
                         <div className="relative flex-shrink-0 w-full h-48 sm:h-auto sm:w-56 bg-[#0D0D0D] overflow-hidden">
                           <img
