@@ -257,7 +257,7 @@ export default function CreatorsPage() {
             </p>
 
             {liveCount > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {creators.filter(c => isLive(c)).map(creator => {
                   const livePlatform = getLivePlatform(creator)
                   const liveUrl = getLiveUrl(creator)
@@ -268,11 +268,11 @@ export default function CreatorsPage() {
                   return (
                     <a key={creator.id} href={liveUrl ?? '#'} target="_blank" rel="noopener noreferrer"
                       className="group relative block bg-[#141414] overflow-hidden"
-                      style={{ border: `1px solid ${color}50`, boxShadow: `0 0 32px ${color}18` }}>
+                      style={{ border: `1px solid ${color}50`, boxShadow: `0 0 40px ${color}1c` }}>
                       <div className="relative overflow-hidden bg-[#0D0D0D]" style={{ aspectRatio: '16/9' }}>
                         {twitchStream ? (
                           <img
-                            src={twitchStream.thumbnail_url.replace('{width}', '480').replace('{height}', '270')}
+                            src={twitchStream.thumbnail_url.replace('{width}', '800').replace('{height}', '450')}
                             alt={creator.handle}
                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                           />
@@ -287,39 +287,39 @@ export default function CreatorsPage() {
                         )}
                         <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(13,13,13,0.92) 8%, transparent 55%)' }} />
 
-                        <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1"
+                        <div className="absolute top-4 left-4 flex items-center gap-1.5 px-3 py-1.5"
                           style={{ background: color }}>
-                          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                          <span className="text-[10px] font-black text-white uppercase tracking-widest">Live</span>
+                          <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                          <span className="text-xs font-black text-white uppercase tracking-widest">Live</span>
                         </div>
 
-                        <div className="absolute top-3 right-3">
-                          <span className="text-[9px] font-mono uppercase tracking-widest px-2 py-1"
+                        <div className="absolute top-4 right-4">
+                          <span className="text-[10px] font-mono uppercase tracking-widest px-2.5 py-1.5"
                             style={{ background: 'rgba(0,0,0,0.6)', color, border: `1px solid ${color}50` }}>
                             Tier {creator.tier}
                           </span>
                         </div>
 
                         {viewers !== null && (
-                          <div className="absolute bottom-3 right-3 flex items-center gap-1 px-2 py-1 bg-black/70">
-                            <Users size={10} className="text-white/70" />
-                            <span className="text-[10px] font-mono text-white/90">
+                          <div className="absolute bottom-4 right-4 flex items-center gap-1.5 px-2.5 py-1.5 bg-black/70">
+                            <Users size={12} className="text-white/70" />
+                            <span className="text-xs font-mono text-white/90">
                               {viewers >= 1000 ? `${(viewers / 1000).toFixed(1)}k` : viewers}
                             </span>
                           </div>
                         )}
 
-                        <div className="absolute bottom-3 left-4 right-4">
-                          <h3 className="font-display font-black text-2xl text-white uppercase leading-none mb-1"
+                        <div className="absolute bottom-4 left-5 right-5">
+                          <h3 className="font-display font-black text-3xl text-white uppercase leading-none mb-1"
                             style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
                             {creator.handle}
                           </h3>
-                          <p className="text-xs font-mono uppercase tracking-widest" style={{ color }}>
+                          <p className="text-sm font-mono uppercase tracking-widest" style={{ color }}>
                             {livePlatform} · {creator.specialty}
                           </p>
                         </div>
                       </div>
-                      <div className="flex items-center justify-center gap-2 py-2.5 text-[11px] font-black uppercase tracking-widest transition-colors"
+                      <div className="flex items-center justify-center gap-2 py-3 text-xs font-black uppercase tracking-widest transition-colors"
                         style={{ color, background: `${color}12` }}>
                         <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: color }} />
                         Watch on {livePlatform}
@@ -381,7 +381,6 @@ export default function CreatorsPage() {
                       const livePlatform = getLivePlatform(creator)
                       const liveUrl = getLiveUrl(creator)
                       const viewers = getLiveViewers(creator)
-                      const twitchStream = getTwitchStream(creator)
                       const platformColor = PLATFORM_COLORS[creator.platform] || '#E8191A'
 
                       return (
@@ -397,23 +396,15 @@ export default function CreatorsPage() {
                           <div className="h-px w-full"
                             style={{ background: `linear-gradient(90deg, ${platformColor}, transparent)` }} />
 
-                          {/* Thumbnail / photo */}
+                          {/* Thumbnail / photo — always the profile photo, never swapped for the live stream thumbnail (that only shows in the Live Now section) */}
                           <div className="relative overflow-hidden bg-[#0D0D0D]" style={{ aspectRatio: '1' }}>
-                            {live && twitchStream ? (
-                              <img
-                                src={twitchStream.thumbnail_url.replace('{width}', '440').replace('{height}', '440')}
-                                alt={creator.handle}
-                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                              />
-                            ) : (
-                              <img
-                                src={`/${creator.photo}`}
-                                alt={creator.handle}
-                                className="creator-photo"
-                                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', opacity: 0.85 }}
-                                onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
-                              />
-                            )}
+                            <img
+                              src={`/${creator.photo}`}
+                              alt={creator.handle}
+                              className="creator-photo"
+                              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', opacity: 0.85 }}
+                              onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
+                            />
                             <div className="creator-overlay absolute inset-0" />
 
                             {/* Platform badge */}
