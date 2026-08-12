@@ -20,7 +20,7 @@ const footerLinks = {
     { href: '/join',                                     label: 'Join Overtake' },
     { href: '/contact',                                  label: 'Contact' },
     { href: '/#news',                                    label: 'News' },
-    { href: 'https://discord.com/invite/OvertakeSector', label: 'Discord' },
+    { href: 'https://discord.gg/YxdAbax8VB', label: 'Discord' },
   ],
   Legal: [
     { href: '/legal/privacy',  label: 'Privacy Policy' },
