@@ -22,7 +22,7 @@ const upcomingEvents = [
     category: 'LAN',
     game: 'CALL OF DUTY',
     featured: true,
-    image: 'event-california-tier-list.jpg',
+    image: 'vintagesocal.png',
     date: 'August 29–30, 2026',
     location: '24331 Muirlands Blvd, Ste D, Lake Forest, CA 92630',
     link: 'https://x.com/ValhallanLF',
