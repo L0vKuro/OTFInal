@@ -252,7 +252,7 @@ export default function EventsPage() {
                 {/* Side image — a real presence next to the featured copy, not a thumbnail,
                     but capped in width so the write-up still has the majority of the card. */}
                 {featured.image && (
-                  <div className="relative w-full h-64 lg:h-auto lg:w-[380px] flex-shrink-0 bg-[#0D0D0D] overflow-hidden">
+                  <div className="relative w-full h-56 lg:h-auto lg:w-[380px] flex-shrink-0 bg-[#0D0D0D] overflow-hidden">
                     <img
                       src={`/${featured.image}`}
                       alt={featured.title}
