@@ -240,6 +240,97 @@ export default function CreatorsPage() {
         </div>
       </div>
 
+      {/* Live Now spotlight — separate, prominent showcase for whoever's live right now */}
+      {liveCount > 0 && (
+        <div className="relative border-b border-white/5 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-[#E8191A]/8 via-transparent to-transparent pointer-events-none" />
+          <div className="relative max-w-7xl mx-auto px-6 py-16">
+            <div className="flex items-center gap-3 mb-8">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#E8191A] opacity-75" />
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#E8191A]" />
+              </span>
+              <h2 className="font-display font-black text-3xl text-[#F2F2F2] uppercase"
+                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>Live Right Now</h2>
+              <span className="text-[#E8191A]/70 text-xs font-mono uppercase tracking-widest">
+                {liveCount} streaming
+              </span>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+              {creators.filter(c => isLive(c)).map(creator => {
+                const livePlatform = getLivePlatform(creator)
+                const liveUrl = getLiveUrl(creator)
+                const viewers = getLiveViewers(creator)
+                const twitchStream = getTwitchStream(creator)
+                const color = PLATFORM_COLORS[livePlatform!] || '#E8191A'
+
+                return (
+                  <a key={creator.id} href={liveUrl ?? '#'} target="_blank" rel="noopener noreferrer"
+                    className="group relative block bg-[#141414] overflow-hidden"
+                    style={{ border: `1px solid ${color}50`, boxShadow: `0 0 32px ${color}18` }}>
+                    <div className="relative overflow-hidden bg-[#0D0D0D]" style={{ aspectRatio: '16/9' }}>
+                      {twitchStream ? (
+                        <img
+                          src={twitchStream.thumbnail_url.replace('{width}', '480').replace('{height}', '270')}
+                          alt={creator.handle}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      ) : (
+                        <img
+                          src={`/${creator.photo}`}
+                          alt={creator.handle}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          style={{ objectPosition: 'top' }}
+                          onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
+                        />
+                      )}
+                      <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(13,13,13,0.92) 8%, transparent 55%)' }} />
+
+                      <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1"
+                        style={{ background: color }}>
+                        <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                        <span className="text-[10px] font-black text-white uppercase tracking-widest">Live</span>
+                      </div>
+
+                      <div className="absolute top-3 right-3">
+                        <span className="text-[9px] font-mono uppercase tracking-widest px-2 py-1"
+                          style={{ background: 'rgba(0,0,0,0.6)', color, border: `1px solid ${color}50` }}>
+                          Tier {creator.tier}
+                        </span>
+                      </div>
+
+                      {viewers !== null && (
+                        <div className="absolute bottom-3 right-3 flex items-center gap-1 px-2 py-1 bg-black/70">
+                          <Users size={10} className="text-white/70" />
+                          <span className="text-[10px] font-mono text-white/90">
+                            {viewers >= 1000 ? `${(viewers / 1000).toFixed(1)}k` : viewers}
+                          </span>
+                        </div>
+                      )}
+
+                      <div className="absolute bottom-3 left-4 right-4">
+                        <h3 className="font-display font-black text-2xl text-white uppercase leading-none mb-1"
+                          style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                          {creator.handle}
+                        </h3>
+                        <p className="text-xs font-mono uppercase tracking-widest" style={{ color }}>
+                          {livePlatform} · {creator.specialty}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-center gap-2 py-2.5 text-[11px] font-black uppercase tracking-widest transition-colors"
+                      style={{ color, background: `${color}12` }}>
+                      <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: color }} />
+                      Watch on {livePlatform}
+                    </div>
+                  </a>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Leaderboard */}
       {hasLeaderboardData && (
         <div className="border-b border-white/5 bg-white/[0.015]">
@@ -451,6 +542,14 @@ export default function CreatorsPage() {
                       style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
                       <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                       Twitter
+                    </a>
+                  )}
+                  {selected.socials?.tiktok && (
+                    <a href={selected.socials.tiktok} target="_blank" rel="noopener noreferrer"
+                      className="flex items-center gap-1.5 px-4 py-2 text-xs font-black uppercase tracking-widest border border-white/10 hover:border-white/30 text-white/40 hover:text-white transition-all"
+                      style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12.53.02C13.84 0 15.14.01 16.44 0c.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+                      TikTok
                     </a>
                   )}
                   {isLive(selected) && getLiveUrl(selected) && (
