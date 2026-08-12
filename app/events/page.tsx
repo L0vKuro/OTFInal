@@ -249,14 +249,15 @@ export default function EventsPage() {
             <div className="bg-[#141414] border border-[#E8191A]/20 overflow-hidden">
               <div className="h-px w-full bg-gradient-to-r from-[#E8191A] to-transparent" />
               <div className={featured.image ? 'flex flex-col lg:flex-row' : ''}>
-                {/* Side image — a real presence next to the featured copy, not a thumbnail,
-                    but capped in width so the write-up still has the majority of the card. */}
+                {/* Side image — sized to hold the whole flyer without cropping it. object-contain
+                    (not object-cover) so nothing gets cut off, with a box tall/roomy enough for
+                    the flyer's portrait shape. */}
                 {featured.image && (
-                  <div className="relative w-full h-56 lg:h-auto lg:w-[380px] flex-shrink-0 bg-[#0D0D0D] overflow-hidden">
+                  <div className="relative w-full h-80 sm:h-96 lg:h-auto lg:w-64 flex-shrink-0 bg-[#0D0D0D] overflow-hidden">
                     <img
                       src={`/${featured.image}`}
                       alt={featured.title}
-                      className="absolute inset-0 w-full h-full object-cover"
+                      className="absolute inset-0 w-full h-full object-contain"
                       onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
                     />
                   </div>
