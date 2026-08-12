@@ -175,7 +175,6 @@ export default function CreatorsPage() {
   }, 0)
 
   const liveCount = creators.filter(c => isLive(c)).length
-  const displayed = filter === 'live' ? creators.filter(c => isLive(c)) : creators
 
   const hasLeaderboardData = leaderboard && (leaderboard.topStreams.length > 0 || leaderboard.topUploads.length > 0 || leaderboard.topViews.length > 0)
 
@@ -240,244 +239,258 @@ export default function CreatorsPage() {
         </div>
       </div>
 
-      {/* Live Now spotlight — separate, prominent showcase for whoever's live right now */}
-      {liveCount > 0 && (
-        <div className="relative border-b border-white/5 overflow-hidden">
+      {/* Live Now — its own dedicated section, only shown when that toggle is active */}
+      {filter === 'live' ? (
+        <div className="relative border-b border-white/5 overflow-hidden min-h-[50vh]">
           <div className="absolute inset-0 bg-gradient-to-b from-[#E8191A]/8 via-transparent to-transparent pointer-events-none" />
           <div className="relative max-w-7xl mx-auto px-6 py-16">
-            <div className="flex items-center gap-3 mb-8">
+            <div className="flex items-center gap-3 mb-4">
               <span className="relative flex h-2.5 w-2.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#E8191A] opacity-75" />
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#E8191A]" />
               </span>
               <h2 className="font-display font-black text-3xl text-[#F2F2F2] uppercase"
                 style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>Live Right Now</h2>
-              <span className="text-[#E8191A]/70 text-xs font-mono uppercase tracking-widest">
-                {liveCount} streaming
-              </span>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-              {creators.filter(c => isLive(c)).map(creator => {
-                const livePlatform = getLivePlatform(creator)
-                const liveUrl = getLiveUrl(creator)
-                const viewers = getLiveViewers(creator)
-                const twitchStream = getTwitchStream(creator)
-                const color = PLATFORM_COLORS[livePlatform!] || '#E8191A'
+            <p className="text-white/40 text-sm max-w-2xl leading-relaxed mb-10">
+              Overtake's creators stream and post across Twitch, YouTube, and TikTok all week long. The moment one of them goes live, they show up right here — no need to check every platform yourself.
+            </p>
 
-                return (
-                  <a key={creator.id} href={liveUrl ?? '#'} target="_blank" rel="noopener noreferrer"
-                    className="group relative block bg-[#141414] overflow-hidden"
-                    style={{ border: `1px solid ${color}50`, boxShadow: `0 0 32px ${color}18` }}>
-                    <div className="relative overflow-hidden bg-[#0D0D0D]" style={{ aspectRatio: '16/9' }}>
-                      {twitchStream ? (
-                        <img
-                          src={twitchStream.thumbnail_url.replace('{width}', '480').replace('{height}', '270')}
-                          alt={creator.handle}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                      ) : (
-                        <img
-                          src={`/${creator.photo}`}
-                          alt={creator.handle}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                          style={{ objectPosition: 'top' }}
-                          onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
-                        />
-                      )}
-                      <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(13,13,13,0.92) 8%, transparent 55%)' }} />
-
-                      <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1"
-                        style={{ background: color }}>
-                        <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                        <span className="text-[10px] font-black text-white uppercase tracking-widest">Live</span>
-                      </div>
-
-                      <div className="absolute top-3 right-3">
-                        <span className="text-[9px] font-mono uppercase tracking-widest px-2 py-1"
-                          style={{ background: 'rgba(0,0,0,0.6)', color, border: `1px solid ${color}50` }}>
-                          Tier {creator.tier}
-                        </span>
-                      </div>
-
-                      {viewers !== null && (
-                        <div className="absolute bottom-3 right-3 flex items-center gap-1 px-2 py-1 bg-black/70">
-                          <Users size={10} className="text-white/70" />
-                          <span className="text-[10px] font-mono text-white/90">
-                            {viewers >= 1000 ? `${(viewers / 1000).toFixed(1)}k` : viewers}
-                          </span>
-                        </div>
-                      )}
-
-                      <div className="absolute bottom-3 left-4 right-4">
-                        <h3 className="font-display font-black text-2xl text-white uppercase leading-none mb-1"
-                          style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-                          {creator.handle}
-                        </h3>
-                        <p className="text-xs font-mono uppercase tracking-widest" style={{ color }}>
-                          {livePlatform} · {creator.specialty}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-center gap-2 py-2.5 text-[11px] font-black uppercase tracking-widest transition-colors"
-                      style={{ color, background: `${color}12` }}>
-                      <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: color }} />
-                      Watch on {livePlatform}
-                    </div>
-                  </a>
-                )
-              })}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Leaderboard */}
-      {hasLeaderboardData && (
-        <div className="border-b border-white/5 bg-white/[0.015]">
-          <div className="max-w-7xl mx-auto px-6 py-16">
-            <div className="flex items-center gap-3 mb-8">
-              <Trophy size={18} className="text-[#E8191A]" />
-              <h2 className="font-display font-black text-3xl text-[#F2F2F2] uppercase"
-                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>This Month's Leaders</h2>
-              <span className="text-white/25 text-xs font-mono">{leaderboard!.period}</span>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <LeaderboardBoard title="Most Streams" icon={Video} color="#9146FF" rows={leaderboard!.topStreams} unit={r => r.streams} platformLabel="Twitch" />
-              <LeaderboardBoard title="Most Uploads" icon={Upload} color="#FF0000" rows={leaderboard!.topUploads} unit={r => r.uploads} platformLabel="YouTube" />
-              <LeaderboardBoard title="Most Views" icon={Eye} color="#E8191A" rows={leaderboard!.topViews} unit={r => r.views} platformLabel="Twitch + YouTube" />
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Creator grid */}
-      <div className="max-w-7xl mx-auto px-6 py-20">
-        {[1, 2, 3].map(tier => {
-          const tierCreators = displayed.filter(c => c.tier === tier)
-          if (tierCreators.length === 0) return null
-          return (
-            <div key={tier} className="mb-16">
-              <div className="flex items-center gap-4 mb-8">
-                <div className="h-px flex-1 bg-white/5" />
-                <span className="text-xs font-mono tracking-widest uppercase text-white/30">
-                  {TIER_LABELS[tier]}
-                </span>
-                <div className="h-px flex-1 bg-white/5" />
-              </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-                {tierCreators.map((creator) => {
-                  const live = isLive(creator)
+            {liveCount > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                {creators.filter(c => isLive(c)).map(creator => {
                   const livePlatform = getLivePlatform(creator)
                   const liveUrl = getLiveUrl(creator)
                   const viewers = getLiveViewers(creator)
                   const twitchStream = getTwitchStream(creator)
-                  const platformColor = PLATFORM_COLORS[creator.platform] || '#E8191A'
+                  const color = PLATFORM_COLORS[livePlatform!] || '#E8191A'
 
                   return (
-                    <div key={creator.id}
-                      className="group relative bg-[#141414] border border-white/5 overflow-hidden cursor-pointer"
-                      style={{
-                        borderColor: live ? `${PLATFORM_COLORS[livePlatform!]}40` : 'rgba(255,255,255,0.05)',
-                        transition: 'all 0.3s ease',
-                      }}
-                      onClick={() => setSelected(creator)}>
-
-                      {/* Top color line */}
-                      <div className="h-px w-full"
-                        style={{ background: `linear-gradient(90deg, ${platformColor}, transparent)` }} />
-
-                      {/* Thumbnail / photo */}
-                      <div className="relative overflow-hidden bg-[#0D0D0D]" style={{ aspectRatio: '1' }}>
-                        {live && twitchStream ? (
+                    <a key={creator.id} href={liveUrl ?? '#'} target="_blank" rel="noopener noreferrer"
+                      className="group relative block bg-[#141414] overflow-hidden"
+                      style={{ border: `1px solid ${color}50`, boxShadow: `0 0 32px ${color}18` }}>
+                      <div className="relative overflow-hidden bg-[#0D0D0D]" style={{ aspectRatio: '16/9' }}>
+                        {twitchStream ? (
                           <img
-                            src={twitchStream.thumbnail_url.replace('{width}', '440').replace('{height}', '440')}
+                            src={twitchStream.thumbnail_url.replace('{width}', '480').replace('{height}', '270')}
                             alt={creator.handle}
-                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                           />
                         ) : (
                           <img
                             src={`/${creator.photo}`}
                             alt={creator.handle}
-                            className="creator-photo"
-                            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', opacity: 0.85 }}
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            style={{ objectPosition: 'top' }}
                             onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
                           />
                         )}
-                        <div className="creator-overlay absolute inset-0" />
+                        <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(13,13,13,0.92) 8%, transparent 55%)' }} />
 
-                        {/* Platform badge */}
-                        <div className="absolute top-2 left-2">
-                          <span className="text-[10px] font-black px-2 py-1 uppercase tracking-widest"
-                            style={{ background: platformColor, color: '#fff' }}>
-                            {creator.platform}
+                        <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1"
+                          style={{ background: color }}>
+                          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                          <span className="text-[10px] font-black text-white uppercase tracking-widest">Live</span>
+                        </div>
+
+                        <div className="absolute top-3 right-3">
+                          <span className="text-[9px] font-mono uppercase tracking-widest px-2 py-1"
+                            style={{ background: 'rgba(0,0,0,0.6)', color, border: `1px solid ${color}50` }}>
+                            Tier {creator.tier}
                           </span>
                         </div>
 
-                        {/* Live badge */}
-                        {live && (
-                          <div className="absolute top-2 right-2 flex items-center gap-1 px-2 py-1"
-                            style={{ background: PLATFORM_COLORS[livePlatform!] }}>
-                            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                            <span className="text-[10px] font-black text-white uppercase tracking-widest">Live</span>
-                          </div>
-                        )}
-
-                        {/* Viewer count */}
                         {viewers !== null && (
-                          <div className="absolute bottom-2 right-2 flex items-center gap-1 px-2 py-1 bg-black/70">
-                            <Users size={10} className="text-white/60" />
-                            <span className="text-[10px] font-mono text-white/80">
+                          <div className="absolute bottom-3 right-3 flex items-center gap-1 px-2 py-1 bg-black/70">
+                            <Users size={10} className="text-white/70" />
+                            <span className="text-[10px] font-mono text-white/90">
                               {viewers >= 1000 ? `${(viewers / 1000).toFixed(1)}k` : viewers}
                             </span>
                           </div>
                         )}
 
-                        {/* Tier badge */}
-                        <div className="absolute bottom-2 left-2">
-                          <span className="text-[10px] font-mono px-2 py-1 uppercase"
-                            style={{ background: 'rgba(0,0,0,0.7)', color: 'rgba(255,255,255,0.4)', border: '1px solid rgba(255,255,255,0.1)' }}>
-                            Tier {creator.tier}
-                          </span>
+                        <div className="absolute bottom-3 left-4 right-4">
+                          <h3 className="font-display font-black text-2xl text-white uppercase leading-none mb-1"
+                            style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                            {creator.handle}
+                          </h3>
+                          <p className="text-xs font-mono uppercase tracking-widest" style={{ color }}>
+                            {livePlatform} · {creator.specialty}
+                          </p>
                         </div>
                       </div>
-
-                      {/* Info */}
-                      <div className="p-3">
-                        <h3 className="font-display font-black text-base text-[#F2F2F2] uppercase leading-none mb-1"
-                          style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-                          {creator.handle}
-                        </h3>
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-mono text-white/30">{creator.specialty}</span>
-                          <span className="flex items-center gap-1 text-xs font-mono text-white/30">
-                            <Users size={10} /> {creator.followers}
-                          </span>
-                        </div>
+                      <div className="flex items-center justify-center gap-2 py-2.5 text-[11px] font-black uppercase tracking-widest transition-colors"
+                        style={{ color, background: `${color}12` }}>
+                        <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: color }} />
+                        Watch on {livePlatform}
                       </div>
-
-                      {/* Watch live button */}
-                      {live && liveUrl && (
-                        <a href={liveUrl} target="_blank" rel="noopener noreferrer"
-                          onClick={e => e.stopPropagation()}
-                          className="flex items-center justify-center gap-2 w-full py-2 text-[10px] font-black uppercase tracking-widest border-t transition-colors"
-                          style={{
-                            color: PLATFORM_COLORS[livePlatform!],
-                            borderColor: `${PLATFORM_COLORS[livePlatform!]}30`,
-                            background: `${PLATFORM_COLORS[livePlatform!]}10`,
-                          }}>
-                          <span className="w-1.5 h-1.5 rounded-full animate-pulse"
-                            style={{ background: PLATFORM_COLORS[livePlatform!] }} />
-                          Watch on {livePlatform}
-                        </a>
-                      )}
-                    </div>
+                    </a>
                   )
                 })}
               </div>
+            ) : (
+              <div className="border border-white/5 bg-[#141414] px-8 py-16 text-center">
+                <p className="text-white/30 font-mono text-sm mb-6">Nobody's live right now — check back soon.</p>
+                <button onClick={() => setFilter('all')}
+                  className="inline-flex items-center gap-2 px-6 py-3 text-xs font-black uppercase tracking-widest border border-white/10 hover:border-white/30 text-white/50 hover:text-white transition-all"
+                  style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                  Browse All Creators
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* Leaderboard */}
+          {hasLeaderboardData && (
+            <div className="border-b border-white/5 bg-white/[0.015]">
+              <div className="max-w-7xl mx-auto px-6 py-16">
+                <div className="flex items-center gap-3 mb-8">
+                  <Trophy size={18} className="text-[#E8191A]" />
+                  <h2 className="font-display font-black text-3xl text-[#F2F2F2] uppercase"
+                    style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>This Month's Leaders</h2>
+                  <span className="text-white/25 text-xs font-mono">{leaderboard!.period}</span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <LeaderboardBoard title="Most Streams" icon={Video} color="#9146FF" rows={leaderboard!.topStreams} unit={r => r.streams} platformLabel="Twitch" />
+                  <LeaderboardBoard title="Most Uploads" icon={Upload} color="#FF0000" rows={leaderboard!.topUploads} unit={r => r.uploads} platformLabel="YouTube" />
+                  <LeaderboardBoard title="Most Views" icon={Eye} color="#E8191A" rows={leaderboard!.topViews} unit={r => r.views} platformLabel="Twitch + YouTube" />
+                </div>
+              </div>
             </div>
-          )
-        })}
-      </div>
+          )}
+
+          {/* Creator grid */}
+          <div className="max-w-7xl mx-auto px-6 py-20">
+            {[1, 2, 3].map(tier => {
+              const tierCreators = creators.filter(c => c.tier === tier)
+              if (tierCreators.length === 0) return null
+              return (
+                <div key={tier} className="mb-16">
+                  <div className="flex items-center gap-4 mb-8">
+                    <div className="h-px flex-1 bg-white/5" />
+                    <span className="text-xs font-mono tracking-widest uppercase text-white/30">
+                      {TIER_LABELS[tier]}
+                    </span>
+                    <div className="h-px flex-1 bg-white/5" />
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+                    {tierCreators.map((creator) => {
+                      const live = isLive(creator)
+                      const livePlatform = getLivePlatform(creator)
+                      const liveUrl = getLiveUrl(creator)
+                      const viewers = getLiveViewers(creator)
+                      const twitchStream = getTwitchStream(creator)
+                      const platformColor = PLATFORM_COLORS[creator.platform] || '#E8191A'
+
+                      return (
+                        <div key={creator.id}
+                          className="group relative bg-[#141414] border border-white/5 overflow-hidden cursor-pointer"
+                          style={{
+                            borderColor: live ? `${PLATFORM_COLORS[livePlatform!]}40` : 'rgba(255,255,255,0.05)',
+                            transition: 'all 0.3s ease',
+                          }}
+                          onClick={() => setSelected(creator)}>
+
+                          {/* Top color line */}
+                          <div className="h-px w-full"
+                            style={{ background: `linear-gradient(90deg, ${platformColor}, transparent)` }} />
+
+                          {/* Thumbnail / photo */}
+                          <div className="relative overflow-hidden bg-[#0D0D0D]" style={{ aspectRatio: '1' }}>
+                            {live && twitchStream ? (
+                              <img
+                                src={twitchStream.thumbnail_url.replace('{width}', '440').replace('{height}', '440')}
+                                alt={creator.handle}
+                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                              />
+                            ) : (
+                              <img
+                                src={`/${creator.photo}`}
+                                alt={creator.handle}
+                                className="creator-photo"
+                                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', opacity: 0.85 }}
+                                onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
+                              />
+                            )}
+                            <div className="creator-overlay absolute inset-0" />
+
+                            {/* Platform badge */}
+                            <div className="absolute top-2 left-2">
+                              <span className="text-[10px] font-black px-2 py-1 uppercase tracking-widest"
+                                style={{ background: platformColor, color: '#fff' }}>
+                                {creator.platform}
+                              </span>
+                            </div>
+
+                            {/* Live badge */}
+                            {live && (
+                              <div className="absolute top-2 right-2 flex items-center gap-1 px-2 py-1"
+                                style={{ background: PLATFORM_COLORS[livePlatform!] }}>
+                                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                                <span className="text-[10px] font-black text-white uppercase tracking-widest">Live</span>
+                              </div>
+                            )}
+
+                            {/* Viewer count */}
+                            {viewers !== null && (
+                              <div className="absolute bottom-2 right-2 flex items-center gap-1 px-2 py-1 bg-black/70">
+                                <Users size={10} className="text-white/60" />
+                                <span className="text-[10px] font-mono text-white/80">
+                                  {viewers >= 1000 ? `${(viewers / 1000).toFixed(1)}k` : viewers}
+                                </span>
+                              </div>
+                            )}
+
+                            {/* Tier badge */}
+                            <div className="absolute bottom-2 left-2">
+                              <span className="text-[10px] font-mono px-2 py-1 uppercase"
+                                style={{ background: 'rgba(0,0,0,0.7)', color: 'rgba(255,255,255,0.4)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                                Tier {creator.tier}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Info */}
+                          <div className="p-3">
+                            <h3 className="font-display font-black text-base text-[#F2F2F2] uppercase leading-none mb-1"
+                              style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                              {creator.handle}
+                            </h3>
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs font-mono text-white/30">{creator.specialty}</span>
+                              <span className="flex items-center gap-1 text-xs font-mono text-white/30">
+                                <Users size={10} /> {creator.followers}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Watch live button */}
+                          {live && liveUrl && (
+                            <a href={liveUrl} target="_blank" rel="noopener noreferrer"
+                              onClick={e => e.stopPropagation()}
+                              className="flex items-center justify-center gap-2 w-full py-2 text-[10px] font-black uppercase tracking-widest border-t transition-colors"
+                              style={{
+                                color: PLATFORM_COLORS[livePlatform!],
+                                borderColor: `${PLATFORM_COLORS[livePlatform!]}30`,
+                                background: `${PLATFORM_COLORS[livePlatform!]}10`,
+                              }}>
+                              <span className="w-1.5 h-1.5 rounded-full animate-pulse"
+                                style={{ background: PLATFORM_COLORS[livePlatform!] }} />
+                              Watch on {livePlatform}
+                            </a>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </>
+      )}
 
       {/* Creator modal */}
       {selected && (
