@@ -208,6 +208,9 @@ export default function AdminDashboard() {
   const [tiktokCounts, setTiktokCounts] = useState<TiktokCount[]>([])
   const [trendData, setTrendData] = useState<TrendRow[]>([])
   const [trendPeriodsOrder, setTrendPeriodsOrder] = useState<string[]>([])
+  // Which person's line is currently highlighted — set by hovering either the
+  // legend or the line itself, so the two stay in sync in both directions.
+  const [hoveredPerson, setHoveredPerson] = useState<string | null>(null)
   const [calendarFilter, setCalendarFilter] = useState<'all' | 'twitch' | 'youtube'>('all')
   const [period, setPeriod] = useState(getCurrentPeriod())
   const [complianceLoading, setComplianceLoading] = useState(false)
@@ -1093,30 +1096,60 @@ export default function AdminDashboard() {
                           <text key={p} x={xFor(i)} y={chartH - 6} fill="rgba(255,255,255,0.3)" fontSize="9" textAnchor="middle" fontFamily="monospace">{p}</text>
                         ) : null
                       ))}
-                      {personNames.map((name, pi) => {
+                      {/* Render hover order (not color/legend order) so whichever line is
+                          highlighted draws last and sits visually on top of the others. */}
+                      {[...personNames]
+                        .sort((a, b) => (a === hoveredPerson ? 1 : b === hoveredPerson ? -1 : 0))
+                        .map((name) => {
+                        const pi = personNames.indexOf(name)
                         const color = CHART_COLORS[pi % CHART_COLORS.length]
+                        const isHovered = hoveredPerson === name
+                        const isDimmed = hoveredPerson !== null && !isHovered
                         const points = trendPeriods.map((p, i) => {
                           const row = trendData.find(r => r.person_name === name && r.period === p)
                           return { x: xFor(i), y: yFor(row ? row.total : 0) }
                         })
                         return (
-                          <g key={name}>
-                            <path d={smoothAreaPath(points, baselineY)} fill={color} opacity={0.08} stroke="none" />
-                            <path d={smoothLinePath(points)} fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" />
+                          <g
+                            key={name}
+                            onMouseEnter={() => setHoveredPerson(name)}
+                            onMouseLeave={() => setHoveredPerson(null)}
+                            style={{ cursor: 'pointer', transition: 'opacity 0.15s ease' }}
+                          >
+                            <path d={smoothAreaPath(points, baselineY)} fill={color} opacity={isDimmed ? 0.02 : 0.08} stroke="none" />
+                            {/* Invisible wide hit-path — makes the thin 2.5px line easy to hover
+                                without needing pixel-perfect mouse precision. */}
+                            <path d={smoothLinePath(points)} fill="none" stroke="transparent" strokeWidth="16" />
+                            <path d={smoothLinePath(points)} fill="none" stroke={color} strokeWidth={isHovered ? 4 : 2.5}
+                              strokeLinecap="round" opacity={isDimmed ? 0.15 : 1}
+                              style={{ transition: 'stroke-width 0.15s ease, opacity 0.15s ease' }} />
                             {points.map((pt, i) => (
-                              <circle key={i} cx={pt.x} cy={pt.y} r="3" fill="#141414" stroke={color} strokeWidth="2" />
+                              <circle key={i} cx={pt.x} cy={pt.y} r={isHovered ? 4 : 3} fill="#141414" stroke={color}
+                                strokeWidth="2" opacity={isDimmed ? 0.15 : 1} />
                             ))}
                           </g>
                         )
                       })}
                     </svg>
                     <div className="flex flex-wrap gap-3 mt-4">
-                      {personNames.map((name, pi) => (
-                        <div key={name} className="flex items-center gap-1.5">
-                          <span className="w-2.5 h-2.5 rounded-full" style={{ background: CHART_COLORS[pi % CHART_COLORS.length] }} />
-                          <span className="text-white/50 text-xs font-mono">{name}</span>
-                        </div>
-                      ))}
+                      {personNames.map((name, pi) => {
+                        const isHovered = hoveredPerson === name
+                        const isDimmed = hoveredPerson !== null && !isHovered
+                        return (
+                          <div key={name}
+                            onMouseEnter={() => setHoveredPerson(name)}
+                            onMouseLeave={() => setHoveredPerson(null)}
+                            className="flex items-center gap-1.5 px-1.5 py-0.5 -mx-1.5 cursor-pointer"
+                            style={{
+                              opacity: isDimmed ? 0.35 : 1,
+                              background: isHovered ? 'rgba(255,255,255,0.06)' : 'transparent',
+                              transition: 'opacity 0.15s ease, background 0.15s ease',
+                            }}>
+                            <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: CHART_COLORS[pi % CHART_COLORS.length] }} />
+                            <span className="text-xs font-mono" style={{ color: isHovered ? '#F2F2F2' : 'rgba(242,242,242,0.5)', fontWeight: isHovered ? 700 : 400 }}>{name}</span>
+                          </div>
+                        )
+                      })}
                     </div>
                   </div>
                 )
