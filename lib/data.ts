@@ -330,7 +330,7 @@ export const creators = [
     tier: 3,
     bio: 'Hi, my name is Natalee, I am a female comp fortnite player and i also love to stream and interact with fans!',
     link: 'https://www.twitch.tv/nataleefn_/about',
-    photo: 'creator-natalee',
+    photo: 'creator-natalee.jpg',
     socials: { twitch: 'nataleefn', twitter: 'https://x.com/nataleefn', youtube: '', tiktok: '' },
   },
   {
