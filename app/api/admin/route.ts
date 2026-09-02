@@ -763,6 +763,62 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ data: rows, periods: weeks.map(w => w.label) })
     }
 
+    // Creator Schedule — a forward-looking content calendar (as opposed to
+    // activity_events, which records what already happened). Anyone with admin
+    // access can drop a planned video/short/stream/post onto a date, independent
+    // of Twitch/YouTube sync.
+    case 'getScheduleItems': {
+      const { monthStart, monthEnd } = monthRange(body.period)
+      const { data } = await supabase
+        .from('creator_schedule')
+        .select('*')
+        .gte('scheduled_date', monthStart.toISOString().slice(0, 10))
+        .lt('scheduled_date', monthEnd.toISOString().slice(0, 10))
+        .order('scheduled_date', { ascending: true })
+      return NextResponse.json({ data })
+    }
+
+    case 'addScheduleItem': {
+      if (!body.person_name || !body.scheduled_date || !body.title) {
+        return NextResponse.json({ error: 'person_name, scheduled_date, and title are required' }, { status: 400 })
+      }
+      const { data, error } = await supabase
+        .from('creator_schedule')
+        .insert({
+          person_name: body.person_name,
+          content_type: body.content_type || 'other',
+          title: body.title,
+          notes: body.notes || '',
+          scheduled_date: body.scheduled_date,
+        })
+        .select()
+      if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+      return NextResponse.json({ success: true, data })
+    }
+
+    case 'updateScheduleItem': {
+      const update: any = {}
+      if (body.completed !== undefined) update.completed = body.completed
+      if (body.person_name !== undefined) update.person_name = body.person_name
+      if (body.content_type !== undefined) update.content_type = body.content_type
+      if (body.title !== undefined) update.title = body.title
+      if (body.notes !== undefined) update.notes = body.notes
+      if (body.scheduled_date !== undefined) update.scheduled_date = body.scheduled_date
+
+      const { error } = await supabase
+        .from('creator_schedule')
+        .update(update)
+        .eq('id', body.id)
+
+      if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+      return NextResponse.json({ success: true })
+    }
+
+    case 'deleteScheduleItem': {
+      await supabase.from('creator_schedule').delete().eq('id', body.id)
+      return NextResponse.json({ success: true })
+    }
+
     default:
       return NextResponse.json({ error: 'Unknown action' }, { status: 400 })
   }
