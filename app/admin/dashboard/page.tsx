@@ -498,7 +498,6 @@ export default function AdminDashboard() {
       {/* Header */}
       <div className="bg-[#141414] border-b border-white/5 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-4">
           <img src="/wordmark.png" alt="OVERTAKE" style={{ height: '36px', mixBlendMode: 'screen' }} />
           <div className="h-6 w-px bg-white/10" />
           <p className="text-white/60 text-xs font-mono uppercase tracking-widest">Admin Dashboard</p>
@@ -988,493 +987,501 @@ export default function AdminDashboard() {
                               {status.label} ({actual}/{target})
                             </span>
                           </div>
-                                  <div className="flex items-center gap-4">
-          <img src="/wordmark.png" alt="OVERTAKE" style={{ height: '36px', mixBlendMode: 'screen' }} />
-          <div className="h-6 w-px bg-white/10" />
-          <p className="text-white/60 text-xs font-mono uppercase tracking-widest">Admin Dashboard</p>
-        </div>
-        <button onClick={logout} className="flex items-center gap-2 text-white/30 hover:text-white text-xs font-mono uppercase tracking-widest transition-colors">
-          <LogOut size={14} /> Logout
-        </button>
-      </div>
-
-      {/* Stats bar */}
-      <div className="border-b border-white/5 bg-[#141414]/50">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex flex-wrap gap-8">
-          <div className="flex items-center gap-3">
-            <Tag size={16} className="text-[#E8191A]" />
-            <span className="text-white/40 text-sm font-mono">Discount Codes</span>
-            <span className="font-display font-black text-xl text-white" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{codes.length}</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <Link size={16} className="text-[#E8191A]" />
-            <span className="text-white/40 text-sm font-mono">Tracking Links</span>
-            <span className="font-display font-black text-xl text-white" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{links.length}</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <BarChart2 size={16} className="text-[#E8191A]" />
-            <span className="text-white/40 text-sm font-mono">Total Clicks</span>
-            <span className="font-display font-black text-xl text-white" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{links.reduce((a, l) => a + l.clicks, 0)}</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <Mail size={16} className="text-[#E8191A]" />
-            <span className="text-white/40 text-sm font-mono">Emails Sent</span>
-            <span className="font-display font-black text-xl text-white" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{orderEmails.length}</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <Users size={16} className="text-[#E8191A]" />
-            <span className="text-white/40 text-sm font-mono">Tracked This Period</span>
-            <span className="font-display font-black text-xl text-white" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{rosterMembers.length}</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-6 py-10">
-        {/* Tabs */}
-        <div className="flex gap-2 mb-8 border-b border-white/5">
-          {[
-            { id: 'codes', label: 'Discount Codes', icon: Tag },
-            { id: 'links', label: 'Tracking Links', icon: Link },
-            { id: 'email', label: 'Send Tracking Email', icon: Mail },
-            { id: 'compliance', label: 'Creator Compliance', icon: Users },
-            { id: 'schedule', label: 'Creator Schedule', icon: Calendar },
-          ].map(({ id, label, icon: Icon }) => (
-            <button key={id} onClick={() => setTab(id as any)}
-              className="flex items-center gap-2 px-6 py-3 text-sm font-black uppercase tracking-widest transition-all border-b-2"
-              style={{
-                fontFamily: 'Barlow Condensed, sans-serif',
-                color: tab === id ? '#E8191A' : 'rgba(242,242,242,0.3)',
-                borderBottomColor: tab === id ? '#E8191A' : 'transparent',
-              }}>
-              <Icon size={14} /> {label}
-            </button>
-          ))}
-        </div>
-
-        {/* DISCOUNT CODES TAB */}
-        {tab === 'codes' && (
-          <div className="space-y-8">
-            <div className="bg-[#141414] border border-white/5 p-6">
-              <h2 className="font-display font-black text-xl text-white uppercase mb-5"
-                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>Create New Code</h2>
-              <form onSubmit={createCode} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div>
-                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Code *</label>
-                  <input required value={newCode.code} onChange={e => setNewCode({ ...newCode, code: e.target.value.toUpperCase() })}
-                    placeholder="OVERTAKE20"
-                    className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
-                </div>
-                <div>
-                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Type *</label>
-                  <select value={newCode.type} onChange={e => setNewCode({ ...newCode, type: e.target.value })}
-                    className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors">
-                    <option value="percent">Percent Off (%)</option>
-                    <option value="fixed">Fixed Amount ($)</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Value *</label>
-                  <input required type="number" value={newCode.value} onChange={e => setNewCode({ ...newCode, value: e.target.value })}
-                    placeholder={newCode.type === 'percent' ? '20' : '10'}
-                    className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
-                </div>
-                <div>
-                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Max Uses (blank = unlimited)</label>
-                  <input type="number" value={newCode.max_uses} onChange={e => setNewCode({ ...newCode, max_uses: e.target.value })}
-                    placeholder="100"
-                    className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
-                </div>
-                <div>
-                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Expires At (optional)</label>
-                  <input type="date" value={newCode.expires_at} onChange={e => setNewCode({ ...newCode, expires_at: e.target.value })}
-                    className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
-                </div>
-                <div>
-                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Notes</label>
-                  <input value={newCode.notes} onChange={e => setNewCode({ ...newCode, notes: e.target.value })}
-                    placeholder="e.g. For partners only"
-                    className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
-                </div>
-                <div className="sm:col-span-2 lg:col-span-3">
-                  <button type="submit"
-                    className="flex items-center gap-2 bg-[#E8191A] hover:bg-[#B81011] px-6 py-3 font-black tracking-widest uppercase text-sm transition-all text-white clip-corner"
-                    style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-                    <Plus size={14} /> Create Code
-                  </button>
-                </div>
-              </form>
-            </div>
-            <div className="space-y-3">
-              {codes.length === 0 && (
-                <div className="bg-[#141414] border border-white/5 p-8 text-center">
-                  <p className="text-white/30 font-mono text-sm">No discount codes yet.</p>
-                </div>
-              )}
-              {codes.map((code) => (
-                <div key={code.id} className="bg-[#141414] border border-white/5 p-5 flex flex-wrap items-center gap-4">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-3 mb-1">
-                      <span className="font-display font-black text-2xl text-white uppercase"
-                        style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{code.code}</span>
-                      <span className="text-xs font-mono px-2 py-0.5 border"
-                        style={{ color: '#E8191A', borderColor: '#E8191A40', background: '#E8191A10' }}>
-                        {code.type === 'percent' ? `${code.value}% OFF` : `$${code.value} OFF`}
-                      </span>
-                    </div>
-                    <div className="flex flex-wrap gap-4 text-xs font-mono text-white/40">
-                      <span>Uses: <span className="text-white">{code.uses}{code.max_uses ? ` / ${code.max_uses}` : ' / ∞'}</span></span>
-                      {code.expires_at && <span>Expires: <span className="text-white">{new Date(code.expires_at).toLocaleDateString()}</span></span>}
-                      {code.notes && <span>Note: <span className="text-white/60">{code.notes}</span></span>}
-                    </div>
-                  </div>
-                  {code.max_uses && (
-                    <div className="w-32">
-                      <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
-                        <div className="h-full bg-[#E8191A] rounded-full transition-all"
-                          style={{ width: `${Math.min((code.uses / code.max_uses) * 100, 100)}%` }} />
+                          <p className="text-white/30 text-xs font-mono">{ROLE_REQUIREMENTS[member.role_type]}</p>
+                        </div>
                       </div>
-                      <p className="text-white/30 text-[10px] font-mono mt-1 text-right">
-                        {Math.round((code.uses / code.max_uses) * 100)}% used
-                      </p>
+                      <div className="flex items-center gap-2">
+                        <button onClick={() => isEditing ? setEditingPerson(null) : startEdit(member)}
+                          className="flex items-center gap-1.5 px-3 py-2 border border-white/10 hover:border-white/30 text-white/40 hover:text-white text-xs font-mono uppercase tracking-widest transition-all">
+                          {isEditing ? <X size={12} /> : <Pencil size={12} />} {isEditing ? 'Cancel' : 'Edit'}
+                        </button>
+                        <button onClick={() => removePerson(member.person_name)}
+                          className="flex items-center gap-1.5 px-3 py-2 border border-white/10 hover:border-[#E8191A]/50 text-white/40 hover:text-[#E8191A] text-xs font-mono uppercase tracking-widest transition-all">
+                          <UserMinus size={12} /> Remove
+                        </button>
+                      </div>
                     </div>
-                  )}
-                  <div className="flex items-center gap-2">
-                    <button onClick={() => copyToClipboard(code.code, code.id)}
-                      className="flex items-center gap-1.5 px-3 py-2 border border-white/10 hover:border-white/30 text-white/40 hover:text-white text-xs font-mono uppercase tracking-widest transition-all">
-                      {copied === code.id ? <Check size={12} className="text-green-400" /> : <Copy size={12} />}
-                      {copied === code.id ? 'Copied' : 'Copy'}
-                    </button>
-                    <button onClick={() => deleteCode(code.id)}
-                      className="flex items-center gap-1.5 px-3 py-2 border border-white/10 hover:border-[#E8191A]/50 text-white/40 hover:text-[#E8191A] text-xs font-mono uppercase tracking-widest transition-all">
-                      <Trash2 size={12} />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
 
-        {/* TRACKING LINKS TAB */}
-        {tab === 'links' && (
-          <div className="space-y-8">
+                    {isEditing ? (
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 items-end">
+                        <div>
+                          <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Role</label>
+                          <select value={editDraft.role_type} onChange={e => setEditDraft({ ...editDraft, role_type: e.target.value })}
+                            className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-3 py-2 text-white font-mono text-sm outline-none transition-colors">
+                            <option value="streamer">Streamer (Twitch)</option>
+                            <option value="tiktok_creator">TikTok Creator</option>
+                            <option value="creator">Creator (TikTok/YT)</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Twitch Login</label>
+                          <input value={editDraft.twitch_login} onChange={e => setEditDraft({ ...editDraft, twitch_login: e.target.value.toLowerCase() })}
+                            placeholder="not set"
+                            className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-3 py-2 text-white font-mono text-sm outline-none transition-colors" />
+                        </div>
+                        <div>
+                          <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">YouTube Channel</label>
+                          <input value={editDraft.youtube_channel} onChange={e => setEditDraft({ ...editDraft, youtube_channel: e.target.value })}
+                            placeholder="UCxxxx or @handle"
+                            className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-3 py-2 text-white font-mono text-sm outline-none transition-colors" />
+                        </div>
+                        <div>
+                          <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Photo URL</label>
+                          <input value={editDraft.photo_url} onChange={e => setEditDraft({ ...editDraft, photo_url: e.target.value })}
+                            placeholder="Paste a TikTok/Twitch/YT photo URL"
+                            className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-3 py-2 text-white font-mono text-sm outline-none transition-colors" />
+                        </div>
+                        <div className="col-span-2 sm:col-span-4">
+                          <button onClick={() => saveEdit(member.person_name)} disabled={savingEdit}
+                            className="flex items-center gap-2 bg-[#E8191A] hover:bg-[#B81011] px-6 py-2.5 font-black tracking-widest uppercase text-xs transition-all text-white clip-corner disabled:opacity-50">
+                            {savingEdit ? <><Clock size={12} className="animate-spin" /> Saving...</> : <><Save size={12} /> Save & Re-sync</>}
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div className="bg-[#0D0D0D] border border-white/5 px-4 py-3">
+                          <p className="text-white/30 text-[10px] font-mono uppercase tracking-widest mb-1">Twitch Streams (auto)</p>
+                          <p className="font-display font-black text-2xl text-white" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                            {member.twitch_login ? twitchCount : <span className="text-white/20 text-sm font-mono">no handle</span>}
+                          </p>
+                        </div>
+                        <div className="bg-[#0D0D0D] border border-white/5 px-4 py-3">
+                          <p className="text-white/30 text-[10px] font-mono uppercase tracking-widest mb-1">YouTube Uploads (auto)</p>
+                          <p className="font-display font-black text-2xl text-white" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                            {member.youtube_channel ? youtubeCount : <span className="text-white/20 text-sm font-mono">no channel</span>}
+                          </p>
+                        </div>
+                        <div className="bg-[#0D0D0D] border border-white/5 px-4 py-3">
+                          <p className="text-white/30 text-[10px] font-mono uppercase tracking-widest mb-1">TikTok Posts (manual)</p>
+                          <div className="flex items-center gap-2">
+                            <input type="number" min={0} value={tiktokDraft[member.person_name] ?? '0'}
+                              onChange={e => setTiktokDraft({ ...tiktokDraft, [member.person_name]: e.target.value })}
+                              className="w-16 bg-transparent border-b border-white/20 focus:border-[#E8191A]/60 text-white font-display font-black text-2xl outline-none"
+                              style={{ fontFamily: 'Barlow Condensed, sans-serif' }} />
+                            <button onClick={() => saveTiktok(member.person_name)} disabled={savingTiktok === member.person_name}
+                              className="flex items-center gap-1 px-2 py-1 border border-white/10 hover:border-white/30 text-white/40 hover:text-white text-[10px] font-mono uppercase tracking-widest transition-all disabled:opacity-50">
+                              {savingTiktok === member.person_name ? <Clock size={10} className="animate-spin" /> : <Save size={10} />}
+                            </button>
+                          </div>
+                        </div>
+                        <div className="bg-[#0D0D0D] border border-white/5 px-4 py-3">
+                          <p className="text-white/30 text-[10px] font-mono uppercase tracking-widest mb-1">Total Activity</p>
+                          <p className="font-display font-black text-2xl text-white" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                            {twitchCount + youtubeCount + tiktokCount}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+
+            {/* Calendar */}
             <div className="bg-[#141414] border border-white/5 p-6">
-              <h2 className="font-display font-black text-xl text-white uppercase mb-5"
-                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>Create Tracking Link</h2>
-              <form onSubmit={createLink} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Name *</label>
-                  <input required value={newLink.name} onChange={e => setNewLink({ ...newLink, name: e.target.value })}
-                    placeholder="Dynasty Instagram Bio"
-                    className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
-                </div>
-                <div>
-                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Slug *</label>
-                  <div className="flex items-center">
-                    <span className="bg-[#0D0D0D] border border-r-0 border-white/10 px-3 py-3 text-white/30 font-mono text-xs whitespace-nowrap">overtakegg.com/track/</span>
-                    <input required value={newLink.slug} onChange={e => setNewLink({ ...newLink, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-') })}
-                      placeholder="dynasty-ig"
-                      className="flex-1 bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
-                  </div>
-                </div>
-                <div className="sm:col-span-2">
-                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Destination URL *</label>
-                  <input required type="url" value={newLink.destination_url} onChange={e => setNewLink({ ...newLink, destination_url: e.target.value })}
-                    placeholder="https://overtakegg.com/store"
-                    className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
-                </div>
-                <div>
-                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Sent To</label>
-                  <input value={newLink.sent_to} onChange={e => setNewLink({ ...newLink, sent_to: e.target.value })}
-                    placeholder="Dynasty, Jxe"
-                    className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
-                </div>
-                <div>
-                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Notes</label>
-                  <input value={newLink.notes} onChange={e => setNewLink({ ...newLink, notes: e.target.value })}
-                    placeholder="Instagram bio link for store launch"
-                    className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
-                </div>
-                <div className="sm:col-span-2">
-                  <button type="submit"
-                    className="flex items-center gap-2 bg-[#E8191A] hover:bg-[#B81011] px-6 py-3 font-black tracking-widest uppercase text-sm transition-all text-white clip-corner"
-                    style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-                    <Plus size={14} /> Create Link
-                  </button>
-                </div>
-              </form>
-            </div>
-            <div className="space-y-3">
-              {links.length === 0 && (
-                <div className="bg-[#141414] border border-white/5 p-8 text-center">
-                  <p className="text-white/30 font-mono text-sm">No tracking links yet.</p>
-                </div>
-              )}
-              {links.map((link) => (
-                <div key={link.id} className="bg-[#141414] border border-white/5 p-5 flex flex-wrap items-center gap-4">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-3 mb-1">
-                      <span className="font-display font-black text-2xl text-white uppercase"
-                        style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{link.name}</span>
-                      <span className="text-xs font-mono px-2 py-0.5 border"
-                        style={{ color: '#00D4FF', borderColor: '#00D4FF40', background: '#00D4FF10' }}>
-                        {link.clicks} clicks
-                      </span>
-                    </div>
-                    <div className="flex flex-wrap gap-4 text-xs font-mono text-white/40">
-                      <span>URL: <span className="text-[#E8191A]">overtakegg.com/track/{link.slug}</span></span>
-                      {link.sent_to && <span>Sent to: <span className="text-white">{link.sent_to}</span></span>}
-                      {link.notes && <span>Note: <span className="text-white/60">{link.notes}</span></span>}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button onClick={() => copyToClipboard(`https://overtakegg.com/track/${link.slug}`, link.id)}
-                      className="flex items-center gap-1.5 px-3 py-2 border border-white/10 hover:border-white/30 text-white/40 hover:text-white text-xs font-mono uppercase tracking-widest transition-all">
-                      {copied === link.id ? <Check size={12} className="text-green-400" /> : <Copy size={12} />}
-                      {copied === link.id ? 'Copied' : 'Copy Link'}
+              <div className="flex flex-wrap items-center gap-3 mb-6">
+                <Calendar size={18} className="text-[#E8191A]" />
+                <h3 className="font-display font-black text-lg text-white uppercase"
+                  style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>Activity Calendar</h3>
+                <div className="flex items-center gap-1 ml-auto">
+                  {(['all', 'twitch', 'youtube'] as const).map(f => (
+                    <button key={f} onClick={() => setCalendarFilter(f)}
+                      className="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest transition-all border"
+                      style={{
+                        fontFamily: 'Barlow Condensed, sans-serif',
+                        color: calendarFilter === f ? '#F2F2F2' : 'rgba(242,242,242,0.3)',
+                        borderColor: calendarFilter === f ? (f === 'twitch' ? '#7A7AFF' : f === 'youtube' ? '#FF4444' : 'rgba(255,255,255,0.2)') : 'rgba(255,255,255,0.05)',
+                        background: calendarFilter === f ? (f === 'twitch' ? '#7A7AFF15' : f === 'youtube' ? '#FF444415' : 'rgba(255,255,255,0.05)') : 'transparent',
+                      }}>
+                      {f === 'all' ? 'All' : f === 'twitch' ? 'Twitch' : 'YouTube'}
                     </button>
-                    <a href={link.destination_url} target="_blank" rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 px-3 py-2 border border-white/10 hover:border-white/30 text-white/40 hover:text-white text-xs font-mono uppercase tracking-widest transition-all">
-                      <ExternalLink size={12} />
-                    </a>
-                    <button onClick={() => deleteLink(link.id)}
-                      className="flex items-center gap-1.5 px-3 py-2 border border-white/10 hover:border-[#E8191A]/50 text-white/40 hover:text-[#E8191A] text-xs font-mono uppercase tracking-widest transition-all">
-                      <Trash2 size={12} />
-                    </button>
-                  </div>
+                  ))}
                 </div>
-              ))}
+                <span className="text-white/30 text-xs font-mono w-full">Twitch streams + YouTube uploads by day (TikTok not date-tracked yet)</span>
+              </div>
+              {(() => {
+                const { dayCount, firstWeekday } = daysInPeriod(period)
+                const cells: (number | null)[] = [...Array(firstWeekday).fill(null), ...Array.from({ length: dayCount }, (_, i) => i + 1)]
+                return (
+                  <div className="grid grid-cols-7 gap-1.5">
+                    {['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'].map(d => (
+                      <div key={d} className="text-center text-white/25 text-[10px] font-mono uppercase tracking-widest pb-1">{d}</div>
+                    ))}
+                    {cells.map((day, i) => {
+                      if (day === null) return <div key={`blank-${i}`} />
+                      const dateStr = `${period}-${String(day).padStart(2, '0')}`
+                      const dayEvents = activityEvents.filter(e => e.event_date === dateStr && (calendarFilter === 'all' || e.platform === calendarFilter))
+                      return (
+                        <div key={dateStr} className="bg-[#0D0D0D] border border-white/5 min-h-[64px] p-1.5">
+                          <p className="text-white/30 text-[10px] font-mono mb-1">{day}</p>
+                          <div className="space-y-0.5">
+                            {dayEvents.slice(0, 3).map(ev => (
+                              <a key={ev.id} href={eventUrl(ev)} target="_blank" rel="noopener noreferrer"
+                                title={`${ev.person_name} — ${ev.platform === 'twitch' ? 'Twitch stream' : 'YouTube upload'}${ev.title ? ` — ${ev.title}` : ''}`}
+                                className="flex items-center gap-1 text-[9px] font-mono px-1 py-0.5 truncate hover:underline"
+                                style={{
+                                  color: ev.platform === 'twitch' ? '#7A7AFF' : '#FF4444',
+                                  background: ev.platform === 'twitch' ? '#7A7AFF15' : '#FF444415',
+                                }}>
+                                <span className="font-bold" style={{ opacity: 0.8 }}>{ev.platform === 'twitch' ? 'TW' : 'YT'}</span>
+                                <span className="truncate">{ev.person_name}</span>
+                              </a>
+                            ))}
+                            {dayEvents.length > 3 && (
+                              <p className="text-white/20 text-[9px] font-mono">+{dayEvents.length - 3} more</p>
+                            )}
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )
+              })()}
             </div>
-          </div>
-        )}
 
-        {/* SEND TRACKING EMAIL TAB */}
-        {tab === 'email' && (
-          <div className="space-y-8">
-            {/* Send form */}
+            {/* Trend chart */}
             <div className="bg-[#141414] border border-white/5 p-6">
-              <h2 className="font-display font-black text-xl text-white uppercase mb-2"
-                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>Send Order Tracking Email</h2>
-              <p className="text-white/40 text-sm font-mono mb-6">Sends a branded Overtake email to the customer with their tracking link.</p>
-
-              {emailSent && (
-                <div className="flex items-center gap-3 bg-green-500/10 border border-green-500/30 px-4 py-3 mb-6">
-                  <Check size={16} className="text-green-400" />
-                  <p className="text-green-400 text-sm font-mono">Email sent successfully!</p>
-                </div>
-              )}
-              {emailError && (
-                <div className="bg-[#E8191A]/10 border border-[#E8191A]/30 px-4 py-3 mb-6">
-                  <p className="text-[#E8191A] text-sm font-mono">{emailError}</p>
-                </div>
-              )}
-
-              <form onSubmit={sendTrackingEmail} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Customer Name *</label>
-                  <input required value={emailForm.customer_name} onChange={e => setEmailForm({ ...emailForm, customer_name: e.target.value })}
-                    placeholder="John Doe"
-                    className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
-                </div>
-                <div>
-                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Customer Email *</label>
-                  <input required type="email" value={emailForm.customer_email} onChange={e => setEmailForm({ ...emailForm, customer_email: e.target.value })}
-                    placeholder="customer@email.com"
-                    className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
-                </div>
-                <div>
-                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Order Number *</label>
-                  <input required value={emailForm.order_number} onChange={e => setEmailForm({ ...emailForm, order_number: e.target.value })}
-                    placeholder="1234"
-                    className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
-                </div>
-                <div>
-                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Tracking URL *</label>
-                  <input required type="url" value={emailForm.tracking_url} onChange={e => setEmailForm({ ...emailForm, tracking_url: e.target.value })}
-                    placeholder="https://tools.usps.com/go/TrackConfirmAction?tLabels=..."
-                    className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
-                </div>
-                <div className="sm:col-span-2">
-                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Internal Notes (not sent to customer)</label>
-                  <input value={emailForm.notes} onChange={e => setEmailForm({ ...emailForm, notes: e.target.value })}
-                    placeholder="e.g. Jersey + hoodie order"
-                    className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
-                </div>
-                <div className="sm:col-span-2">
-                  <button type="submit" disabled={sending}
-                    className="flex items-center gap-2 bg-[#E8191A] hover:bg-[#B81011] px-6 py-3 font-black tracking-widest uppercase text-sm transition-all text-white clip-corner disabled:opacity-50"
-                    style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-                    {sending ? <><Clock size={14} className="animate-spin" /> Sending...</> : <><Send size={14} /> Send Tracking Email</>}
-                  </button>
-                </div>
-              </form>
+              <div className="flex items-center gap-3 mb-6">
+                <TrendingUp size={18} className="text-[#E8191A]" />
+                <h3 className="font-display font-black text-lg text-white uppercase"
+                  style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>12-Week Trend</h3>
+                <span className="text-white/30 text-xs font-mono">Total weekly activity per person — use this to spot who's improving or falling off</span>
+              </div>
+              {(() => {
+                const trendPeriods = trendPeriodsOrder.length > 0 ? trendPeriodsOrder : Array.from(new Set(trendData.map(r => r.period)))
+                const personNames = Array.from(new Set(trendData.map(r => r.person_name))).sort()
+                if (trendPeriods.length === 0 || personNames.length === 0) {
+                  return <p className="text-white/30 font-mono text-sm">Not enough data yet — sync some activity first.</p>
+                }
+                const maxVal = Math.max(1, ...trendData.map(r => r.total))
+                const chartW = 640
+                const chartH = 240
+                const padL = 30
+                const padB = 24
+                const padT = 14
+                const plotW = chartW - padL - 10
+                const plotH = chartH - padB - padT
+                const baselineY = padT + plotH
+                const xFor = (i: number) => padL + (trendPeriods.length > 1 ? (i / (trendPeriods.length - 1)) * plotW : plotW / 2)
+                const yFor = (v: number) => padT + plotH - (v / maxVal) * plotH
+                // Only label every other week if there are a lot of them, so labels don't collide
+                const labelStep = trendPeriods.length > 8 ? 2 : 1
+                return (
+                  <div>
+                    <svg viewBox={`0 0 ${chartW} ${chartH}`} className="w-full" style={{ maxHeight: '300px' }}>
+                      {[0, 0.5, 1].map(f => (
+                        <line key={f} x1={padL} x2={chartW - 10} y1={padT + plotH * (1 - f)} y2={padT + plotH * (1 - f)}
+                          stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+                      ))}
+                      {trendPeriods.map((p, i) => (
+                        i % labelStep === 0 ? (
+                          <text key={p} x={xFor(i)} y={chartH - 6} fill="rgba(255,255,255,0.3)" fontSize="9" textAnchor="middle" fontFamily="monospace">{p}</text>
+                        ) : null
+                      ))}
+                      {/* Render hover order (not color/legend order) so whichever line is
+                          highlighted draws last and sits visually on top of the others. */}
+                      {[...personNames]
+                        .sort((a, b) => (a === hoveredPerson ? 1 : b === hoveredPerson ? -1 : 0))
+                        .map((name) => {
+                        const pi = personNames.indexOf(name)
+                        const color = CHART_COLORS[pi % CHART_COLORS.length]
+                        const isHovered = hoveredPerson === name
+                        const isDimmed = hoveredPerson !== null && !isHovered
+                        const points = trendPeriods.map((p, i) => {
+                          const row = trendData.find(r => r.person_name === name && r.period === p)
+                          return { x: xFor(i), y: yFor(row ? row.total : 0) }
+                        })
+                        return (
+                          <g
+                            key={name}
+                            onMouseEnter={() => setHoveredPerson(name)}
+                            onMouseLeave={() => setHoveredPerson(null)}
+                            style={{ cursor: 'pointer', transition: 'opacity 0.15s ease' }}
+                          >
+                            <path d={smoothAreaPath(points, baselineY)} fill={color} opacity={isDimmed ? 0.02 : 0.08} stroke="none" />
+                            {/* Invisible wide hit-path — makes the thin 2.5px line easy to hover
+                                without needing pixel-perfect mouse precision. */}
+                            <path d={smoothLinePath(points)} fill="none" stroke="transparent" strokeWidth="16" />
+                            <path d={smoothLinePath(points)} fill="none" stroke={color} strokeWidth={isHovered ? 4 : 2.5}
+                              strokeLinecap="round" opacity={isDimmed ? 0.15 : 1}
+                              style={{ transition: 'stroke-width 0.15s ease, opacity 0.15s ease' }} />
+                            {points.map((pt, i) => (
+                              <circle key={i} cx={pt.x} cy={pt.y} r={isHovered ? 4 : 3} fill="#141414" stroke={color}
+                                strokeWidth="2" opacity={isDimmed ? 0.15 : 1} />
+                            ))}
+                          </g>
+                        )
+                      })}
+                    </svg>
+                    <div className="flex flex-wrap gap-3 mt-4">
+                      {personNames.map((name, pi) => {
+                        const isHovered = hoveredPerson === name
+                        const isDimmed = hoveredPerson !== null && !isHovered
+                        return (
+                          <div key={name}
+                            onMouseEnter={() => setHoveredPerson(name)}
+                            onMouseLeave={() => setHoveredPerson(null)}
+                            className="flex items-center gap-1.5 px-1.5 py-0.5 -mx-1.5 cursor-pointer"
+                            style={{
+                              opacity: isDimmed ? 0.35 : 1,
+                              background: isHovered ? 'rgba(255,255,255,0.06)' : 'transparent',
+                              transition: 'opacity 0.15s ease, background 0.15s ease',
+                            }}>
+                            <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: CHART_COLORS[pi % CHART_COLORS.length] }} />
+                            <span className="text-xs font-mono" style={{ color: isHovered ? '#F2F2F2' : 'rgba(242,242,242,0.5)', fontWeight: isHovered ? 700 : 400 }}>{name}</span>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )
+              })()}
             </div>
 
-            {/* Email history */}
-            <div>
+            {/* How this works */}
+            <div className="bg-[#141414] border border-white/5 p-6">
               <h3 className="font-display font-black text-lg text-white uppercase mb-4"
-                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-                Email History <span className="text-white/30 text-base">({orderEmails.length})</span>
-              </h3>
-              <div className="space-y-3">
-                {orderEmails.length === 0 && (
-                  <div className="bg-[#141414] border border-white/5 p-8 text-center">
-                    <p className="text-white/30 font-mono text-sm">No emails sent yet.</p>
-                  </div>
-                )}
-                {orderEmails.map((email) => (
-                  <div key={email.id} className="bg-[#141414] border border-white/5 p-5">
-                    <div className="flex flex-wrap items-start justify-between gap-4">
-                      <div>
-                        <div className="flex items-center gap-3 mb-1">
-                          <span className="font-display font-black text-xl text-white uppercase"
-                            style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{email.customer_name}</span>
-                          <span className="text-xs font-mono px-2 py-0.5 border"
-                            style={{ color: '#00A878', borderColor: '#00A87840', background: '#00A87810' }}>
-                            Order #{email.order_number}
-                          </span>
-                        </div>
-                        <div className="flex flex-wrap gap-4 text-xs font-mono text-white/40">
-                          <span>To: <span className="text-white">{email.customer_email}</span></span>
-                          <span>Tracking: <a href={email.tracking_url} target="_blank" rel="noopener noreferrer" className="text-[#E8191A] hover:underline">View Link</a></span>
-                          {email.notes && <span>Note: <span className="text-white/60">{email.notes}</span></span>}
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2 text-white/30 text-xs font-mono">
-                        <Clock size={12} />
-                        {new Date(email.sent_at).toLocaleDateString()} {new Date(email.sent_at).toLocaleTimeString()}
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>How This Tool Works</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5 text-sm">
+                <div>
+                  <p className="text-[#00D4FF] text-xs font-mono uppercase tracking-widest mb-1">Who gets tracked</p>
+                  <p className="text-white/50 leading-relaxed">
+                    Everyone listed on the public /creators page is added here automatically, using their site photo and whatever Twitch/YouTube handles are on file. You only need the "Add New Creator" form for someone new who isn't on /creators yet — anyone already there will just show up on its own next time you open this tab.
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[#00D4FF] text-xs font-mono uppercase tracking-widest mb-1">Periods are monthly</p>
+                  <p className="text-white/50 leading-relaxed">
+                    The "Period" field controls which month you're viewing — codes, streams, uploads, and the calendar all scope to it. Switching periods doesn't delete or change anything, it just changes what you're looking at.
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[#00D4FF] text-xs font-mono uppercase tracking-widest mb-1">Twitch & YouTube are automatic — but not live</p>
+                  <p className="text-white/50 leading-relaxed">
+                    Stream and upload counts pull straight from the Twitch/YouTube APIs, but only when you click "Sync Twitch & YouTube." Nothing runs in the background — if it's been a while since the last sync, the numbers you see are stale, not necessarily zero. If a sync fails for someone, it shows up as a red error under the sync button with the exact reason (usually a wrong or misspelled handle).
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[#00D4FF] text-xs font-mono uppercase tracking-widest mb-1">TikTok is manual</p>
+                  <p className="text-white/50 leading-relaxed">
+                    There's no TikTok API connection yet, so post counts have to be typed in by hand per person, per month, using the number field on their card. Nothing else needs to be touched for TikTok — just the number.
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[#00D4FF] text-xs font-mono uppercase tracking-widest mb-1">Editing a handle re-syncs immediately</p>
+                  <p className="text-white/50 leading-relaxed">
+                    Hitting "Save & Re-sync" after editing someone's Twitch login or YouTube channel pulls their activity again right away, so a typo fix shows updated numbers within a few seconds — no need to hit the big Sync button separately.
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[#00D4FF] text-xs font-mono uppercase tracking-widest mb-1">"Remove" is safe — nothing is deleted</p>
+                  <p className="text-white/50 leading-relaxed">
+                    Removing someone just stops tracking them going forward; their past activity and history stay in the system. If they're still listed on /creators, they'll get auto-added back the next time you open this tab — so removal is really meant for people who've left, not a way to permanently wipe someone.
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[#00D4FF] text-xs font-mono uppercase tracking-widest mb-1">This data also powers the public leaderboard</p>
+                  <p className="text-white/50 leading-relaxed">
+                    The "This Month's Leaders" board on the public /creators page reads directly from the same synced data shown here. If someone's numbers look wrong here, they'll look wrong there too — fixing it in this tab (handle, then re-sync) fixes both places at once.
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[#00D4FF] text-xs font-mono uppercase tracking-widest mb-1">Calendar & trend chart are just visualizations</p>
+                  <p className="text-white/50 leading-relaxed">
+                    Both are read-only — they can't be edited directly, they just reflect whatever's already been synced or entered above. Use the calendar's All/Twitch/YouTube tabs to see who's been active on a given platform, and the trend chart to spot who's ramping up or falling off week to week.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* CREATOR COMPLIANCE TAB */}
-        {tab === 'compliance' && (
+        {/* CREATOR SCHEDULE TAB */}
+        {tab === 'schedule' && (
           <div className="space-y-8">
-            {/* Controls */}
             <div className="bg-[#141414] border border-white/5 p-6">
               <div className="flex flex-wrap items-end justify-between gap-4 mb-2">
                 <div>
                   <h2 className="font-display font-black text-xl text-white uppercase mb-1"
-                    style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>Creator Compliance</h2>
-                  <p className="text-white/40 text-sm font-mono">Tracks streaming/posting activity against org requirements, by month.</p>
+                    style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>Creator Schedule</h2>
+                  <p className="text-white/40 text-sm font-mono">Plan what's going out and when — drop a video, short, stream, or post onto the month's calendar before it happens.</p>
                 </div>
-                <div className="flex flex-wrap items-center gap-3">
-                  <div>
-                    <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Period</label>
-                    <input type="month" value={period} onChange={e => setPeriod(e.target.value)}
-                      className="bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-2.5 text-white font-mono text-sm outline-none transition-colors" />
-                  </div>
-                  <button onClick={syncAll} disabled={syncing}
-                    className="flex items-center gap-2 bg-[#E8191A] hover:bg-[#B81011] px-4 py-2.5 font-black tracking-widest uppercase text-xs transition-all text-white clip-corner disabled:opacity-50 mt-5">
-                    <RefreshCw size={14} className={syncing ? 'animate-spin' : ''} /> {syncing ? 'Syncing...' : 'Sync Twitch & YouTube'}
-                  </button>
+                <div>
+                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Period</label>
+                  <input type="month" value={period} onChange={e => setPeriod(e.target.value)}
+                    className="bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-2.5 text-white font-mono text-sm outline-none transition-colors" />
                 </div>
               </div>
               <p className="text-white/25 text-xs font-mono">
-                Twitch and YouTube activity pull automatically from their APIs for anyone with a handle on file. TikTok posts are entered manually until a TikTok API connection is set up.
+                This is separate from the auto-synced activity above — it's for planning ahead, not tracking what already happened. Anyone with admin access can add or remove items.
               </p>
-              {syncErrors.length > 0 && (
-                <div className="mt-4 bg-[#E8191A]/10 border border-[#E8191A]/30 px-4 py-3 space-y-1">
-                  <p className="text-[#E8191A] text-xs font-mono font-bold uppercase tracking-widest mb-1">Sync issues ({syncErrors.length})</p>
-                  {syncErrors.map((e, i) => (
-                    <p key={i} className="text-[#E8191A]/80 text-xs font-mono">{e}</p>
-                  ))}
-                </div>
-              )}
             </div>
 
-            {/* Add person form — only for people NOT already in the site's /creators data.
-                Everyone already listed on /creators is added automatically. */}
+            {/* Add form */}
             <div className="bg-[#141414] border border-white/5 p-6">
-              <h3 className="font-display font-black text-lg text-white uppercase mb-1"
-                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>Add New Creator</h3>
-              <p className="text-white/30 text-xs font-mono mb-4">
-                Everyone already on /creators is tracked automatically above, with their site photo. Only use this for someone new who isn't listed there yet.
-              </p>
-              <form onSubmit={addPerson} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+              <h3 className="font-display font-black text-lg text-white uppercase mb-4"
+                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>Add to Schedule</h3>
+              <form onSubmit={addScheduleItem} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                 <div>
-                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Name *</label>
-                  <input required value={newPerson.person_name} onChange={e => setNewPerson({ ...newPerson, person_name: e.target.value })}
-                    placeholder="New Creator Name"
-                    className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
-                </div>
-                <div>
-                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Role *</label>
-                  <select value={newPerson.role_type} onChange={e => setNewPerson({ ...newPerson, role_type: e.target.value })}
+                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Creator *</label>
+                  <select required value={newScheduleItem.person_name}
+                    onChange={e => setNewScheduleItem({ ...newScheduleItem, person_name: e.target.value })}
                     className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors">
-                    <option value="streamer">Streamer (Twitch)</option>
-                    <option value="tiktok_creator">TikTok Creator</option>
-                    <option value="creator">Creator (TikTok/YT)</option>
+                    <option value="">Select creator...</option>
+                    {rosterMembers.map(m => (
+                      <option key={m.id} value={m.person_name}>{m.person_name}</option>
+                    ))}
                   </select>
                 </div>
                 <div>
-                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Twitch Login</label>
-                  <input value={newPerson.twitch_login} onChange={e => setNewPerson({ ...newPerson, twitch_login: e.target.value.toLowerCase() })}
-                    placeholder="dynasty_k1ng"
+                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Content Type *</label>
+                  <select value={newScheduleItem.content_type}
+                    onChange={e => setNewScheduleItem({ ...newScheduleItem, content_type: e.target.value })}
+                    className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors">
+                    {Object.entries(CONTENT_TYPE_LABELS).map(([val, label]) => (
+                      <option key={val} value={val}>{label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Date *</label>
+                  <input required type="date" value={newScheduleItem.scheduled_date}
+                    onChange={e => setNewScheduleItem({ ...newScheduleItem, scheduled_date: e.target.value })}
                     className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
                 </div>
                 <div>
-                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">YouTube Channel</label>
-                  <input value={newPerson.youtube_channel} onChange={e => setNewPerson({ ...newPerson, youtube_channel: e.target.value })}
-                    placeholder="UCxxxx or @handle"
+                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Title / Description *</label>
+                  <input required value={newScheduleItem.title}
+                    onChange={e => setNewScheduleItem({ ...newScheduleItem, title: e.target.value })}
+                    placeholder="e.g. Season 3 tier list short"
                     className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
                 </div>
                 <div>
-                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Photo URL (optional)</label>
-                  <input value={newPerson.photo_url} onChange={e => setNewPerson({ ...newPerson, photo_url: e.target.value })}
-                    placeholder="Auto-fills from Twitch/YT"
+                  <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Notes</label>
+                  <input value={newScheduleItem.notes}
+                    onChange={e => setNewScheduleItem({ ...newScheduleItem, notes: e.target.value })}
+                    placeholder="Optional"
                     className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
                 </div>
-                <div className="flex items-end sm:col-span-2 lg:col-span-5">
-                  <button type="submit" disabled={addingPerson}
-                    className="flex items-center gap-2 bg-[#E8191A] hover:bg-[#B81011] px-6 py-3 font-black tracking-widest uppercase text-sm transition-all text-white clip-corner justify-center disabled:opacity-50"
+                <div className="sm:col-span-2 lg:col-span-5">
+                  <button type="submit" disabled={addingScheduleItem}
+                    className="flex items-center gap-2 bg-[#E8191A] hover:bg-[#B81011] px-6 py-3 font-black tracking-widest uppercase text-sm transition-all text-white clip-corner disabled:opacity-50"
                     style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-                    {addingPerson ? <><Clock size={14} className="animate-spin" /> Adding...</> : <><Plus size={14} /> Add & Track</>}
+                    {addingScheduleItem ? <><Clock size={14} className="animate-spin" /> Adding...</> : <><Plus size={14} /> Add to Schedule</>}
                   </button>
                 </div>
               </form>
             </div>
 
-            {/* Roster table */}
-            <div className="space-y-3">
-              {complianceLoading && (
-                <div className="bg-[#141414] border border-white/5 p-8 text-center">
-                  <p className="text-white/30 font-mono text-sm animate-pulse">Loading roster...</p>
-                </div>
-              )}
-              {!complianceLoading && rosterMembers.length === 0 && (
-                <div className="bg-[#141414] border border-white/5 p-8 text-center">
-                  <p className="text-white/30 font-mono text-sm">No one tracked yet. Add someone above to get started.</p>
-                </div>
-              )}
-              {!complianceLoading && rosterMembers.map((member) => {
-                const twitchCount = activityEvents.filter(e => e.person_name === member.person_name && e.platform === 'twitch').length
-                const youtubeCount = activityEvents.filter(e => e.person_name === member.person_name && e.platform === 'youtube').length
-                const tiktokCount = parseInt(tiktokDraft[member.person_name] ?? '0') || 0
-                const target = ROLE_TARGET[member.role_type]
-                const actual = getActual(member, twitchCount, youtubeCount, tiktokCount)
-                const status = getStatus(actual, target)
-                const isEditing = editingPerson === member.person_name
+            {/* Calendar */}
+            <div className="bg-[#141414] border border-white/5 p-6">
+              <div className="flex flex-wrap items-center gap-3 mb-6">
+                <Calendar size={18} className="text-[#E8191A]" />
+                <h3 className="font-display font-black text-lg text-white uppercase"
+                  style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>Content Calendar</h3>
+                <span className="text-white/30 text-xs font-mono">Click an item to toggle it posted/not posted</span>
+              </div>
+              {scheduleLoading ? (
+                <p className="text-white/30 font-mono text-sm animate-pulse">Loading schedule...</p>
+              ) : (() => {
+                const { dayCount, firstWeekday } = daysInPeriod(period)
+                const cells: (number | null)[] = [...Array(firstWeekday).fill(null), ...Array.from({ length: dayCount }, (_, i) => i + 1)]
                 return (
-                  <div key={member.id} className="bg-[#141414] border border-white/5 p-5">
-                    <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-                      <div className="flex items-start gap-4">
-                        <Avatar src={member.photo_url} name={member.person_name} size={56} />
-                        <div>
-                          <div className="flex items-center gap-3 mb-1">
-                            <span className="font-display font-black text-2xl text-white uppercase"
-                              style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{member.person_name}</span>
-                            <span className="text-xs font-mono px-2 py-0.5 border"
-                              style={{ color: '#00D4FF', borderColor: '#00D4FF40', background: '#00D4FF10' }}>
-                              {ROLE_LABELS[member.role_type]}
-                            </span>
-                            <span className="text-xs font-mono px-2 py-0.5 border"
-                              style={{ color: status.color, borderColor: `${status.color}40`, background: `${status.color}10` }}>
-                              {status.label} ({actual}/{target})
-                            </span>
+                  <div className="grid grid-cols-7 gap-1.5">
+                    {['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'].map(d => (
+                      <div key={d} className="text-center text-white/25 text-[10px] font-mono uppercase tracking-widest pb-1">{d}</div>
+                    ))}
+                    {cells.map((day, i) => {
+                      if (day === null) return <div key={`blank-${i}`} />
+                      const dateStr = `${period}-${String(day).padStart(2, '0')}`
+                      const dayItems = scheduleItems.filter(s => s.scheduled_date === dateStr)
+                      return (
+                        <div key={dateStr} className="bg-[#0D0D0D] border border-white/5 min-h-[64px] p-1.5">
+                          <p className="text-white/30 text-[10px] font-mono mb-1">{day}</p>
+                          <div className="space-y-0.5">
+                            {dayItems.slice(0, 3).map(item => (
+                              <button key={item.id} onClick={() => toggleScheduleComplete(item)}
+                                title={`${item.person_name} — ${CONTENT_TYPE_LABELS[item.content_type] || 'Other'}: ${item.title}${item.notes ? ` (${item.notes})` : ''}`}
+                                className="flex items-center gap-1 w-full text-[9px] font-mono px-1 py-0.5 truncate text-left"
+                                style={{
+                                  color: CONTENT_TYPE_COLORS[item.content_type] || '#F0A500',
+                                  background: `${CONTENT_TYPE_COLORS[item.content_type] || '#F0A500'}15`,
+                                  textDecoration: item.completed ? 'line-through' : 'none',
+                                  opacity: item.completed ? 0.5 : 1,
+                                }}>
+                                <span className="truncate">{item.person_name}</span>
+                              </button>
+                            ))}
+                            {dayItems.length > 3 && (
+                              <p className="text-white/20 text-[9px] font-mono">+{dayItems.length - 3} more</p>
+                            )}
                           </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )
+              })()}
+            </div>
+
+            {/* List */}
+            <div className="space-y-3">
+              {!scheduleLoading && scheduleItems.length === 0 && (
+                <div className="bg-[#141414] border border-white/5 p-8 text-center">
+                  <p className="text-white/30 font-mono text-sm">Nothing scheduled for this month yet. Add something above to get started.</p>
+                </div>
+              )}
+              {[...scheduleItems].sort((a, b) => a.scheduled_date.localeCompare(b.scheduled_date)).map(item => {
+                const color = CONTENT_TYPE_COLORS[item.content_type] || '#F0A500'
+                const member = rosterMembers.find(m => m.person_name === item.person_name)
+                return (
+                  <div key={item.id} className="bg-[#141414] border border-white/5 p-5 flex flex-wrap items-center gap-4">
+                    <Avatar src={member?.photo_url} name={item.person_name} size={44} />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-3 mb-1 flex-wrap">
+                        <span className="font-display font-black text-lg text-white uppercase"
+                          style={{
+                            fontFamily: 'Barlow Condensed, sans-serif',
+                            textDecoration: item.completed ? 'line-through' : 'none',
+                            opacity: item.completed ? 0.5 : 1,
+                          }}>
+                          {item.person_name}
+                        </span>
+                        <span className="text-xs font-mono px-2 py-0.5 border"
+                          style={{ color, borderColor: `${color}40`, background: `${color}10` }}>
+                          {CONTENT_TYPE_LABELS[item.content_type] || 'Other'}
+                        </span>
+                        <span className="text-white/30 text-xs font-mono">
+                          {new Date(item.scheduled_date + 'T00:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                        </span>
+                        {item.completed && (
+                          <span className="text-[10px] font-mono px-2 py-0.5 border"
+                            style={{ color: '#00A878', borderColor: '#00A87840', background: '#00A87810' }}>
+                            Posted
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-white/60 text-sm">{item.title}</p>
+                      {item.notes && <p className="text-white/30 text-xs font-mono mt-1">{item.notes}</p>}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => toggleScheduleComplete(item)}
+                        className="flex items-center gap-1.5 px-3 py-2 border border-white/10 hover:border-white/30 text-white/40 hover:text-white text-xs font-mono uppercase tracking-widest transition-all">
+                        <Check size={12} /> {item.completed ? 'Mark Not Posted' : 'Mark Posted'}
+                      </button>
+                      <button onClick={() => deleteScheduleItem(item.id)} disabled={deletingScheduleId === item.id}
+                        className="flex items-center gap-1.5 px-3 py-2 border border-white/10 hover:border-[#E8191A]/50 text-white/40 hover:text-[#E8191A] text-xs font-mono uppercase tracking-widest transition-all disabled:opacity-50">
+                        <Trash2 size={12} />
+                      </button>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
