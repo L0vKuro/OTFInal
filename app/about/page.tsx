@@ -49,8 +49,7 @@ const leadership = [
   { name: 'Ghost', role: 'Project Manager', bio: 'Coordinates projects and initiatives across the organization to keep everything on track.', twitter: 'GraveGhost_1' },
   { name: 'Jxe', role: 'Social Media Manager', bio: "Drives Overtake's social presence and keeps fans connected with the latest updates.", twitter: 'OfficialJxe5_' },
   { name: 'Visionz', role: 'CoD Manager', bio: 'Oversees the Call of Duty roster and competitive strategy.', twitter: 'Visionzuh' },
-  { name: 'Zap', role: 'Fortnite Manager', bio: 'Manages the Fortnite division and competitive operations.', twitter: 'zapticalggs' },
-  { name: 'Javsr', role: 'Fortnite Talent Manager', bio: 'Oversees Fortnite talent acquisition and player development within the Overtake division.', twitter: 'javsrtalent' },
+  { name: 'Javsr', role: 'Talent Acquisition', bio: 'Oversees Fortnite talent acquisition and player development within the Overtake division.', twitter: 'javsrtalent' },
 ]
 
 const quotes = [
@@ -66,8 +65,7 @@ const quotes = [
   { name: 'Ghost', role: 'Project Manager', quote: 'It is during our darkest moments that we must focus to see the light.' },
   { name: 'Jxe', role: 'Social Media Manager', quote: "In order to be successful at what you're doing, you have to be obsessed with change." },
   { name: 'Visionz', role: 'CoD Manager', quote: 'Success is focusing the full power of all you are on what you have a burning desire to achieve.' },
-  { name: 'Zap', role: 'Fortnite Manager', quote: 'Learn as if you will live forever, live like you will die tomorrow.' },
-  { name: 'Javsr', role: 'Fortnite Talent Manager', quote: 'Talent wins games, but teamwork and intelligence win championships.' },
+  { name: 'Javsr', role: 'Talent Acquisition', quote: 'Talent wins games, but teamwork and intelligence win championships.' },
 ]
 
 export default function AboutPage() {
