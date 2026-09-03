@@ -10,7 +10,7 @@ export const teams = [
       { name: 'INTRAA', role: 'PLAYER', country: '🇺🇸', real: '@intrraa', twitter: 'https://x.com/intrraa' },
       { name: 'LEARSI', role: 'PLAYER', country: '🇺🇸', real: '@learsifarm', twitter: 'https://x.com/learsifarm' },
       { name: 'JASON', role: 'PLAYER', country: '🇺🇸', real: '@305jasonn', twitter: 'https://x.com/305jasonn' },
-      { name: 'SACRIFICE', role: 'PLAYER', country: '🇺🇸', real: '@sacrificeCS', twitter: 'https://x.com/sacrificeCS' },
+      { name: 'CORIM', role: 'PLAYER', country: '🇺🇸', real: '@1corim', twitter: 'https://x.com/1corim' },
     ],
   },
   {
