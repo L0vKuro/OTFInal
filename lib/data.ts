@@ -38,7 +38,6 @@ export const teams = [
       { name: 'KEO', role: 'PLAYER', country: '🇺🇸', real: '@keo197', twitter: 'https://x.com/keo197' },
       { name: 'CAMO', role: 'PLAYER', country: '🇺🇸', real: '@Camo_R6', twitter: 'https://x.com/Camo_R6' },
       { name: 'FINAL', role: 'PLAYER', country: '🇺🇸', real: '@finalkiss_', twitter: 'https://x.com/finalkiss_' },
-      { name: 'AJ', role: 'PLAYER', country: '🇺🇸', real: '@applejuice1007', twitter: 'https://x.com/applejuice1007' },
       { name: 'SWISZ', role: 'PLAYER', country: '🇺🇸', real: '@SwiszKVX', twitter: 'https://x.com/SwiszKVX' },
     ],
   },
@@ -49,7 +48,6 @@ export const teams = [
     color: '#EC4899',
     region: 'NA',
     roster: [
-      { name: 'NOTCIERRA', role: 'PLAYER', country: '🇺🇸', real: '@nottCierra', twitter: 'https://x.com/nottCierra' },
       { name: 'EMMAMUAH', role: 'PLAYER', country: '🇺🇸', real: '@emmamuahh', twitter: 'https://x.com/emmamuahh' },
       { name: 'AZZYRIAX', role: 'PLAYER', country: '🇺🇸', real: '@azzyriax', twitter: 'https://x.com/azzyriax' },
       { name: 'ERMIMPALA', role: 'PLAYER', country: '🇺🇸', real: '@ErmImpala', twitter: 'https://x.com/ErmImpala' },
