@@ -29,19 +29,6 @@ export const teams = [
     ],
   },
   {
-    id: 'rainbow6academy',
-    game: 'RAINBOW SIX ACADEMY',
-    tag: 'OT',
-    color: '#38BDF8',
-    region: 'NA',
-    roster: [
-      { name: 'KEO', role: 'PLAYER', country: '🇺🇸', real: '@keo197', twitter: 'https://x.com/keo197' },
-      { name: 'CAMO', role: 'PLAYER', country: '🇺🇸', real: '@Camo_R6', twitter: 'https://x.com/Camo_R6' },
-      { name: 'FINAL', role: 'PLAYER', country: '🇺🇸', real: '@finalkiss_', twitter: 'https://x.com/finalkiss_' },
-      { name: 'SWISZ', role: 'PLAYER', country: '🇺🇸', real: '@SwiszKVX', twitter: 'https://x.com/SwiszKVX' },
-    ],
-  },
-  {
     id: 'rainbow6female',
     game: 'RAINBOW SIX FEMALE',
     tag: 'OT',
