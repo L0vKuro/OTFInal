@@ -701,10 +701,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true, updated, eventsAdded, errors })
     }
 
-    case 'getTrendData': {
+      case 'getTrendData': {
       const weeksCount = body.weeks || 12
       const weeks = weeksBack(weeksCount)
       const earliest = weeks[0].start.toISOString().slice(0, 10)
+
+      // Only include people still on the active roster — someone removed via
+      // removeRosterMember keeps their historical activity_events rows (that
+      // data shouldn't just vanish), but they shouldn't keep showing up here
+      // after they're gone.
+      const { data: activeRoster } = await supabase
+        .from('roster_members')
+        .select('person_name')
+        .eq('active', true)
+      const activeNames = new Set((activeRoster || []).map(r => r.person_name))
 
       const { data: events } = await supabase
         .from('activity_events')
@@ -732,6 +742,7 @@ export async function POST(req: NextRequest) {
       for (const w of weeks) buckets[w.label] = {}
 
       for (const ev of events || []) {
+        if (!activeNames.has(ev.person_name)) continue
         const evDate = new Date(ev.event_date + 'T00:00:00Z')
         const w = weeks.find(w => evDate >= w.start && evDate < w.end)
         if (!w) continue
@@ -741,6 +752,7 @@ export async function POST(req: NextRequest) {
       }
 
       for (const row of tiktokRows || []) {
+        if (!activeNames.has(row.person_name)) continue
         const count = weeksInMonth[row.period] || 1
         const perWeek = row.tiktok_posts / count
         for (const w of weeks) {
