@@ -19,9 +19,9 @@ function periodBounds(period: string) {
   }
 }
 
-// Public, unauthenticated — powers the leaderboard on /creators. Reads pre-synced
-// data from Supabase only (no live Twitch/YouTube API calls), so this stays fast
-// and never burns API quota on public traffic.
+// Public, unauthenticated — powers the leaderboard + "Just Dropped" video promo
+// on /creators. Reads pre-synced data from Supabase only (no live Twitch/YouTube
+// API calls), so this stays fast and never burns API quota on public traffic.
 export async function GET() {
   try {
     let period = currentPeriod()
@@ -87,8 +87,42 @@ export async function GET() {
     const topUploads = [...rows].filter(r => r.uploads > 0).sort((a, b) => b.uploads - a.uploads).slice(0, 5)
     const topViews = [...rows].filter(r => r.views > 0).sort((a, b) => b.views - a.views).slice(0, 5)
 
-    return NextResponse.json({ period, topStreams, topUploads, topViews })
+    // "Just Dropped" promo — the single most recent Twitch/YouTube activity across
+    // the whole roster, regardless of month, so there's always something fresh to
+    // spotlight even right after a month rolls over and the leaderboard resets.
+    let latestVideo: {
+      person_name: string
+      photo_url: string
+      platform: 'twitch' | 'youtube'
+      title: string
+      external_id: string
+      event_date: string
+      url: string
+    } | null = null
+
+    const { data: latestEvents } = await supabase
+      .from('activity_events')
+      .select('person_name, platform, title, external_id, event_date')
+      .order('event_date', { ascending: false })
+      .limit(1)
+
+    const latest = latestEvents?.[0]
+    if (latest) {
+      latestVideo = {
+        person_name: latest.person_name,
+        photo_url: photoMap[latest.person_name] || '',
+        platform: latest.platform,
+        title: latest.title || '',
+        external_id: latest.external_id,
+        event_date: latest.event_date,
+        url: latest.platform === 'twitch'
+          ? `https://www.twitch.tv/videos/${latest.external_id}`
+          : `https://www.youtube.com/watch?v=${latest.external_id}`,
+      }
+    }
+
+    return NextResponse.json({ period, topStreams, topUploads, topViews, latestVideo })
   } catch {
-    return NextResponse.json({ period: currentPeriod(), topStreams: [], topUploads: [], topViews: [] })
+    return NextResponse.json({ period: currentPeriod(), topStreams: [], topUploads: [], topViews: [], latestVideo: null })
   }
 }
