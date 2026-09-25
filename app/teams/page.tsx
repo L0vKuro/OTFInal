@@ -307,6 +307,12 @@ export default function TeamsPage() {
   }
 
   function onPointerDown(e: React.PointerEvent<HTMLDivElement>) {
+    // Don't hijack the pointer for dragging if the press started on a link,
+    // button, or anything inside one (player cards, socials, "Stats via"
+    // links) — capturing the pointer here was swallowing their clicks
+    // entirely, since setPointerCapture reroutes the eventual pointerup away
+    // from the actual target.
+    if ((e.target as HTMLElement).closest('a, button')) return
     setDragging(true)
     dragStartX.current = e.clientX
     dragDelta.current = 0
@@ -347,7 +353,7 @@ export default function TeamsPage() {
       `}</style>
 
       {/* Hero */}
-      <div className="relative overflow-hidden border-b border-white/5 py-16 sm:py-20">
+      <div className="relative overflow-hidden border-b border-white/5 pt-36 pb-16 sm:pb-20">
         <div className="absolute inset-0 bg-grid opacity-10 pointer-events-none" />
         <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-[0.05]">
           <div className="w-full h-40 bg-gradient-to-b from-transparent via-[#E8191A] to-transparent"
@@ -366,7 +372,7 @@ export default function TeamsPage() {
       </div>
 
       {/* Team tabs */}
-      <div className="border-b border-white/5 bg-[#0A0A0A] sticky top-0 z-20 backdrop-blur-md">
+      <div className="border-b border-white/5 bg-[#0A0A0A] sticky z-20 backdrop-blur-md" style={{ top: '150px' }}>
         <div className="max-w-6xl mx-auto px-6 flex items-center gap-2 overflow-x-auto no-scrollbar">
           {teams.map((t: any, i: number) => (
             <button key={t.id} onClick={() => goTo(i)}
