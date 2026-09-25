@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { ChevronRight, ShoppingBag, Tag, Package, X, Check } from 'lucide-react'
+import { useRef } from 'react'
+import { ChevronRight, ShoppingBag, Tag, Package, X, Check, Sparkles } from 'lucide-react'
 import { useCart } from '@/components/CartContext'
 
 const SIZES = ['S', 'M', 'L', 'XL', '2XL', '3XL']
@@ -28,6 +29,96 @@ const products = [
     isVNeck: true,
   },
 ]
+
+// The jersey image panel gets the same tilt/glow/marquee treatment built for
+// the Ink3D partner spotlight (see components/Ink3dSpotlight.tsx) — mouse-follow
+// perspective tilt, a pulsing holographic glow border, a scanning light sweep,
+// and looping marquee ribbons — so the product shots feel as premium as the
+// partner spotlight instead of sitting in a plain static square.
+function JerseyShowcase({ image, tag }: { image: string; tag?: string }) {
+  const panelRef = useRef<HTMLDivElement>(null)
+  const [tilt, setTilt] = useState({ x: 0, y: 0 })
+
+  const handleMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const el = panelRef.current
+    if (!el) return
+    const rect = el.getBoundingClientRect()
+    const px = (e.clientX - rect.left) / rect.width - 0.5
+    const py = (e.clientY - rect.top) / rect.height - 0.5
+    setTilt({ x: py * -8, y: px * 12 })
+  }
+
+  const marqueeText = 'OFFICIAL OVERTAKE MERCH  \u2022  BUILT WITH REPULSECO  \u2022  CUSTOM NAME & NUMBER  \u2022  '
+
+  return (
+    <div className="relative overflow-hidden border border-white/10" style={{ borderRadius: '12px' }}>
+      <style>{`
+        @keyframes jersey-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        @keyframes jersey-glow { 0%, 100% { box-shadow: inset 0 0 0 1px rgba(232,25,26,0.25), 0 0 40px rgba(232,25,26,0.2), 0 0 80px rgba(168,85,247,0.1); } 50% { box-shadow: inset 0 0 0 1px rgba(168,85,247,0.35), 0 0 60px rgba(168,85,247,0.3), 0 0 100px rgba(56,189,248,0.15); } }
+        @keyframes jersey-scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(220%); } }
+        .jersey-glow-panel { animation: jersey-glow 4s ease-in-out infinite; }
+      `}</style>
+
+      {/* Top marquee ribbon */}
+      <div className="relative border-b border-white/10 bg-gradient-to-r from-[#E8191A]/20 via-[#A855F7]/20 to-[#38BDF8]/20 py-1.5 overflow-hidden">
+        <div className="flex whitespace-nowrap" style={{ animation: 'jersey-marquee 20s linear infinite', width: 'fit-content' }}>
+          <span className="text-[9px] font-black uppercase tracking-[0.25em] text-white/70 px-3">{marqueeText.repeat(6)}</span>
+          <span className="text-[9px] font-black uppercase tracking-[0.25em] text-white/70 px-3">{marqueeText.repeat(6)}</span>
+        </div>
+      </div>
+
+      <div
+        ref={panelRef}
+        onMouseMove={handleMove}
+        onMouseLeave={() => setTilt({ x: 0, y: 0 })}
+        className="jersey-glow-panel relative bg-[#141414] overflow-hidden aspect-square"
+        style={{
+          transform: `perspective(1200px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale3d(1.01,1.01,1.01)`,
+          transition: 'transform 0.15s ease-out',
+        }}>
+        <div className="absolute inset-0 opacity-[0.15] pointer-events-none"
+          style={{ background: 'radial-gradient(circle at 30% 20%, #A855F7, transparent 60%)' }} />
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-[#E8191A] via-[#A855F7] to-transparent" />
+
+        {/* Scanning light sweep */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-30">
+          <div className="w-full h-1/3" style={{ background: 'linear-gradient(180deg, transparent, rgba(168,85,247,0.5), transparent)', animation: 'jersey-scan 3.5s ease-in-out infinite' }} />
+        </div>
+
+        <img
+          src={image}
+          alt=""
+          style={{ position: 'relative', width: '100%', height: '100%', objectFit: 'contain', padding: '32px', filter: 'drop-shadow(0 10px 30px rgba(0,0,0,0.5))' }}
+        />
+
+        {tag && (
+          <div className="absolute top-4 left-4">
+            <span className="text-[10px] font-mono font-black px-3 py-1.5 bg-[#E8191A] text-white uppercase tracking-widest">
+              {tag}
+            </span>
+          </div>
+        )}
+        <div className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1.5 bg-black/60 backdrop-blur-md border border-[#A855F7]/40">
+          <Sparkles size={11} className="text-[#A855F7]" />
+          <span className="text-[9px] font-black uppercase tracking-widest text-[#A855F7]">Official</span>
+        </div>
+        <div className="absolute bottom-4 left-4">
+          <span className="text-[10px] font-mono font-black px-3 py-1.5 bg-[#00A878] text-white uppercase tracking-widest">
+            Available Now
+          </span>
+        </div>
+      </div>
+
+      {/* Bottom marquee ribbon */}
+      <div className="relative border-t border-white/10 bg-gradient-to-r from-[#38BDF8]/20 via-[#A855F7]/20 to-[#E8191A]/20 py-1.5 overflow-hidden">
+        <div className="flex whitespace-nowrap" style={{ animation: 'jersey-marquee 24s linear infinite reverse', width: 'fit-content' }}>
+          <span className="text-[9px] font-black uppercase tracking-[0.25em] text-white/70 px-3">{marqueeText.repeat(6)}</span>
+          <span className="text-[9px] font-black uppercase tracking-[0.25em] text-white/70 px-3">{marqueeText.repeat(6)}</span>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 export default function StorePage() {
   const [activeImage, setActiveImage] = useState<Record<string, number>>({})
@@ -141,27 +232,7 @@ export default function StorePage() {
 
             {/* Image Gallery */}
             <div className={`space-y-4 ${idx % 2 === 1 ? 'lg:col-start-2' : ''}`}>
-              <div className="relative bg-[#141414] border border-white/5 overflow-hidden aspect-square"
-                style={{ borderRadius: '12px' }}>
-                <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-[#E8191A] to-transparent" />
-                <img
-                  src={product.images[getImage(product.id)]}
-                  alt={product.name}
-                  style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '32px', borderRadius: '12px', transition: 'opacity 0.2s' }}
-                />
-                {product.tag && (
-                  <div className="absolute top-4 left-4">
-                    <span className="text-[10px] font-mono font-black px-3 py-1.5 bg-[#E8191A] text-white uppercase tracking-widest">
-                      {product.tag}
-                    </span>
-                  </div>
-                )}
-                <div className="absolute top-4 right-4">
-                  <span className="text-[10px] font-mono font-black px-3 py-1.5 bg-[#00A878] text-white uppercase tracking-widest">
-                    Available Now
-                  </span>
-                </div>
-              </div>
+              <JerseyShowcase image={product.images[getImage(product.id)]} tag={product.tag} />
               <div className="flex gap-3">
                 {product.images.map((img, i) => (
                   <button key={i} onClick={() => setActiveImage(prev => ({ ...prev, [product.id]: i }))}
