@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Plus, Trash2, Copy, ExternalLink, Tag, Link, BarChart2, LogOut, Check, Mail, Send, Clock, Users, RefreshCw, Save, CopyPlus, Calendar, TrendingUp, UserMinus, Pencil, X, FileText, Eye, EyeOff } from 'lucide-react'
-import { creators, news } from '@/lib/data'
+import { Plus, Trash2, Copy, ExternalLink, Tag, Link, BarChart2, LogOut, Check, Mail, Send, Clock, Users, RefreshCw, Save, CopyPlus, Calendar, TrendingUp, UserMinus, Pencil, X, FileText, Eye, EyeOff, Trophy, Swords } from 'lucide-react'
+import { creators, news, teams } from '@/lib/data'
 
 type DiscountCode = {
   id: string
@@ -91,6 +91,20 @@ type ArticleRow = {
   cover_image: string
   author: string
   published: boolean
+  updated_at: string
+}
+
+type RosterStat = { name: string; matches_played: number; note: string }
+type RecentMatch = { opponent: string; result: 'W' | 'L' | 'D'; score: string; event: string; date: string }
+type TeamStatsRow = {
+  team_id: string
+  source_label: string
+  source_url: string
+  rank_label: string
+  rank_sub: string
+  record_text: string
+  roster_stats: RosterStat[]
+  recent_matches: RecentMatch[]
   updated_at: string
 }
 
@@ -228,7 +242,7 @@ function smoothAreaPath(points: { x: number; y: number }[], baselineY: number): 
 
 export default function AdminDashboard() {
   const router = useRouter()
-  const [tab, setTab] = useState<'codes' | 'links' | 'email' | 'compliance' | 'schedule' | 'articles'>('codes')
+  const [tab, setTab] = useState<'codes' | 'links' | 'email' | 'compliance' | 'schedule' | 'articles' | 'teams'>('codes')
   const [codes, setCodes] = useState<DiscountCode[]>([])
   const [links, setLinks] = useState<TrackingLink[]>([])
   const [orderEmails, setOrderEmails] = useState<OrderEmail[]>([])
@@ -269,6 +283,15 @@ export default function AdminDashboard() {
   const [editingArticleId, setEditingArticleId] = useState<number | null>(null)
   const [articleDraft, setArticleDraft] = useState({ body: '', cover_image: '', author: 'Overtake Staff', published: true })
   const [savingArticle, setSavingArticle] = useState(false)
+
+  const [teamStats, setTeamStats] = useState<TeamStatsRow[]>([])
+  const [teamStatsLoading, setTeamStatsLoading] = useState(false)
+  const [editingTeamId, setEditingTeamId] = useState<string | null>(null)
+  const [teamDraft, setTeamDraft] = useState<{
+    source_label: string; source_url: string; rank_label: string; rank_sub: string
+    record_text: string; roster_stats: RosterStat[]; recent_matches: RecentMatch[]
+  }>({ source_label: '', source_url: '', rank_label: '', rank_sub: '', record_text: '', roster_stats: [], recent_matches: [] })
+  const [savingTeam, setSavingTeam] = useState(false)
 
   const [newCode, setNewCode] = useState({ code: '', type: 'percent', value: '', max_uses: '', expires_at: '', notes: '' })
   const [newLink, setNewLink] = useState({ name: '', slug: '', destination_url: '', sent_to: '', notes: '' })
@@ -313,6 +336,9 @@ export default function AdminDashboard() {
   }, [tab, period])
   useEffect(() => {
     if (tab === 'articles') fetchArticles()
+  }, [tab])
+  useEffect(() => {
+    if (tab === 'teams') fetchTeamStats()
   }, [tab])
 
   const api = async (body: object) => {
@@ -415,6 +441,71 @@ export default function AdminDashboard() {
     await api({ action: 'deleteArticle', news_id: newsId })
     await fetchArticles()
     if (editingArticleId === newsId) setEditingArticleId(null)
+  }
+
+  const fetchTeamStats = async () => {
+    setTeamStatsLoading(true)
+    const res = await api({ action: 'getTeamStats' })
+    setTeamStats(res.data || [])
+    setTeamStatsLoading(false)
+  }
+
+  const openTeamEditor = (teamId: string) => {
+    const team = teams.find((t: any) => t.id === teamId)
+    const existing = teamStats.find(t => t.team_id === teamId)
+    const existingRoster: RosterStat[] = existing?.roster_stats || []
+    // Seed one row per player currently on the static roster, carrying over any
+    // saved match count/note for that name — so admin never has to retype names.
+    const rosterStats: RosterStat[] = (team?.roster || []).map((p: any) => {
+      const found = existingRoster.find(r => r.name === p.name)
+      return { name: p.name, matches_played: found?.matches_played ?? 0, note: found?.note ?? '' }
+    })
+    setTeamDraft({
+      source_label: existing?.source_label || '',
+      source_url: existing?.source_url || '',
+      rank_label: existing?.rank_label || '',
+      rank_sub: existing?.rank_sub || '',
+      record_text: existing?.record_text || '',
+      roster_stats: rosterStats,
+      recent_matches: existing?.recent_matches || [],
+    })
+    setEditingTeamId(teamId)
+  }
+
+  const updateRosterStat = (index: number, field: 'matches_played' | 'note', value: string) => {
+    setTeamDraft(prev => ({
+      ...prev,
+      roster_stats: prev.roster_stats.map((r, i) => i === index
+        ? { ...r, [field]: field === 'matches_played' ? (parseInt(value) || 0) : value }
+        : r),
+    }))
+  }
+
+  const addRecentMatch = () => {
+    setTeamDraft(prev => ({
+      ...prev,
+      recent_matches: [...prev.recent_matches, { opponent: '', result: 'W', score: '', event: '', date: '' }],
+    }))
+  }
+
+  const updateRecentMatch = (index: number, field: keyof RecentMatch, value: string) => {
+    setTeamDraft(prev => ({
+      ...prev,
+      recent_matches: prev.recent_matches.map((m, i) => i === index ? { ...m, [field]: value } : m),
+    }))
+  }
+
+  const removeRecentMatch = (index: number) => {
+    setTeamDraft(prev => ({ ...prev, recent_matches: prev.recent_matches.filter((_, i) => i !== index) }))
+  }
+
+  const saveTeamDraft = async () => {
+    if (!editingTeamId) return
+    setSavingTeam(true)
+    await api({ action: 'upsertTeamStats', team_id: editingTeamId, ...teamDraft })
+    await fetchTeamStats()
+    setSavingTeam(false)
+    setEditingTeamId(null)
   }
 
   const addPerson = async (e: React.FormEvent) => {
@@ -594,6 +685,7 @@ export default function AdminDashboard() {
             { id: 'compliance', label: 'Creator Compliance', icon: Users },
             { id: 'schedule', label: 'Creator Schedule', icon: Calendar },
             { id: 'articles', label: 'Articles', icon: FileText },
+            { id: 'teams', label: 'Teams', icon: Trophy },
           ].map(({ id, label, icon: Icon }) => (
             <button key={id} onClick={() => setTab(id as any)}
               className="flex items-center gap-2 px-6 py-3 text-sm font-black uppercase tracking-widest transition-all border-b-2"
@@ -1634,6 +1726,188 @@ export default function AdminDashboard() {
                               className="flex items-center gap-2 bg-[#E8191A] hover:bg-[#B81011] px-6 py-3 font-black tracking-widest uppercase text-sm transition-all text-white clip-corner disabled:opacity-50"
                               style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
                               {savingArticle ? <><Clock size={14} className="animate-spin" /> Saving...</> : <><Save size={14} /> Save Article</>}
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* TEAMS TAB */}
+        {tab === 'teams' && (
+          <div className="space-y-8">
+            <div className="bg-[#141414] border border-white/5 p-6">
+              <h2 className="font-display font-black text-xl text-white uppercase mb-1"
+                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>Team Competitive Stats</h2>
+              <p className="text-white/30 text-xs font-mono">
+                Neither HLTV nor Liquipedia offer a public way to pull this automatically (no HLTV API, and Liquipedia's official API needs a registered key), so this is filled in by hand from those pages. A team with nothing entered here just shows its static roster on the public site with no rank/match info.
+              </p>
+            </div>
+
+            {teamStatsLoading && (
+              <div className="bg-[#141414] border border-white/5 p-8 text-center">
+                <p className="text-white/30 font-mono text-sm animate-pulse">Loading team stats...</p>
+              </div>
+            )}
+
+            {!teamStatsLoading && (
+              <div className="space-y-3">
+                {teams.map((team: any) => {
+                  const existing = teamStats.find(t => t.team_id === team.id)
+                  const isEditing = editingTeamId === team.id
+                  return (
+                    <div key={team.id} className="bg-[#141414] border border-white/5 p-5">
+                      <div className="flex flex-wrap items-center justify-between gap-4">
+                        <div className="flex items-center gap-4 min-w-0">
+                          <div className="w-12 h-12 rounded-sm flex items-center justify-center flex-shrink-0"
+                            style={{ background: `${team.color}15`, border: `1px solid ${team.color}40` }}>
+                            <Swords size={20} style={{ color: team.color }} />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-xs font-mono px-2 py-0.5 border"
+                                style={{ color: team.color, borderColor: `${team.color}40`, background: `${team.color}10` }}>
+                                {team.game}
+                              </span>
+                              {existing?.rank_label && (
+                                <span className="text-[10px] font-mono px-2 py-0.5 border border-[#00D4FF]/40 text-[#00D4FF] bg-[#00D4FF]/10">
+                                  {existing.rank_label}
+                                </span>
+                              )}
+                              {!existing && (
+                                <span className="text-[10px] font-mono px-2 py-0.5 border border-white/10 text-white/30">
+                                  No Stats Yet
+                                </span>
+                              )}
+                            </div>
+                            <p className="font-display font-bold text-white uppercase truncate"
+                              style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{team.tag} {team.game}</p>
+                            <p className="text-white/30 text-xs font-mono">{team.roster.length} on roster{existing?.updated_at ? ` · Updated ${new Date(existing.updated_at).toLocaleDateString()}` : ''}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          {existing?.source_url && (
+                            <a href={existing.source_url} target="_blank" rel="noopener noreferrer"
+                              className="flex items-center gap-1.5 px-3 py-2 border border-white/10 hover:border-white/30 text-white/40 hover:text-white text-xs font-mono uppercase tracking-widest transition-all">
+                              <ExternalLink size={12} /> Source
+                            </a>
+                          )}
+                          <button onClick={() => isEditing ? setEditingTeamId(null) : openTeamEditor(team.id)}
+                            className="flex items-center gap-1.5 px-3 py-2 border border-white/10 hover:border-white/30 text-white/40 hover:text-white text-xs font-mono uppercase tracking-widest transition-all">
+                            <Pencil size={12} /> {isEditing ? 'Close' : existing ? 'Edit' : 'Add Stats'}
+                          </button>
+                        </div>
+                      </div>
+
+                      {isEditing && (
+                        <div className="mt-5 pt-5 border-t border-white/5 space-y-5">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div>
+                              <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Source (e.g. HLTV.org)</label>
+                              <input value={teamDraft.source_label} onChange={e => setTeamDraft({ ...teamDraft, source_label: e.target.value })}
+                                placeholder="HLTV.org"
+                                className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
+                            </div>
+                            <div>
+                              <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Source URL</label>
+                              <input value={teamDraft.source_url} onChange={e => setTeamDraft({ ...teamDraft, source_url: e.target.value })}
+                                placeholder="https://www.hltv.org/team/..."
+                                className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
+                            </div>
+                            <div>
+                              <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Rank Label</label>
+                              <input value={teamDraft.rank_label} onChange={e => setTeamDraft({ ...teamDraft, rank_label: e.target.value })}
+                                placeholder="#125 World"
+                                className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
+                            </div>
+                            <div>
+                              <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Rank Sub-label</label>
+                              <input value={teamDraft.rank_sub} onChange={e => setTeamDraft({ ...teamDraft, rank_sub: e.target.value })}
+                                placeholder="Peak #102"
+                                className="w-full bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="text-white/40 text-xs font-mono uppercase tracking-widest block mb-1">Record</label>
+                            <input value={teamDraft.record_text} onChange={e => setTeamDraft({ ...teamDraft, record_text: e.target.value })}
+                              placeholder="e.g. 14-6 this split, or Group Stage — NAL Season 3"
+                              className="w-full max-w-md bg-[#0D0D0D] border border-white/10 focus:border-[#E8191A]/50 px-4 py-3 text-white font-mono text-sm outline-none transition-colors" />
+                          </div>
+
+                          {/* Roster match counts */}
+                          <div>
+                            <p className="text-white/40 text-xs font-mono uppercase tracking-widest mb-2">Matches Played (per roster member)</p>
+                            <div className="space-y-2">
+                              {teamDraft.roster_stats.map((r, i) => (
+                                <div key={r.name} className="flex flex-wrap items-center gap-3 bg-[#0D0D0D] border border-white/5 px-4 py-2.5">
+                                  <span className="font-display font-bold text-white uppercase w-32 flex-shrink-0"
+                                    style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{r.name}</span>
+                                  <input type="number" min={0} value={r.matches_played}
+                                    onChange={e => updateRosterStat(i, 'matches_played', e.target.value)}
+                                    className="w-20 bg-transparent border-b border-white/20 focus:border-[#E8191A]/60 text-white font-mono text-sm outline-none" />
+                                  <span className="text-white/25 text-[10px] font-mono uppercase">matches</span>
+                                  <input value={r.note} onChange={e => updateRosterStat(i, 'note', e.target.value)}
+                                    placeholder="optional note, e.g. IGL"
+                                    className="flex-1 min-w-[140px] bg-transparent border-b border-white/10 focus:border-[#E8191A]/60 text-white/60 text-xs font-mono outline-none" />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Recent matches */}
+                          <div>
+                            <div className="flex items-center justify-between mb-2">
+                              <p className="text-white/40 text-xs font-mono uppercase tracking-widest">Recent Matches</p>
+                              <button onClick={addRecentMatch}
+                                className="flex items-center gap-1 px-2 py-1 border border-white/10 hover:border-white/30 text-white/40 hover:text-white text-[10px] font-mono uppercase tracking-widest transition-all">
+                                <Plus size={10} /> Add Match
+                              </button>
+                            </div>
+                            <div className="space-y-2">
+                              {teamDraft.recent_matches.length === 0 && (
+                                <p className="text-white/20 text-xs font-mono">No recent matches added.</p>
+                              )}
+                              {teamDraft.recent_matches.map((m, i) => (
+                                <div key={i} className="grid grid-cols-2 sm:grid-cols-6 gap-2 bg-[#0D0D0D] border border-white/5 px-4 py-3 items-center">
+                                  <input value={m.opponent} onChange={e => updateRecentMatch(i, 'opponent', e.target.value)}
+                                    placeholder="Opponent"
+                                    className="bg-transparent border-b border-white/10 focus:border-[#E8191A]/60 text-white text-xs font-mono outline-none col-span-2 sm:col-span-2" />
+                                  <select value={m.result} onChange={e => updateRecentMatch(i, 'result', e.target.value)}
+                                    className="bg-[#141414] border border-white/10 text-white text-xs font-mono px-2 py-1 outline-none">
+                                    <option value="W">W</option>
+                                    <option value="L">L</option>
+                                    <option value="D">D</option>
+                                  </select>
+                                  <input value={m.score} onChange={e => updateRecentMatch(i, 'score', e.target.value)}
+                                    placeholder="Score"
+                                    className="bg-transparent border-b border-white/10 focus:border-[#E8191A]/60 text-white text-xs font-mono outline-none" />
+                                  <input value={m.event} onChange={e => updateRecentMatch(i, 'event', e.target.value)}
+                                    placeholder="Event"
+                                    className="bg-transparent border-b border-white/10 focus:border-[#E8191A]/60 text-white text-xs font-mono outline-none" />
+                                  <div className="flex items-center gap-2">
+                                    <input value={m.date} onChange={e => updateRecentMatch(i, 'date', e.target.value)}
+                                      placeholder="Date"
+                                      className="flex-1 bg-transparent border-b border-white/10 focus:border-[#E8191A]/60 text-white text-xs font-mono outline-none" />
+                                    <button onClick={() => removeRecentMatch(i)}
+                                      className="text-white/30 hover:text-[#E8191A] transition-colors flex-shrink-0">
+                                      <Trash2 size={12} />
+                                    </button>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="flex justify-end">
+                            <button onClick={saveTeamDraft} disabled={savingTeam}
+                              className="flex items-center gap-2 bg-[#E8191A] hover:bg-[#B81011] px-6 py-3 font-black tracking-widest uppercase text-sm transition-all text-white clip-corner disabled:opacity-50"
+                              style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                              {savingTeam ? <><Clock size={14} className="animate-spin" /> Saving...</> : <><Save size={14} /> Save Team Stats</>}
                             </button>
                           </div>
                         </div>
