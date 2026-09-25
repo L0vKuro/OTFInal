@@ -815,23 +815,52 @@ export default function CreatorsPage() {
               being hovered, which stole the hover and closed the peek the
               instant it appeared. */}
           <div className="absolute inset-0 bg-black/50 backdrop-blur-md transition-opacity" />
-          <div className="relative bg-[#0D0D0D] border border-white/10 shadow-2xl overflow-hidden pointer-events-auto cursor-pointer"
-            style={{ width: 'min(360px, 90vw)', animation: 'hoverPeekIn 0.2s cubic-bezier(0.16,1,0.3,1)' }}
+          {/* Clean horizontal rectangle: info on the left, photo on the right —
+              instead of the old stacked square (photo on top, info below). */}
+          <div className="relative bg-[#0D0D0D] border border-white/10 shadow-2xl overflow-hidden pointer-events-auto cursor-pointer flex flex-row"
+            style={{ width: 'min(560px, 92vw)', height: 260, animation: 'hoverPeekIn 0.2s cubic-bezier(0.16,1,0.3,1)' }}
             onMouseEnter={cancelHoverClose}
             onMouseLeave={handleCardLeave}
             onClick={() => { setSelected(hoveredCreator); setHoveredCreator(null) }}>
-            <div className="h-1 w-full" style={{ background: PLATFORM_COLORS[hoveredCreator.platform] || '#E8191A' }} />
-            <div className="relative overflow-hidden bg-[#141414]" style={{ aspectRatio: '1' }}>
-              <img src={`/${hoveredCreator.photo}`} alt={hoveredCreator.handle}
-                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }}
-                onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
-              <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, #0D0D0D 10%, transparent 55%)' }} />
-              <div className="absolute top-3 left-3">
-                <span className="text-[10px] font-black px-2 py-1 uppercase tracking-widest"
-                  style={{ background: PLATFORM_COLORS[hoveredCreator.platform] || '#E8191A', color: PLATFORM_TEXT[hoveredCreator.platform] || '#fff' }}>
-                  {hoveredCreator.platform}
+
+            {/* Info */}
+            <div className="relative flex-1 min-w-0 p-6 flex flex-col justify-center">
+              <div className="absolute top-0 left-0 bottom-0 w-1"
+                style={{ background: PLATFORM_COLORS[hoveredCreator.platform] || '#E8191A' }} />
+              <span className="inline-flex items-center gap-1.5 w-fit text-[10px] font-black px-2 py-1 uppercase tracking-widest mb-3"
+                style={{ background: PLATFORM_COLORS[hoveredCreator.platform] || '#E8191A', color: PLATFORM_TEXT[hoveredCreator.platform] || '#fff' }}>
+                {hoveredCreator.platform}
+              </span>
+              <h3 className="font-display font-black text-2xl text-white uppercase leading-none mb-1"
+                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{hoveredCreator.handle}</h3>
+              <p className="text-xs font-mono uppercase tracking-widest mb-3" style={{ color: accentSafe(hoveredCreator.platform) }}>
+                {hoveredCreator.specialty}
+              </p>
+              <p className="text-white/45 text-xs leading-relaxed mb-4 line-clamp-3">{hoveredCreator.bio}</p>
+              <div className="flex items-center gap-3 mt-auto">
+                <span className="flex items-center gap-1.5 text-white/30 text-[11px] font-mono">
+                  <Users size={11} /> {hoveredCreator.followers}
                 </span>
+                {hoveredCreator.socials?.twitter && (
+                  <span className="text-white/25">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                  </span>
+                )}
+                {hoveredCreator.socials?.tiktok && (
+                  <span className="text-white/25">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12.53.02C13.84 0 15.14.01 16.44 0c.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+                  </span>
+                )}
+                <span className="text-white/20 text-[10px] uppercase tracking-widest ml-auto">Click for more</span>
               </div>
+            </div>
+
+            {/* Photo */}
+            <div className="relative flex-shrink-0" style={{ width: '42%' }}>
+              <img src={`/${hoveredCreator.photo}`} alt={hoveredCreator.handle}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', position: 'absolute', inset: 0 }}
+                onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
+              <div className="absolute inset-0" style={{ background: 'linear-gradient(to left, transparent 60%, #0D0D0D 100%)' }} />
               {isLive(hoveredCreator) && (
                 <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1"
                   style={{ background: PLATFORM_COLORS[getLivePlatform(hoveredCreator)!] }}>
@@ -839,22 +868,6 @@ export default function CreatorsPage() {
                   <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: PLATFORM_TEXT[getLivePlatform(hoveredCreator)!] || '#fff' }}>Live</span>
                 </div>
               )}
-              <div className="absolute bottom-3 left-4 right-4">
-                <h3 className="font-display font-black text-2xl text-white uppercase leading-none"
-                  style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{hoveredCreator.handle}</h3>
-                <p className="text-xs font-mono uppercase tracking-widest mt-1" style={{ color: accentSafe(hoveredCreator.platform) }}>
-                  {hoveredCreator.specialty}
-                </p>
-              </div>
-            </div>
-            <div className="p-5">
-              <p className="text-white/50 text-sm leading-relaxed mb-4 line-clamp-3">{hoveredCreator.bio}</p>
-              <div className="flex items-center justify-between text-xs font-mono">
-                <span className="flex items-center gap-1.5 text-white/30">
-                  <Users size={11} /> {hoveredCreator.followers} followers
-                </span>
-                <span className="text-white/25 uppercase tracking-widest">Click for full profile</span>
-              </div>
             </div>
           </div>
         </div>
