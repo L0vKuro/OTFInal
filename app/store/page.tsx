@@ -30,11 +30,10 @@ const products = [
   },
 ]
 
-// The jersey image panel gets the same tilt/glow/marquee treatment built for
-// the Ink3D partner spotlight (see components/Ink3dSpotlight.tsx) — mouse-follow
-// perspective tilt, a pulsing holographic glow border, a scanning light sweep,
-// and looping marquee ribbons — so the product shots feel as premium as the
-// partner spotlight instead of sitting in a plain static square.
+// The jersey image panel keeps the mouse-follow perspective tilt and pulsing
+// glow border built for the Ink3D partner spotlight, but simplified: no more
+// marquee ribbons top/bottom, and the glow/scan now use the site's one brand
+// red instead of the purple/blue accent colors.
 function JerseyShowcase({ image, tag }: { image: string; tag?: string }) {
   const panelRef = useRef<HTMLDivElement>(null)
   const [tilt, setTilt] = useState({ x: 0, y: 0 })
@@ -48,24 +47,13 @@ function JerseyShowcase({ image, tag }: { image: string; tag?: string }) {
     setTilt({ x: py * -8, y: px * 12 })
   }
 
-  const marqueeText = 'OFFICIAL OVERTAKE MERCH  \u2022  BUILT WITH REPULSECO  \u2022  CUSTOM NAME & NUMBER  \u2022  '
-
   return (
     <div className="relative overflow-hidden border border-white/10" style={{ borderRadius: '12px' }}>
       <style>{`
-        @keyframes jersey-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-        @keyframes jersey-glow { 0%, 100% { box-shadow: inset 0 0 0 1px rgba(232,25,26,0.25), 0 0 40px rgba(232,25,26,0.2), 0 0 80px rgba(168,85,247,0.1); } 50% { box-shadow: inset 0 0 0 1px rgba(168,85,247,0.35), 0 0 60px rgba(168,85,247,0.3), 0 0 100px rgba(56,189,248,0.15); } }
+        @keyframes jersey-glow { 0%, 100% { box-shadow: inset 0 0 0 1px rgba(232,25,26,0.25), 0 0 40px rgba(232,25,26,0.2); } 50% { box-shadow: inset 0 0 0 1px rgba(232,25,26,0.4), 0 0 65px rgba(232,25,26,0.4); } }
         @keyframes jersey-scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(220%); } }
         .jersey-glow-panel { animation: jersey-glow 4s ease-in-out infinite; }
       `}</style>
-
-      {/* Top marquee ribbon */}
-      <div className="relative border-b border-white/10 bg-gradient-to-r from-[#E8191A]/20 via-[#A855F7]/20 to-[#38BDF8]/20 py-1.5 overflow-hidden">
-        <div className="flex whitespace-nowrap" style={{ animation: 'jersey-marquee 20s linear infinite', width: 'fit-content' }}>
-          <span className="text-[9px] font-black uppercase tracking-[0.25em] text-white/70 px-3">{marqueeText.repeat(6)}</span>
-          <span className="text-[9px] font-black uppercase tracking-[0.25em] text-white/70 px-3">{marqueeText.repeat(6)}</span>
-        </div>
-      </div>
 
       <div
         ref={panelRef}
@@ -77,12 +65,12 @@ function JerseyShowcase({ image, tag }: { image: string; tag?: string }) {
           transition: 'transform 0.15s ease-out',
         }}>
         <div className="absolute inset-0 opacity-[0.15] pointer-events-none"
-          style={{ background: 'radial-gradient(circle at 30% 20%, #A855F7, transparent 60%)' }} />
-        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-[#E8191A] via-[#A855F7] to-transparent" />
+          style={{ background: 'radial-gradient(circle at 30% 20%, #E8191A, transparent 60%)' }} />
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-[#E8191A] to-transparent" />
 
-        {/* Scanning light sweep */}
+        {/* Scanning light sweep — same brand red used everywhere else on the site */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-30">
-          <div className="w-full h-1/3" style={{ background: 'linear-gradient(180deg, transparent, rgba(168,85,247,0.5), transparent)', animation: 'jersey-scan 3.5s ease-in-out infinite' }} />
+          <div className="w-full h-1/3" style={{ background: 'linear-gradient(180deg, transparent, rgba(232,25,26,0.5), transparent)', animation: 'jersey-scan 3.5s ease-in-out infinite' }} />
         </div>
 
         <img
@@ -98,22 +86,14 @@ function JerseyShowcase({ image, tag }: { image: string; tag?: string }) {
             </span>
           </div>
         )}
-        <div className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1.5 bg-black/60 backdrop-blur-md border border-[#A855F7]/40">
-          <Sparkles size={11} className="text-[#A855F7]" />
-          <span className="text-[9px] font-black uppercase tracking-widest text-[#A855F7]">Official</span>
+        <div className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1.5 bg-black/60 backdrop-blur-md border border-[#E8191A]/40">
+          <Sparkles size={11} className="text-[#E8191A]" />
+          <span className="text-[9px] font-black uppercase tracking-widest text-[#E8191A]">Official</span>
         </div>
         <div className="absolute bottom-4 left-4">
           <span className="text-[10px] font-mono font-black px-3 py-1.5 bg-[#00A878] text-white uppercase tracking-widest">
             Available Now
           </span>
-        </div>
-      </div>
-
-      {/* Bottom marquee ribbon */}
-      <div className="relative border-t border-white/10 bg-gradient-to-r from-[#38BDF8]/20 via-[#A855F7]/20 to-[#E8191A]/20 py-1.5 overflow-hidden">
-        <div className="flex whitespace-nowrap" style={{ animation: 'jersey-marquee 24s linear infinite reverse', width: 'fit-content' }}>
-          <span className="text-[9px] font-black uppercase tracking-[0.25em] text-white/70 px-3">{marqueeText.repeat(6)}</span>
-          <span className="text-[9px] font-black uppercase tracking-[0.25em] text-white/70 px-3">{marqueeText.repeat(6)}</span>
         </div>
       </div>
     </div>
