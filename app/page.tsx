@@ -160,6 +160,133 @@ function JerseyPromo({ onClose }: { onClose: () => void }) {
   )
 }
 
+type TeamStatsRow = {
+  team_id: string
+  rank_label: string
+  rank_sub: string
+  recent_matches: { opponent: string; result: 'W' | 'L' | 'D'; score: string; event: string; date: string }[]
+}
+
+const RESULT_COLOR: Record<string, string> = { W: '#00A878', L: '#E8191A', D: '#F0A500' }
+
+// Replaces the old static roster-grid section with a live-feeling results
+// ticker pulled from the same team_stats the admin Teams tab already fills
+// in — so the homepage actually changes as matches get logged instead of
+// just repeating the roster names that live on /teams anyway.
+function BattleLog() {
+  const [statsMap, setStatsMap] = useState<Record<string, TeamStatsRow>>({})
+  const [paused, setPaused] = useState(false)
+
+  useEffect(() => {
+    fetch('/api/team-stats')
+      .then(res => res.json())
+      .then(data => {
+        const map: Record<string, TeamStatsRow> = {}
+        for (const row of data.data || []) map[row.team_id] = row
+        setStatsMap(map)
+      })
+      .catch(() => {})
+  }, [])
+
+  const rankChips = teams.filter((t: any) => statsMap[t.id]?.rank_label)
+
+  const feed = teams
+    .flatMap((team: any) => {
+      const s = statsMap[team.id]
+      if (!s?.recent_matches?.length) return []
+      return s.recent_matches.map(m => ({ ...m, team }))
+    })
+    .sort((a, b) => (b.date || '').localeCompare(a.date || ''))
+    .slice(0, 10)
+
+  const MatchCard = ({ m }: { m: any }) => (
+    <Link href={`/teams#${m.team.id}`}
+      className="group flex-shrink-0 w-[260px] bg-[#141414] border border-white/5 hover:border-white/20 p-4 transition-colors"
+      style={{ borderLeftColor: m.team.color, borderLeftWidth: '3px' }}>
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-[10px] font-mono uppercase tracking-widest truncate" style={{ color: m.team.color }}>
+          {m.team.tag} · {m.team.game}
+        </span>
+        <span className="flex items-center justify-center w-6 h-6 rounded-sm font-display font-black text-xs flex-shrink-0"
+          style={{ color: RESULT_COLOR[m.result], background: `${RESULT_COLOR[m.result]}18`, fontFamily: 'Barlow Condensed, sans-serif' }}>
+          {m.result}
+        </span>
+      </div>
+      <p className="text-white font-display font-black text-lg uppercase truncate" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+        vs {m.opponent}
+      </p>
+      <p className="text-white/30 text-[10px] font-mono truncate mt-0.5">
+        {m.event}{m.date ? ` · ${m.date}` : ''}{m.score ? ` · ${m.score}` : ''}
+      </p>
+    </Link>
+  )
+
+  return (
+    <section className="relative py-20 overflow-hidden">
+      <style>{`
+        @keyframes battlelog-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+      `}</style>
+      <div className="absolute inset-0 bg-grid opacity-20" />
+      <div className="relative max-w-7xl mx-auto px-6">
+        <div className="flex items-end justify-between mb-10 flex-wrap gap-4">
+          <div>
+            <p className="text-[#E8191A] text-xs font-mono tracking-widest uppercase mb-3">// Live From The Arena</p>
+            <h2 className="font-display font-black text-5xl md:text-7xl uppercase text-[#F2F2F2]" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+              IN THE<br />ARENA
+            </h2>
+          </div>
+          <Link href="/teams" className="hidden md:flex items-center gap-2 text-[#F2F2F2]/40 hover:text-[#E8191A] text-sm font-medium tracking-wider transition-colors">
+            View All Teams <ArrowRight size={14} />
+          </Link>
+        </div>
+
+        {rankChips.length > 0 && (
+          <div className="flex flex-wrap gap-3 mb-8">
+            {rankChips.map((t: any) => (
+              <Link key={t.id} href={`/teams#${t.id}`}
+                className="flex items-center gap-3 border px-4 py-2.5 transition-colors hover:border-white/30"
+                style={{ borderColor: `${t.color}30`, background: `${t.color}0d` }}>
+                <span className="w-2 h-2 rounded-full" style={{ background: t.color }} />
+                <span className="text-xs font-mono uppercase tracking-widest text-white/50">{t.game}</span>
+                <span className="font-display font-black text-lg text-white leading-none" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                  {statsMap[t.id].rank_label}
+                </span>
+              </Link>
+            ))}
+          </div>
+        )}
+
+        {feed.length > 0 ? (
+          <div className="relative overflow-hidden"
+            style={{ maskImage: 'linear-gradient(90deg, transparent, black 5%, black 95%, transparent)', WebkitMaskImage: 'linear-gradient(90deg, transparent, black 5%, black 95%, transparent)' }}
+            onMouseEnter={() => setPaused(true)}
+            onMouseLeave={() => setPaused(false)}>
+            <div className="flex gap-4 w-max"
+              style={{ animation: 'battlelog-scroll 36s linear infinite', animationPlayState: paused ? 'paused' : 'running' }}>
+              {[...feed, ...feed].map((m, i) => <MatchCard key={i} m={m} />)}
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {teams.map((t: any) => (
+              <Link key={t.id} href={`/teams#${t.id}`}
+                className="group relative bg-[#141414] border border-white/5 hover:border-white/20 p-6 overflow-hidden transition-colors"
+                style={{ borderTopColor: `${t.color}40`, borderTopWidth: '2px' }}>
+                <div className="absolute top-0 right-0 w-28 h-28 blur-[60px] opacity-10 group-hover:opacity-20 transition-opacity" style={{ background: t.color }} />
+                <span className="text-xs font-mono uppercase tracking-widest" style={{ color: t.color }}>{t.region}</span>
+                <h3 className="font-display font-black text-3xl text-white uppercase mt-1" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{t.game}</h3>
+                <div className="flex items-center gap-2 mt-4 text-xs text-white/30 group-hover:text-white/60 transition-colors font-medium">
+                  View Roster <ChevronRight size={12} />
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  )
+}
+
 export default function HomePage() {
   const router = useRouter()
   const [splashDone, setSplashDone] = useState(() => {
@@ -323,50 +450,8 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* ─── TEAMS ─── */}
-        <section className="relative py-20 overflow-hidden">
-          <div className="absolute inset-0 bg-grid opacity-20" />
-          <div className="relative max-w-7xl mx-auto px-6">
-            <div className="flex items-end justify-between mb-12">
-              <div>
-                <p className="text-[#E8191A] text-xs font-mono tracking-widest uppercase mb-3">// Our Rosters</p>
-                <h2 className="font-display font-black text-5xl md:text-7xl uppercase text-[#F2F2F2]" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-                  COMPETING AT<br />THE HIGHEST LEVEL
-                </h2>
-              </div>
-              <Link href="/teams" className="hidden md:flex items-center gap-2 text-[#F2F2F2]/40 hover:text-[#E8191A] text-sm font-medium tracking-wider transition-colors">
-                View All Teams <ArrowRight size={14} />
-              </Link>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {teams.map((team) => (
-                <Link key={team.id} href={`/teams#${team.id}`}
-                  className="group relative bg-[#141414] border border-white/5 hover:border-white/10 p-6 card-hover overflow-hidden">
-                  <div className="absolute top-0 left-0 w-1 h-full" style={{ background: team.color }} />
-                  <div className="absolute top-0 left-0 w-full h-px" style={{ background: `linear-gradient(90deg, ${team.color}, transparent)` }} />
-                  <div className="absolute top-0 right-0 w-32 h-32 blur-[60px] opacity-10 group-hover:opacity-20 transition-opacity" style={{ background: team.color }} />
-                  <div className="mb-4">
-                    <span className="text-xs font-mono px-2 py-0.5 mb-1 inline-block"
-                      style={{ color: team.color, background: `${team.color}15`, border: `1px solid ${team.color}30` }}>{team.region}</span>
-                    <h3 className="font-display font-black text-3xl text-[#F2F2F2] uppercase" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{team.game}</h3>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {team.roster.map((player, pi) => (
-                      <div key={pi} className="flex items-center gap-1.5 bg-white/3 border border-white/5 px-3 py-1.5 rounded-sm">
-                        <span className="font-mono text-xs font-bold text-[#F2F2F2]">{player.name}</span>
-                        <span className="text-[#F2F2F2]/30 text-xs">·</span>
-                        <span className="text-[#F2F2F2]/40 text-xs">{player.role}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex items-center gap-2 mt-4 text-xs text-[#F2F2F2]/30 group-hover:text-[#F2F2F2]/60 transition-colors font-medium">
-                    View Roster <ChevronRight size={12} />
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
+        {/* ─── TEAMS / BATTLE LOG ─── */}
+        <BattleLog />
 
         {/* ─── NEWS ─── */}
         <section id="news" className="relative py-20 bg-[#141414] overflow-hidden">
