@@ -864,6 +864,39 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true })
     }
 
+    // Team Stats — admin-entered competitive info (rank, record, per-player
+    // match counts, recent results) for a team in the `teams` array in
+    // lib/data.ts, matched by team_id === team.id. Neither HLTV nor Liquipedia
+    // offer a way to pull this automatically (no public HLTV API, and
+    // Liquipedia's official API needs a registered key), so this is filled in
+    // by hand from those pages rather than scraped.
+    case 'getTeamStats': {
+      const { data } = await supabase.from('team_stats').select('*')
+      return NextResponse.json({ data })
+    }
+
+    case 'upsertTeamStats': {
+      if (!body.team_id) {
+        return NextResponse.json({ error: 'team_id is required' }, { status: 400 })
+      }
+      const { data, error } = await supabase
+        .from('team_stats')
+        .upsert({
+          team_id: body.team_id,
+          source_label: body.source_label || '',
+          source_url: body.source_url || '',
+          rank_label: body.rank_label || '',
+          rank_sub: body.rank_sub || '',
+          record_text: body.record_text || '',
+          roster_stats: body.roster_stats || [],
+          recent_matches: body.recent_matches || [],
+          updated_at: new Date().toISOString(),
+        }, { onConflict: 'team_id' })
+        .select()
+      if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+      return NextResponse.json({ success: true, data })
+    }
+
     default:
       return NextResponse.json({ error: 'Unknown action' }, { status: 400 })
   }
