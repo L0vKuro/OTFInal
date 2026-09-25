@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ChevronRight, MessageCircle, ArrowRight, X, ShoppingBag, Tag } from 'lucide-react'
@@ -12,6 +13,19 @@ const stats = [
   { label: 'Followers', value: '5K', unit: '+' },
   { label: 'Engagements', value: '3M', unit: '+' },
 ]
+
+// Wraps a navigation in the browser's View Transitions API when supported
+// (Chrome/Edge today, Safari catching up) — gives a real cross-fade "open"
+// animation into the article page for free, no extra library needed. Falls
+// back to an instant nav on browsers that don't support it.
+function navigateWithTransition(fn: () => void) {
+  const doc = document as any
+  if (typeof doc.startViewTransition === 'function') {
+    doc.startViewTransition(() => fn())
+  } else {
+    fn()
+  }
+}
 
 function LiveButton() {
   const [liveCount, setLiveCount] = useState(0)
@@ -147,6 +161,7 @@ function JerseyPromo({ onClose }: { onClose: () => void }) {
 }
 
 export default function HomePage() {
+  const router = useRouter()
   const [splashDone, setSplashDone] = useState(() => {
     if (typeof window === 'undefined') return false
     return sessionStorage.getItem('ot-splash') === 'done'
@@ -167,8 +182,31 @@ export default function HomePage() {
     window.location.href = 'https://x.com/OvertakeSector'
   }
 
+  const openArticle = (id: number) => {
+    navigateWithTransition(() => router.push(`/news/${id}`))
+  }
+
   return (
     <>
+      {/* ─── View Transition styles (also declared on /news/[id] so the
+          animation applies whichever direction navigation happens) ─── */}
+      <style>{`
+        ::view-transition-old(root) {
+          animation: page-fade-out 0.35s cubic-bezier(0.4, 0, 1, 1) both;
+        }
+        ::view-transition-new(root) {
+          animation: page-fade-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        @keyframes page-fade-out {
+          from { opacity: 1; transform: scale(1); }
+          to { opacity: 0; transform: scale(0.97); }
+        }
+        @keyframes page-fade-in {
+          from { opacity: 0; transform: scale(1.03); }
+          to { opacity: 1; transform: scale(1); }
+        }
+      `}</style>
+
       {/* ─── SPLASH SCREEN ─── */}
       {!splashDone && (
         <div className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#0D0D0D] transition-opacity duration-700 ${fadeOut ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
@@ -340,7 +378,15 @@ export default function HomePage() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
               {news.map((article) => (
-                <a key={article.id} href={article.link} target="_blank" rel="noopener noreferrer"
+                <a key={article.id} href={`/news/${article.id}`}
+                  onClick={e => {
+                    // Plain left-clicks open the animated in-app article page.
+                    // Ctrl/Cmd/middle-click still work normally (new tab, etc.)
+                    // since we don't preventDefault for those.
+                    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+                    e.preventDefault()
+                    openArticle(article.id)
+                  }}
                   className="group relative bg-[#0D0D0D] border border-white/5 hover:border-[#E8191A]/30 overflow-hidden card-hover block">
                   <div className="h-48 relative overflow-hidden bg-[#1A1A1A]">
                     <img src={article.image} alt={article.title}
@@ -351,17 +397,18 @@ export default function HomePage() {
                     <div className="absolute top-3 left-3 z-10">
                       <span className="text-[10px] font-mono font-bold px-2 py-1 bg-[#E8191A] text-[#F2F2F2] uppercase tracking-widest">{article.category}</span>
                     </div>
-                    <div className="absolute top-3 right-3 z-10">
-                      <div className="w-6 h-6 bg-black/70 rounded flex items-center justify-center">
+                    <a href={article.link} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}
+                      className="absolute top-3 right-3 z-10">
+                      <div className="w-6 h-6 bg-black/70 hover:bg-black/90 rounded flex items-center justify-center transition-colors" title="View original post on X">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                       </div>
-                    </div>
+                    </a>
                   </div>
                   <div className="p-5">
                     <p className="text-[#F2F2F2]/30 text-xs font-mono mb-2">{article.date}</p>
                     <h3 className="font-display font-bold text-lg text-[#F2F2F2] group-hover:text-[#E8191A] transition-colors uppercase leading-tight mb-2" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{article.title}</h3>
                     <p className="text-[#F2F2F2]/40 text-sm leading-relaxed line-clamp-2">{article.excerpt}</p>
-                    <div className="flex items-center gap-2 mt-4 text-xs text-[#E8191A] font-medium">Read on X <ChevronRight size={12} /></div>
+                    <div className="flex items-center gap-2 mt-4 text-xs text-[#E8191A] font-medium">Read Article <ChevronRight size={12} /></div>
                   </div>
                 </a>
               ))}
