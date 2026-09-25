@@ -25,6 +25,122 @@ type TeamStats = {
 
 const RESULT_COLOR: Record<string, string> = { W: '#00A878', L: '#E8191A', D: '#F0A500' }
 
+// Player photo lookup + tracker links — pulled in from the old standalone
+// /teams/[teamId]/[playerSlug] page, since clicking a player now opens an
+// in-page modal here instead of navigating to a full-screen route.
+const PLAYER_PHOTOS: Record<string, string> = {
+  ein: 'player-e-in.png',
+  vcipher: 'player-vcipher.png',
+  megahitidee: 'player-megahitIdee.jpg',
+  kiingkooopa: 'player-kiinkooopa.jpg',
+  godcookie: 'player-cookie.webp',
+  kontrol: 'player-kontrol.jpeg',
+  ximmy: 'player-ximmy.png',
+  yesyert: 'player-yesyert.png',
+  deasells: 'player-deasells.png',
+  favor8: 'player-favor8.png',
+  adlibb: 'player-adlibb.png',
+  nathan: 'coach-Nathan.jpg',
+  shiyo: 'coach-Shiyo.jpg',
+  abyce: 'coach-Abyce.jpg',
+  final: 'player-finalkiss.jpg',
+  gingy: 'coach-gingy.jpg',
+  jogorku: 'coach-jogorku.jpg',
+  emma: 'player-emma.jpg',
+  azzyriax: 'player-azzy.jpg',
+  flip: 'player-flip.jpg',
+  swisz: 'player-Swisz.jpg',
+  ghost: 'player-ghost.jpg',
+  holdmypollo: 'player-pollo.jpg',
+  notcierra: 'player-cierra.jpg',
+  emmamuah: 'player-emma.jpg',
+  itsthrill: 'player-itsthr1ll.jpg',
+  tumorous: 'coach-TumorousXD.jpg',
+}
+
+const TRACKER_LINKS: Record<string, string> = {
+  valorant: 'https://www.vlr.gg/team/17236/overtake',
+  counterstrike: 'https://www.hltv.org/team/13855/overtake-sector',
+  deadlock: '',
+}
+
+function getPlayerPhoto(name: string): string {
+  const key = name.toLowerCase().replace(/[^a-z0-9]/g, '')
+  return PLAYER_PHOTOS[key] || `player-${key}.jpg`
+}
+
+function getPlayerCardColor(player: any, team: any): string {
+  const isRedCard = ['NATHAN', 'SHIYO', 'ABYCE'].includes(player.name)
+  const isFemaleCoach = ['GINGY', 'JOGORKU'].includes(player.name)
+  return isRedCard || isFemaleCoach ? '#E8191A' : team.color
+}
+
+// A medium-sized modal — noticeably bigger than the creators hover-peek
+// rectangle, but nowhere near full-screen like the old dedicated player page
+// was. Image on the right, info + socials on the left, same "rectangle"
+// language used for the creators peek so the two feel like a matched pair.
+function PlayerModal({ player, team, onClose }: { player: any; team: any; onClose: () => void }) {
+  const photo = getPlayerPhoto(player.name)
+  const cardColor = getPlayerCardColor(player, team)
+  const trackerLink = TRACKER_LINKS[team.id] || null
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-6" onClick={onClose}>
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+      <div className="relative bg-[#0D0D0D] border border-white/10 shadow-2xl overflow-hidden flex flex-col sm:flex-row"
+        onClick={e => e.stopPropagation()}
+        style={{ width: 'min(640px, 92vw)', animation: 'hoverPeekIn 0.2s cubic-bezier(0.16,1,0.3,1)' }}>
+        <div className="h-1 w-full sm:hidden" style={{ background: cardColor }} />
+
+        {/* Info */}
+        <div className="relative flex-1 min-w-0 p-7 sm:p-8 flex flex-col justify-center">
+          <div className="hidden sm:block absolute top-0 left-0 bottom-0 w-1" style={{ background: cardColor }} />
+          <span className="inline-block w-fit text-[10px] font-mono px-2.5 py-1 font-bold uppercase tracking-widest mb-4"
+            style={{ color: cardColor, background: `${cardColor}15`, border: `1px solid ${cardColor}30` }}>
+            Overtake — {team.game}
+          </span>
+          <h3 className="font-display font-black uppercase leading-none text-4xl sm:text-5xl text-[#F2F2F2] mb-2"
+            style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+            {player.name}
+          </h3>
+          <p className="text-sm font-mono mb-1" style={{ color: cardColor }}>{player.real}</p>
+          <p className="text-white/40 text-xs font-mono uppercase tracking-widest mb-6">{player.role}</p>
+          <div className="flex flex-wrap gap-2.5">
+            {player.twitter && (
+              <a href={player.twitter} target="_blank" rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-black uppercase tracking-widest transition-all hover:opacity-80"
+                style={{ fontFamily: 'Barlow Condensed, sans-serif', color: cardColor, border: `1px solid ${cardColor}50`, background: `${cardColor}10` }}>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
+                Twitter / X
+              </a>
+            )}
+            {trackerLink && (
+              <a href={trackerLink} target="_blank" rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-black uppercase tracking-widest transition-all hover:opacity-80"
+                style={{ fontFamily: 'Barlow Condensed, sans-serif', color: cardColor, border: `1px solid ${cardColor}50`, background: `${cardColor}10` }}>
+                <ExternalLink size={11} />
+                Team Tracker
+              </a>
+            )}
+          </div>
+        </div>
+
+        {/* Photo */}
+        <div className="relative flex-shrink-0 order-first sm:order-last w-full sm:w-64" style={{ aspectRatio: '4/3' }}>
+          <img src={`/${photo}`} alt={player.name}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', position: 'absolute', inset: 0 }}
+            onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
+          <div className="absolute inset-0 hidden sm:block" style={{ background: 'linear-gradient(to left, transparent 55%, #0D0D0D 100%)' }} />
+          <button onClick={onClose}
+            className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center bg-black/50 hover:bg-black/70 text-white/70 hover:text-white transition-colors rounded-full">
+            ✕
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // Fades an element up into view the first time it crosses into frame — since
 // each slide only becomes visible once the carousel scrolls to it, this still
 // plays out naturally as a "crisp mount" the first time you land on a team.
@@ -129,7 +245,7 @@ function TeamCrestPanel({ team, stats }: { team: any; stats?: TeamStats }) {
   )
 }
 
-function TeamSlide({ team, stats }: { team: any; stats?: TeamStats }) {
+function TeamSlide({ team, stats, onSelectPlayer }: { team: any; stats?: TeamStats; onSelectPlayer: (player: any) => void }) {
   const roster = team.roster as { name: string; role: string; country: string; real: string; twitter: string }[]
   const statByName: Record<string, RosterStat> = {}
   for (const r of stats?.roster_stats || []) statByName[r.name] = r
@@ -170,14 +286,14 @@ function TeamSlide({ team, stats }: { team: any; stats?: TeamStats }) {
                       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                         style={{ background: `linear-gradient(120deg, transparent, ${team.color}08, transparent)` }} />
                       <div className="relative flex items-center justify-between gap-3">
-                        <Link href={`/teams/${team.id}/${playerSlug(p.name)}`} className="min-w-0 flex-1">
+                        <button type="button" onClick={() => onSelectPlayer(p)} className="min-w-0 flex-1 text-left">
                           <div className="flex items-center gap-2">
                             <span className="font-display font-black text-lg text-white uppercase truncate group-hover:text-white transition-colors"
                               style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{p.name}</span>
                             <span>{p.country}</span>
                           </div>
                           <p className="text-white/30 text-[10px] font-mono uppercase tracking-widest">{p.role}{stat?.note ? ` · ${stat.note}` : ''}</p>
-                        </Link>
+                        </button>
                         <div className="flex items-center gap-3 flex-shrink-0">
                           {stat && (
                             <div className="text-right">
@@ -265,6 +381,7 @@ export default function TeamsPage() {
   const dragStartX = useRef(0)
   const dragDelta = useRef(0)
   const viewportRef = useRef<HTMLDivElement>(null)
+  const [selectedPlayer, setSelectedPlayer] = useState<{ player: any; team: any } | null>(null)
 
   const count = teams.length
 
@@ -341,6 +458,7 @@ export default function TeamsPage() {
         @keyframes carousel-scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(220%); } }
         @keyframes carousel-holo { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
         @keyframes crest-pulse { 0%, 100% { box-shadow: 0 0 30px var(--crest-glow-a); } 50% { box-shadow: 0 0 55px var(--crest-glow-b); } }
+        @keyframes hoverPeekIn { from { opacity: 0; transform: scale(0.94); } to { opacity: 1; transform: scale(1); } }
         .team-crest-glow { animation: crest-pulse 4s ease-in-out infinite; }
         .carousel-holo-text {
           background: linear-gradient(90deg, var(--carousel-c1), #ffffff, var(--carousel-c1));
@@ -411,7 +529,7 @@ export default function TeamsPage() {
             }}>
             {teams.map((team: any) => (
               <div key={team.id} className="h-full" style={{ width: `${100 / count}%`, flexShrink: 0 }}>
-                <TeamSlide team={team} stats={statsMap[team.id]} />
+                <TeamSlide team={team} stats={statsMap[team.id]} onSelectPlayer={(p) => setSelectedPlayer({ player: p, team })} />
               </div>
             ))}
           </div>
@@ -447,6 +565,14 @@ export default function TeamsPage() {
           {loaded ? 'Stats current as of each team\'s last manual update' : 'Loading team stats...'}
         </p>
       </div>
+
+      {selectedPlayer && (
+        <PlayerModal
+          player={selectedPlayer.player}
+          team={selectedPlayer.team}
+          onClose={() => setSelectedPlayer(null)}
+        />
+      )}
     </div>
   )
 }
