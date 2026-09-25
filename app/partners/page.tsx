@@ -1,5 +1,6 @@
 import { partners } from '@/lib/data'
 import { ChevronRight, Mail } from 'lucide-react'
+import Ink3dSpotlight from '@/components/Ink3dSpotlight'
 
 export const metadata = {
   title: 'Partners — Overtake Esports',
@@ -13,12 +14,20 @@ const TIER_CONFIG: Record<string, { label: string; color: string; bg: string; bo
   Partner: { label: 'PARTNER', color: '#A855F7', bg: '#A855F715', border: '#A855F730' },
 }
 
+// Ink3D gets pulled out of the regular tiered grid and given its own
+// oversized spotlight section (see components/Ink3dSpotlight.tsx) — everyone
+// else still renders normally below.
+const SPOTLIGHT_NAME = 'Ink3D'
+
 export default function PartnersPage() {
+  const spotlightPartner = partners.find(p => p.name === SPOTLIGHT_NAME)
+  const remainingPartners = partners.filter(p => p.name !== SPOTLIGHT_NAME)
+
   const grouped: Record<string, typeof partners> = {
-    Founding: partners.filter(p => p.tier === 'Founding'),
-    Premier: partners.filter(p => p.tier === 'Premier'),
-    Official: partners.filter(p => p.tier === 'Official'),
-    Partner: partners.filter(p => p.tier === 'Partner'),
+    Founding: remainingPartners.filter(p => p.tier === 'Founding'),
+    Premier: remainingPartners.filter(p => p.tier === 'Premier'),
+    Official: remainingPartners.filter(p => p.tier === 'Official'),
+    Partner: remainingPartners.filter(p => p.tier === 'Partner'),
   }
 
   return (
@@ -39,6 +48,9 @@ export default function PartnersPage() {
           </p>
         </div>
       </div>
+
+      {/* Ink3D exclusive spotlight */}
+      {spotlightPartner && <Ink3dSpotlight partner={spotlightPartner} />}
 
       {/* Partners by tier */}
       <div className="max-w-7xl mx-auto px-6 py-20 space-y-20">
