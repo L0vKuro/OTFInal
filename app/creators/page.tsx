@@ -208,13 +208,14 @@ function JustDroppedCard({ video, creator }: { video: LatestVideo; creator: any 
   const platformKey = video.platform === 'twitch' ? 'Twitch' : 'YouTube'
   return (
     <div>
-      <div className="flex items-center gap-2 mb-3">
-        <Sparkles size={14} className="text-[#E8191A]" />
-        <p className="text-white/40 text-xs font-mono uppercase tracking-widest">Just Dropped</p>
+      <div className="flex items-center gap-3 mb-6">
+        <Sparkles size={18} className="text-[#E8191A]" />
+        <h2 className="font-display font-black text-3xl text-[#F2F2F2] uppercase"
+          style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>Just Dropped</h2>
       </div>
       <a href={video.url} target="_blank" rel="noopener noreferrer"
-        className="group relative block bg-[#0D0D0D] border border-white/10 hover:border-[#E8191A]/40 overflow-hidden transition-all">
-        <div className="relative overflow-hidden bg-[#141414]" style={{ aspectRatio: '16/9' }}>
+        className="group relative flex flex-col sm:flex-row gap-0 bg-[#0D0D0D] border border-white/10 hover:border-[#E8191A]/40 overflow-hidden transition-all">
+        <div className="relative sm:w-96 flex-shrink-0 overflow-hidden bg-[#141414]" style={{ aspectRatio: '16/9' }}>
           {creator ? (
             <img src={`/${creator.photo}`} alt={video.person_name}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
@@ -222,36 +223,36 @@ function JustDroppedCard({ video, creator }: { video: LatestVideo; creator: any 
               onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-[#141414]">
-              <Video size={24} className="text-white/10" />
+              <Video size={32} className="text-white/10" />
             </div>
           )}
           <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-            <div className="w-10 h-10 rounded-full bg-[#E8191A] flex items-center justify-center shadow-[0_0_20px_rgba(232,25,26,0.5)] group-hover:scale-110 transition-transform">
-              <Play size={16} className="text-white ml-0.5" fill="white" />
+            <div className="w-14 h-14 rounded-full bg-[#E8191A] flex items-center justify-center shadow-[0_0_30px_rgba(232,25,26,0.5)] group-hover:scale-110 transition-transform">
+              <Play size={20} className="text-white ml-1" fill="white" />
             </div>
           </div>
-          <div className="absolute top-2 left-2">
-            <span className="text-[9px] font-black px-2 py-1 uppercase tracking-widest"
+          <div className="absolute top-3 left-3">
+            <span className="text-[10px] font-black px-2 py-1 uppercase tracking-widest"
               style={{ background: PLATFORM_COLORS[platformKey], color: PLATFORM_TEXT[platformKey] }}>
               {video.platform === 'twitch' ? 'Twitch VOD' : 'YouTube'}
             </span>
           </div>
         </div>
-        <div className="p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <LeaderAvatar src={video.photo_url} name={video.person_name} size={22} />
-            <span className="font-display font-bold text-xs text-[#E8191A] uppercase tracking-wide"
+        <div className="p-8 flex flex-col justify-center flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-3">
+            <LeaderAvatar src={video.photo_url} name={video.person_name} size={28} />
+            <span className="font-display font-bold text-sm text-[#E8191A] uppercase tracking-wide"
               style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{video.person_name}</span>
-            <span className="text-white/25 text-[10px] font-mono ml-auto">
+            <span className="text-white/25 text-xs font-mono">
               {new Date(video.event_date + 'T00:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
             </span>
           </div>
-          <h3 className="font-display font-black text-base text-white uppercase leading-tight mb-2 group-hover:text-[#E8191A] transition-colors"
+          <h3 className="font-display font-black text-2xl sm:text-3xl text-white uppercase leading-tight mb-3 group-hover:text-[#E8191A] transition-colors"
             style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
             {video.title || 'New content just went up'}
           </h3>
-          <div className="flex items-center gap-1.5 text-white/40 text-[10px] font-mono uppercase tracking-widest">
-            <Play size={10} /> Watch now <ExternalLink size={10} />
+          <div className="flex items-center gap-2 text-white/40 text-xs font-mono uppercase tracking-widest">
+            <Play size={12} /> Watch now <ExternalLink size={11} />
           </div>
         </div>
       </a>
@@ -278,7 +279,14 @@ export default function CreatorsPage() {
   }
   const handleCardLeave = () => {
     if (hoverTimer.current) clearTimeout(hoverTimer.current)
-    setHoveredCreator(null)
+    // Small delay before closing (instead of instant) — this is what stops the
+    // peek from flashing shut: without it, the peek panel appearing on top of
+    // the cursor's position causes an immediate mouseleave on the grid card
+    // itself, closing the peek in the same frame it opened.
+    hoverTimer.current = setTimeout(() => setHoveredCreator(null), 120)
+  }
+  const cancelHoverClose = () => {
+    if (hoverTimer.current) clearTimeout(hoverTimer.current)
   }
 
   useEffect(() => {
@@ -660,11 +668,8 @@ export default function CreatorsPage() {
             </div>
           )}
 
-          {/* Creator grid, with Just Dropped as a side feature instead of a
-              full-width top banner */}
+          {/* Creator grid */}
           <div className="max-w-7xl mx-auto px-6 py-20">
-            <div className="flex flex-col lg:flex-row gap-10">
-              <div className="flex-1 min-w-0 order-2 lg:order-1">
             {[1, 2, 3].map(tier => {
               const tierCreators = creators.filter(c => c.tier === tier)
               if (tierCreators.length === 0) return null
@@ -787,17 +792,17 @@ export default function CreatorsPage() {
                 </div>
               )
             })}
-              </div>
-
-              {latestVideoData && (
-                <aside className="w-full lg:w-72 flex-shrink-0 order-1 lg:order-2">
-                  <div className="lg:sticky lg:top-24">
-                    <JustDroppedCard video={latestVideoData} creator={latestVideoCreator} />
-                  </div>
-                </aside>
-              )}
-            </div>
           </div>
+
+          {/* Just Dropped — sits at the bottom of the page as its own feature
+              rather than competing with the leaderboard for top billing */}
+          {latestVideoData && (
+            <div className="border-t border-white/5 bg-[#141414]/40">
+              <div className="max-w-4xl mx-auto px-6 py-16">
+                <JustDroppedCard video={latestVideoData} creator={latestVideoCreator} />
+              </div>
+            </div>
+          )}
         </>
       )}
 
@@ -805,11 +810,16 @@ export default function CreatorsPage() {
           requiring a click. Clicking through it opens the full modal. */}
       {hoveredCreator && (
         <div className="fixed inset-0 z-40 flex items-center justify-center p-6 pointer-events-none">
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-md pointer-events-auto transition-opacity"
-            onClick={handleCardLeave} />
+          {/* Backdrop is decorative only (pointer-events-none) — earlier this
+              was clickable and covered the whole screen including the card
+              being hovered, which stole the hover and closed the peek the
+              instant it appeared. */}
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-md transition-opacity" />
           <div className="relative bg-[#0D0D0D] border border-white/10 shadow-2xl overflow-hidden pointer-events-auto cursor-pointer"
             style={{ width: 'min(360px, 90vw)', animation: 'hoverPeekIn 0.2s cubic-bezier(0.16,1,0.3,1)' }}
-            onClick={() => { setSelected(hoveredCreator); handleCardLeave() }}>
+            onMouseEnter={cancelHoverClose}
+            onMouseLeave={handleCardLeave}
+            onClick={() => { setSelected(hoveredCreator); setHoveredCreator(null) }}>
             <div className="h-1 w-full" style={{ background: PLATFORM_COLORS[hoveredCreator.platform] || '#E8191A' }} />
             <div className="relative overflow-hidden bg-[#141414]" style={{ aspectRatio: '1' }}>
               <img src={`/${hoveredCreator.photo}`} alt={hoveredCreator.handle}
