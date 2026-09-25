@@ -55,11 +55,31 @@ type ScheduleItem = {
   photo_url: string
 }
 
+// Kept to a strict white / red / black palette per brand direction — no more
+// purple/pink/blue platform colors. PLATFORM_COLORS is the "identity" color
+// for each platform (used for fills, glows, borders). Since that identity
+// color is sometimes white and sometimes black, PLATFORM_TEXT gives the
+// readable text color to pair with a PLATFORM_COLORS-filled background, and
+// accentSafe() gives a readable *foreground* color for spots (bare text,
+// icons) that would otherwise render TikTok's black invisibly on this dark UI.
 const PLATFORM_COLORS: Record<string, string> = {
-  Twitch: '#9146FF',
-  YouTube: '#FF0000',
-  TikTok: '#EE1D52',
-  Twitter: '#1DA1F2',
+  Twitch: '#F2F2F2',
+  YouTube: '#E8191A',
+  TikTok: '#0D0D0D',
+  Twitter: '#F2F2F2',
+}
+
+const PLATFORM_TEXT: Record<string, string> = {
+  Twitch: '#0D0D0D',
+  YouTube: '#F2F2F2',
+  TikTok: '#F2F2F2',
+  Twitter: '#0D0D0D',
+}
+
+function accentSafe(platform?: string | null): string {
+  if (!platform) return '#E8191A'
+  if (platform === 'TikTok') return '#F2F2F2'
+  return PLATFORM_COLORS[platform] || '#E8191A'
 }
 
 const CONTENT_TYPE_LABELS: Record<string, string> = {
@@ -184,6 +204,61 @@ function relativeDay(dateStr: string): string {
   return target.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })
 }
 
+function JustDroppedCard({ video, creator }: { video: LatestVideo; creator: any }) {
+  const platformKey = video.platform === 'twitch' ? 'Twitch' : 'YouTube'
+  return (
+    <div>
+      <div className="flex items-center gap-2 mb-3">
+        <Sparkles size={14} className="text-[#E8191A]" />
+        <p className="text-white/40 text-xs font-mono uppercase tracking-widest">Just Dropped</p>
+      </div>
+      <a href={video.url} target="_blank" rel="noopener noreferrer"
+        className="group relative block bg-[#0D0D0D] border border-white/10 hover:border-[#E8191A]/40 overflow-hidden transition-all">
+        <div className="relative overflow-hidden bg-[#141414]" style={{ aspectRatio: '16/9' }}>
+          {creator ? (
+            <img src={`/${creator.photo}`} alt={video.person_name}
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              style={{ objectPosition: 'top' }}
+              onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-[#141414]">
+              <Video size={24} className="text-white/10" />
+            </div>
+          )}
+          <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+            <div className="w-10 h-10 rounded-full bg-[#E8191A] flex items-center justify-center shadow-[0_0_20px_rgba(232,25,26,0.5)] group-hover:scale-110 transition-transform">
+              <Play size={16} className="text-white ml-0.5" fill="white" />
+            </div>
+          </div>
+          <div className="absolute top-2 left-2">
+            <span className="text-[9px] font-black px-2 py-1 uppercase tracking-widest"
+              style={{ background: PLATFORM_COLORS[platformKey], color: PLATFORM_TEXT[platformKey] }}>
+              {video.platform === 'twitch' ? 'Twitch VOD' : 'YouTube'}
+            </span>
+          </div>
+        </div>
+        <div className="p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <LeaderAvatar src={video.photo_url} name={video.person_name} size={22} />
+            <span className="font-display font-bold text-xs text-[#E8191A] uppercase tracking-wide"
+              style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{video.person_name}</span>
+            <span className="text-white/25 text-[10px] font-mono ml-auto">
+              {new Date(video.event_date + 'T00:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+            </span>
+          </div>
+          <h3 className="font-display font-black text-base text-white uppercase leading-tight mb-2 group-hover:text-[#E8191A] transition-colors"
+            style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+            {video.title || 'New content just went up'}
+          </h3>
+          <div className="flex items-center gap-1.5 text-white/40 text-[10px] font-mono uppercase tracking-widest">
+            <Play size={10} /> Watch now <ExternalLink size={10} />
+          </div>
+        </div>
+      </a>
+    </div>
+  )
+}
+
 export default function CreatorsPage() {
   const [twitchStreams, setTwitchStreams] = useState<TwitchStream[]>([])
   const [youtubeStreams, setYoutubeStreams] = useState<YouTubeStream[]>([])
@@ -191,6 +266,20 @@ export default function CreatorsPage() {
   const [schedule, setSchedule] = useState<ScheduleItem[]>([])
   const [selected, setSelected] = useState<any>(null)
   const [filter, setFilter] = useState<'all' | 'live'>('all')
+
+  // Hover preview — a short delay before showing (so a quick mouse pass
+  // across the grid doesn't pop things open), no delay on hide.
+  const [hoveredCreator, setHoveredCreator] = useState<any>(null)
+  const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const handleCardEnter = (creator: any) => {
+    if (hoverTimer.current) clearTimeout(hoverTimer.current)
+    hoverTimer.current = setTimeout(() => setHoveredCreator(creator), 180)
+  }
+  const handleCardLeave = () => {
+    if (hoverTimer.current) clearTimeout(hoverTimer.current)
+    setHoveredCreator(null)
+  }
 
   useEffect(() => {
     fetch('/api/twitch-live')
@@ -280,6 +369,7 @@ export default function CreatorsPage() {
         .group:hover .creator-photo { transform: scale(1.05); }
         .group:hover .creator-overlay { opacity: 0.1; }
         @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        @keyframes hoverPeekIn { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
         @keyframes creators-scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
         @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 20px rgba(232,25,26,0.15); } 50% { box-shadow: 0 0 40px rgba(232,25,26,0.35); } }
         .timeline-dot { animation: pulse-glow 2.5s ease-in-out infinite; }
@@ -399,8 +489,8 @@ export default function CreatorsPage() {
 
                           <div className="absolute top-4 left-4 flex items-center gap-1.5 px-3 py-1.5"
                             style={{ background: color }}>
-                            <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-                            <span className="text-xs font-black text-white uppercase tracking-widest">Live</span>
+                            <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: PLATFORM_TEXT[livePlatform!] || '#fff' }} />
+                            <span className="text-xs font-black uppercase tracking-widest" style={{ color: PLATFORM_TEXT[livePlatform!] || '#fff' }}>Live</span>
                           </div>
 
                           <div className="absolute top-4 right-4">
@@ -453,64 +543,6 @@ export default function CreatorsPage() {
         </div>
       ) : (
         <>
-          {/* Just Dropped — the single most recent upload/stream across the whole roster */}
-          {latestVideoData && (
-            <div className="border-b border-white/5 bg-[#141414]/40">
-              <div className="max-w-7xl mx-auto px-6 py-16">
-                <Reveal>
-                  <div className="flex items-center gap-3 mb-6">
-                    <Sparkles size={18} className="text-[#E8191A]" />
-                    <h2 className="font-display font-black text-3xl text-[#F2F2F2] uppercase"
-                      style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>Just Dropped</h2>
-                  </div>
-                  <a href={latestVideoData.url} target="_blank" rel="noopener noreferrer"
-                    className="group relative flex flex-col sm:flex-row gap-0 bg-[#0D0D0D] border border-white/10 hover:border-[#E8191A]/40 overflow-hidden transition-all">
-                    <div className="relative sm:w-96 flex-shrink-0 overflow-hidden bg-[#141414]" style={{ aspectRatio: '16/9' }}>
-                      {latestVideoCreator ? (
-                        <img src={`/${latestVideoCreator.photo}`} alt={latestVideoData.person_name}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                          style={{ objectPosition: 'top' }}
-                          onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-[#141414]">
-                          <Video size={32} className="text-white/10" />
-                        </div>
-                      )}
-                      <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                        <div className="w-14 h-14 rounded-full bg-[#E8191A] flex items-center justify-center shadow-[0_0_30px_rgba(232,25,26,0.5)] group-hover:scale-110 transition-transform">
-                          <Play size={20} className="text-white ml-1" fill="white" />
-                        </div>
-                      </div>
-                      <div className="absolute top-3 left-3">
-                        <span className="text-[10px] font-black px-2 py-1 uppercase tracking-widest"
-                          style={{ background: PLATFORM_COLORS[latestVideoData.platform === 'twitch' ? 'Twitch' : 'YouTube'], color: '#fff' }}>
-                          {latestVideoData.platform === 'twitch' ? 'Twitch VOD' : 'YouTube'}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="p-8 flex flex-col justify-center flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-3">
-                        <LeaderAvatar src={latestVideoData.photo_url} name={latestVideoData.person_name} size={28} />
-                        <span className="font-display font-bold text-sm text-[#E8191A] uppercase tracking-wide"
-                          style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{latestVideoData.person_name}</span>
-                        <span className="text-white/25 text-xs font-mono">
-                          {new Date(latestVideoData.event_date + 'T00:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-                        </span>
-                      </div>
-                      <h3 className="font-display font-black text-2xl sm:text-3xl text-white uppercase leading-tight mb-3 group-hover:text-[#E8191A] transition-colors"
-                        style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-                        {latestVideoData.title || 'New content just went up'}
-                      </h3>
-                      <div className="flex items-center gap-2 text-white/40 text-xs font-mono uppercase tracking-widest">
-                        <Play size={12} /> Watch now <ExternalLink size={11} />
-                      </div>
-                    </div>
-                  </a>
-                </Reveal>
-              </div>
-            </div>
-          )}
-
           {/* Leaders — Creator of the Month spotlight + supporting boards */}
           {hasLeaderboardData && (
             <div className="border-b border-white/5 bg-white/[0.015]">
@@ -628,8 +660,11 @@ export default function CreatorsPage() {
             </div>
           )}
 
-          {/* Creator grid */}
+          {/* Creator grid, with Just Dropped as a side feature instead of a
+              full-width top banner */}
           <div className="max-w-7xl mx-auto px-6 py-20">
+            <div className="flex flex-col lg:flex-row gap-10">
+              <div className="flex-1 min-w-0 order-2 lg:order-1">
             {[1, 2, 3].map(tier => {
               const tierCreators = creators.filter(c => c.tier === tier)
               if (tierCreators.length === 0) return null
@@ -660,7 +695,9 @@ export default function CreatorsPage() {
                               borderColor: live ? `${PLATFORM_COLORS[livePlatform!]}40` : 'rgba(255,255,255,0.05)',
                               transition: 'all 0.3s ease',
                             }}
-                            onClick={() => setSelected(creator)}>
+                            onClick={() => setSelected(creator)}
+                            onMouseEnter={() => handleCardEnter(creator)}
+                            onMouseLeave={handleCardLeave}>
 
                             {/* Top color line */}
                             <div className="h-px w-full"
@@ -680,7 +717,7 @@ export default function CreatorsPage() {
                               {/* Platform badge */}
                               <div className="absolute top-2 left-2">
                                 <span className="text-[10px] font-black px-2 py-1 uppercase tracking-widest"
-                                  style={{ background: platformColor, color: '#fff' }}>
+                                  style={{ background: platformColor, color: PLATFORM_TEXT[creator.platform] || '#fff' }}>
                                   {creator.platform}
                                 </span>
                               </div>
@@ -689,8 +726,8 @@ export default function CreatorsPage() {
                               {live && (
                                 <div className="absolute top-2 right-2 flex items-center gap-1 px-2 py-1"
                                   style={{ background: PLATFORM_COLORS[livePlatform!] }}>
-                                  <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                                  <span className="text-[10px] font-black text-white uppercase tracking-widest">Live</span>
+                                  <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: PLATFORM_TEXT[livePlatform!] || '#fff' }} />
+                                  <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: PLATFORM_TEXT[livePlatform!] || '#fff' }}>Live</span>
                                 </div>
                               )}
 
@@ -750,8 +787,67 @@ export default function CreatorsPage() {
                 </div>
               )
             })}
+              </div>
+
+              {latestVideoData && (
+                <aside className="w-full lg:w-72 flex-shrink-0 order-1 lg:order-2">
+                  <div className="lg:sticky lg:top-24">
+                    <JustDroppedCard video={latestVideoData} creator={latestVideoCreator} />
+                  </div>
+                </aside>
+              )}
+            </div>
           </div>
         </>
+      )}
+
+      {/* Hover preview — a quick, non-blocking peek at a creator card without
+          requiring a click. Clicking through it opens the full modal. */}
+      {hoveredCreator && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center p-6 pointer-events-none">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-md pointer-events-auto transition-opacity"
+            onClick={handleCardLeave} />
+          <div className="relative bg-[#0D0D0D] border border-white/10 shadow-2xl overflow-hidden pointer-events-auto cursor-pointer"
+            style={{ width: 'min(360px, 90vw)', animation: 'hoverPeekIn 0.2s cubic-bezier(0.16,1,0.3,1)' }}
+            onClick={() => { setSelected(hoveredCreator); handleCardLeave() }}>
+            <div className="h-1 w-full" style={{ background: PLATFORM_COLORS[hoveredCreator.platform] || '#E8191A' }} />
+            <div className="relative overflow-hidden bg-[#141414]" style={{ aspectRatio: '1' }}>
+              <img src={`/${hoveredCreator.photo}`} alt={hoveredCreator.handle}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }}
+                onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
+              <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, #0D0D0D 10%, transparent 55%)' }} />
+              <div className="absolute top-3 left-3">
+                <span className="text-[10px] font-black px-2 py-1 uppercase tracking-widest"
+                  style={{ background: PLATFORM_COLORS[hoveredCreator.platform] || '#E8191A', color: PLATFORM_TEXT[hoveredCreator.platform] || '#fff' }}>
+                  {hoveredCreator.platform}
+                </span>
+              </div>
+              {isLive(hoveredCreator) && (
+                <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1"
+                  style={{ background: PLATFORM_COLORS[getLivePlatform(hoveredCreator)!] }}>
+                  <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: PLATFORM_TEXT[getLivePlatform(hoveredCreator)!] || '#fff' }} />
+                  <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: PLATFORM_TEXT[getLivePlatform(hoveredCreator)!] || '#fff' }}>Live</span>
+                </div>
+              )}
+              <div className="absolute bottom-3 left-4 right-4">
+                <h3 className="font-display font-black text-2xl text-white uppercase leading-none"
+                  style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{hoveredCreator.handle}</h3>
+                <p className="text-xs font-mono uppercase tracking-widest mt-1" style={{ color: accentSafe(hoveredCreator.platform) }}>
+                  {hoveredCreator.specialty}
+                </p>
+              </div>
+            </div>
+            <div className="p-5">
+              <p className="text-white/50 text-sm leading-relaxed mb-4 line-clamp-3">{hoveredCreator.bio}</p>
+              <div className="flex items-center justify-between text-xs font-mono">
+                <span className="flex items-center gap-1.5 text-white/30">
+                  <Users size={11} /> {hoveredCreator.followers} followers
+                </span>
+                <span className="text-white/25 uppercase tracking-widest">Click for full profile</span>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Creator modal */}
@@ -773,15 +869,15 @@ export default function CreatorsPage() {
                 {isLive(selected) && (
                   <div className="absolute top-3 left-3 flex items-center gap-1.5 px-3 py-1.5"
                     style={{ background: PLATFORM_COLORS[getLivePlatform(selected)!] }}>
-                    <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-                    <span className="text-xs font-black text-white uppercase">Live on {getLivePlatform(selected)}</span>
+                    <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: PLATFORM_TEXT[getLivePlatform(selected)!] || '#fff' }} />
+                    <span className="text-xs font-black uppercase" style={{ color: PLATFORM_TEXT[getLivePlatform(selected)!] || '#fff' }}>Live on {getLivePlatform(selected)}</span>
                   </div>
                 )}
               </div>
               <div className="p-8 flex flex-col justify-center">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="text-[10px] font-black px-2 py-1 uppercase tracking-widest"
-                    style={{ background: PLATFORM_COLORS[selected.platform] || '#E8191A', color: '#fff' }}>
+                    style={{ background: PLATFORM_COLORS[selected.platform] || '#E8191A', color: PLATFORM_TEXT[selected.platform] || '#fff' }}>
                     {selected.platform}
                   </span>
                   <span className="text-[10px] font-mono px-2 py-1 uppercase border"
@@ -791,7 +887,7 @@ export default function CreatorsPage() {
                 </div>
                 <h2 className="font-display font-black text-3xl text-white uppercase mb-1"
                   style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{selected.handle}</h2>
-                <p className="text-xs font-mono mb-4" style={{ color: PLATFORM_COLORS[selected.platform] || '#E8191A' }}>
+                <p className="text-xs font-mono mb-4" style={{ color: accentSafe(selected.platform) }}>
                   {selected.specialty}
                 </p>
                 <p className="text-white/50 text-sm leading-relaxed mb-6">{selected.bio}</p>
@@ -804,7 +900,7 @@ export default function CreatorsPage() {
                     <a href={selected.link} target="_blank" rel="noopener noreferrer"
                       className="flex items-center gap-1.5 px-4 py-2 text-xs font-black uppercase tracking-widest transition-all"
                       style={{
-                        color: '#fff',
+                        color: PLATFORM_TEXT[selected.platform] || '#fff',
                         background: PLATFORM_COLORS[selected.platform] || '#E8191A',
                         fontFamily: 'Barlow Condensed, sans-serif',
                       }}>
@@ -831,11 +927,11 @@ export default function CreatorsPage() {
                     <a href={getLiveUrl(selected)!} target="_blank" rel="noopener noreferrer"
                       className="flex items-center gap-1.5 px-4 py-2 text-xs font-black uppercase tracking-widest transition-all animate-pulse"
                       style={{
-                        color: '#fff',
+                        color: PLATFORM_TEXT[getLivePlatform(selected)!] || '#fff',
                         background: PLATFORM_COLORS[getLivePlatform(selected)!],
                         fontFamily: 'Barlow Condensed, sans-serif',
                       }}>
-                      <span className="w-1.5 h-1.5 rounded-full bg-white" />
+                      <span className="w-1.5 h-1.5 rounded-full" style={{ background: PLATFORM_TEXT[getLivePlatform(selected)!] || '#fff' }} />
                       Watch Live
                     </a>
                   )}
