@@ -39,7 +39,7 @@ const milestones = [
 const leadership = [
 { name: 'Lazur', role: 'CEO / Founder', bio: 'Visionary behind Overtake Sector. Building the org from the ground up with passion and purpose.', twitter: 'wydlazur' },
   { name: 'Kuro', role: 'COO', bio: 'Oversees day-to-day operations and keeps the organization running at its best.', twitter: 'L0vKuro' },
-  { name: 'Gunner', role: 'CSO', bio: 'Oversees Overtake’s strategic vision, growth, and long-term organizational goals.', twitter: 'Gunnerade' },
+  { name: 'Gunner', role: 'Co-Owner', bio: 'Oversees Overtake’s strategic vision, growth, and long-term organizational goals.', twitter: 'Gunnerade' },
   { name: 'Rxsistance', role: 'Co-Owner', bio: 'Helps lead Overtake’s operations, development, and overall direction as a core member of ownership.', twitter: 'Rxsistance' },
   { name: 'Dynasty', role: 'General Manager', bio: 'Oversees the organization’s competitive operations and helps drive growth across Overtake’s esports divisions.', twitter: 'SpotJr25' },
   { name: 'Balterr', role: 'Director of Esports', bio: 'Manages competitive operations, team development, and day-to-day esports activities across Overtake.', twitter: 'Balterrr' },
@@ -53,7 +53,7 @@ const leadership = [
 const quotes = [
   { name: 'Lazur', role: 'CEO / Founder', quote: "Don't worry about failure; you only have to be right once." },
   { name: 'Kuro', role: 'COO', quote: 'Doubt kills more dreams than failure ever will.' },
-  { name: 'Gunner', role: 'CSO', quote: 'Great things are never built by one person alone; they are built by people who believe in the same vision.' },
+  { name: 'Gunner', role: 'Co-Owner', quote: 'Great things are never built by one person alone; they are built by people who believe in the same vision.' },
   { name: 'Rxsistance', role: 'Co-Owner', quote: 'The best leaders are the ones who turn ambition into action.' },
   { name: 'Dynasty', role: 'General Manager', quote: 'Life is like a video game, it gets hard because you leveled up.' },
   { name: 'Balterr', role: 'Director of Esports', quote: 'Success is not given. It is earned through consistency, discipline, and the willingness to improve.' },
