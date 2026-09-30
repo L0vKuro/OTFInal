@@ -10,6 +10,9 @@ export type CartItem = {
   nameOnBack: string
   numberOnBack: string
   isVNeck: boolean
+  // Whether this product supports/requires a name-on-back customization at all —
+  // false for items like the hoodie that ship as-is with no printing option.
+  personalize: boolean
 }
 
 type CartContextType = {
