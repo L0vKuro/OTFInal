@@ -30,6 +30,28 @@ const products = [
     isVNeck: true,
     personalize: true,
   },
+  {
+    id: 'hoodie-black-2026',
+    name: 'OFFICIAL 2026 HOODIE — BLACK',
+    price: 70,
+    tag: 'NEW DROP',
+    description: 'The Overtake 2026 Hoodie in Black — heavyweight fleece built for the grind, on stream or off. Subtle tonal crosshair emblem on the chest, a full sleeve wordmark hit, and the Overtake logo stitched at the back neck.',
+    details: ['Heavyweight fleece hoodie', 'Tonal crosshair chest emblem', 'Full sleeve Overtake wordmark', 'Kangaroo pocket', 'Available via RepulseCo'],
+    images: ['/hoodie-black-front-cutout.png', '/hoodie-black-back-cutout.png'],
+    isVNeck: false,
+    personalize: false,
+  },
+  {
+    id: 'hoodie-red-2026',
+    name: 'OFFICIAL 2026 HOODIE — RED',
+    price: 70,
+    tag: 'NEW DROP',
+    description: 'The Overtake 2026 Hoodie in Red — heavyweight fleece built for the grind, on stream or off. Crisp white crosshair emblem on the chest, a full sleeve wordmark hit, and the Overtake logo stitched at the back neck.',
+    details: ['Heavyweight fleece hoodie', 'White crosshair chest emblem', 'Full sleeve Overtake wordmark', 'Kangaroo pocket', 'Available via RepulseCo'],
+    images: ['/hoodie-red-front-cutout.png', '/hoodie-red-back-cutout.png'],
+    isVNeck: false,
+    personalize: false,
+  },
 ]
 
 // The jersey image panel keeps the mouse-follow perspective tilt and pulsing
