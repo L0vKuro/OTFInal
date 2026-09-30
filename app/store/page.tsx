@@ -17,6 +17,7 @@ const products = [
     details: ['Premium performance fabric', 'Custom dragon art sleeve graphics', 'Overtake crosshair emblem', 'Personalized nickname on back', 'Available via RepulseCo'],
     images: ['/Front.png', '/Rear.png'],
     isVNeck: false,
+    personalize: true,
   },
   {
     id: 'vneck-jersey-2026',
@@ -27,6 +28,29 @@ const products = [
     details: ['Premium performance jersey fabric', 'V-neck collar with crosshair detail', 'Black & white colorway with red accents', 'Custom name & number on back', 'Available via RepulseCo'],
     images: ['/FRONT-JERSEY.png', '/BACK-JERSEY.png'],
     isVNeck: true,
+    personalize: true,
+  },
+  {
+    id: 'hoodie-black-2026',
+    name: 'OFFICIAL 2026 HOODIE — BLACK',
+    price: 70,
+    tag: 'NEW DROP',
+    description: 'The Overtake 2026 Hoodie in Black — heavyweight fleece built for the grind, on stream or off. Subtle tonal crosshair emblem on the chest, a full sleeve wordmark hit, and the Overtake logo stitched at the back neck.',
+    details: ['Heavyweight fleece hoodie', 'Tonal crosshair chest emblem', 'Full sleeve Overtake wordmark', 'Kangaroo pocket', 'Available via RepulseCo'],
+    images: ['/hoodie-black-front.png', '/HOODIE-BLACK-BACK.jpg'],
+    isVNeck: false,
+    personalize: false,
+  },
+  {
+    id: 'hoodie-red-2026',
+    name: 'OFFICIAL 2026 HOODIE — RED',
+    price: 70,
+    tag: 'NEW DROP',
+    description: 'The Overtake 2026 Hoodie in Red — heavyweight fleece built for the grind, on stream or off. Crisp white crosshair emblem on the chest, a full sleeve wordmark hit, and the Overtake logo stitched at the back neck.',
+    details: ['Heavyweight fleece hoodie', 'White crosshair chest emblem', 'Full sleeve Overtake wordmark', 'Kangaroo pocket', 'Available via RepulseCo'],
+    images: ['/hoodie-red-front.png', '/HOODIE-RED-BACK.jpg'],
+    isVNeck: false,
+    personalize: false,
   },
 ]
 
@@ -132,7 +156,7 @@ export default function StorePage() {
 
     const e: Record<string, string> = {}
     if (!size) e.size = 'Please select a size'
-    if (!nameOnBack.trim()) e.nameOnBack = 'Required'
+    if (product.personalize && !nameOnBack.trim()) e.nameOnBack = 'Required'
     if (product.isVNeck && !numberOnBack.trim()) e.numberOnBack = 'Required'
     setErrors(e)
     if (Object.keys(e).length > 0) return
@@ -146,6 +170,7 @@ export default function StorePage() {
       nameOnBack: nameOnBack.trim(),
       numberOnBack: numberOnBack.trim(),
       isVNeck: product.isVNeck,
+      personalize: product.personalize,
     })
 
     setAdded(true)
@@ -180,7 +205,7 @@ export default function StorePage() {
           </p>
           <div className="flex flex-wrap gap-4 mt-8">
             {[
-              { label: 'Products', value: '2' },
+              { label: 'Products', value: '4' },
               { label: 'Partner', value: 'RepulseCo' },
               { label: 'Status', value: 'Available Now' },
             ].map(({ label, value }) => (
@@ -336,23 +361,25 @@ export default function StorePage() {
               {errors.size && <p className="text-[#E8191A] text-xs font-mono mt-1">{errors.size}</p>}
             </div>
 
-            {/* Name on Back */}
-            <div className="mb-5">
-              <label className="text-[#F2F2F2]/40 text-xs font-mono uppercase tracking-widest mb-2 block">Name on Back *</label>
-              <input
-                value={nameOnBack}
-                onChange={e => { setNameOnBack(e.target.value); setErrors(p => ({ ...p, nameOnBack: '' })) }}
-                placeholder="Your name or gamertag"
-                maxLength={20}
-                className="w-full bg-[#0D0D0D] border border-white/10 px-4 py-3 text-[#F2F2F2] text-sm font-mono focus:outline-none focus:border-[#E8191A]/60 transition-colors"
-              />
-              <div className="flex justify-between mt-1">
-                {errors.nameOnBack
-                  ? <p className="text-[#E8191A] text-xs font-mono">{errors.nameOnBack}</p>
-                  : <span />}
-                <p className="text-[#F2F2F2]/20 text-xs font-mono">{nameOnBack.length}/20</p>
+            {/* Name on Back — only for products that actually support printing */}
+            {modalProduct.personalize && (
+              <div className="mb-5">
+                <label className="text-[#F2F2F2]/40 text-xs font-mono uppercase tracking-widest mb-2 block">Name on Back *</label>
+                <input
+                  value={nameOnBack}
+                  onChange={e => { setNameOnBack(e.target.value); setErrors(p => ({ ...p, nameOnBack: '' })) }}
+                  placeholder="Your name or gamertag"
+                  maxLength={20}
+                  className="w-full bg-[#0D0D0D] border border-white/10 px-4 py-3 text-[#F2F2F2] text-sm font-mono focus:outline-none focus:border-[#E8191A]/60 transition-colors"
+                />
+                <div className="flex justify-between mt-1">
+                  {errors.nameOnBack
+                    ? <p className="text-[#E8191A] text-xs font-mono">{errors.nameOnBack}</p>
+                    : <span />}
+                  <p className="text-[#F2F2F2]/20 text-xs font-mono">{nameOnBack.length}/20</p>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Number on Back (V-Neck only) */}
             {modalProduct.isVNeck && (
