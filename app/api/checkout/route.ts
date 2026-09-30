@@ -21,6 +21,7 @@ type CartItem = {
   nameOnBack: string
   numberOnBack: string
   isVNeck: boolean
+  personalize: boolean
 }
 
 // Origin can legitimately be missing on a same-origin POST — some privacy-hardened
@@ -113,7 +114,9 @@ export async function POST(req: NextRequest) {
     }
 
     for (const item of items) {
-      if (!item.name || typeof item.price !== 'number' || item.price <= 0 || item.price > 1000 || !item.size || !item.nameOnBack) {
+      // Name-on-back is only required for items that actually support
+      // personalization (e.g. the jerseys) — a plain hoodie has no print field.
+      if (!item.name || typeof item.price !== 'number' || item.price <= 0 || item.price > 1000 || !item.size || (item.personalize && !item.nameOnBack)) {
         return NextResponse.json({ error: 'Invalid cart item' }, { status: 400 })
       }
     }
@@ -135,7 +138,9 @@ export async function POST(req: NextRequest) {
         currency: 'usd',
         product_data: {
           name: `${item.name} — Size ${item.size}`,
-          description: item.isVNeck ? `Name: ${item.nameOnBack} · #${item.numberOnBack}` : `Name: ${item.nameOnBack}`,
+          ...(item.personalize
+            ? { description: item.isVNeck ? `Name: ${item.nameOnBack} · #${item.numberOnBack}` : `Name: ${item.nameOnBack}` }
+            : {}),
         },
         unit_amount: Math.round(item.price * 100),
       },
@@ -162,6 +167,7 @@ export async function POST(req: NextRequest) {
         nameOnBack: item.nameOnBack,
         numberOnBack: item.numberOnBack,
         isVNeck: item.isVNeck,
+        personalize: item.personalize,
         price: item.price,
       })
     })
