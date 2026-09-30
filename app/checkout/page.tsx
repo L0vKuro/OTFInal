@@ -324,7 +324,7 @@ function CheckoutContent() {
                           <h4 className="font-display font-black text-xs uppercase text-[#F2F2F2] leading-tight"
                             style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>{item.name}</h4>
                           <p className="text-[#F2F2F2]/40 text-xs font-mono">Size: {item.size}</p>
-                          <p className="text-[#F2F2F2]/40 text-xs font-mono">Name: {item.nameOnBack}</p>
+                          {item.personalize && <p className="text-[#F2F2F2]/40 text-xs font-mono">Name: {item.nameOnBack}</p>}
                           {item.isVNeck && <p className="text-[#F2F2F2]/40 text-xs font-mono">#{item.numberOnBack}</p>}
                           <p className="text-[#E8191A] font-black text-sm">${item.price}.00</p>
                         </div>
