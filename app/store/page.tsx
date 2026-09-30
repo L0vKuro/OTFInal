@@ -37,7 +37,7 @@ const products = [
     tag: 'NEW DROP',
     description: 'The Overtake 2026 Hoodie in Black — heavyweight fleece built for the grind, on stream or off. Subtle tonal crosshair emblem on the chest, a full sleeve wordmark hit, and the Overtake logo stitched at the back neck.',
     details: ['Heavyweight fleece hoodie', 'Tonal crosshair chest emblem', 'Full sleeve Overtake wordmark', 'Kangaroo pocket', 'Available via RepulseCo'],
-    images: ['/hoodie-black-front-cutout.png', '/hoodie-black-back-cutout.png'],
+    images: ['/hoodieb1.png', '/HOODIE-BLACK-BACK1.png'],
     isVNeck: false,
     personalize: false,
   },
