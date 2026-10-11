@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { ExternalLink, Trophy, Swords, Users, TrendingUp, ChevronRight, ChevronLeft } from 'lucide-react'
 import { teams } from '@/lib/data'
+import Tilt from '@/components/Tilt'
 
 function playerSlug(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9]/g, '-')
@@ -87,9 +88,10 @@ function PlayerModal({ player, team, onClose }: { player: any; team: any; onClos
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-6" onClick={onClose}>
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
-      <div className="relative bg-[#0D0D0D] border border-white/10 shadow-2xl overflow-hidden flex flex-col sm:flex-row"
+      <Tilt fill={false} max={4} scale={1.01}
         onClick={e => e.stopPropagation()}
-        style={{ width: 'min(640px, 92vw)', animation: 'hoverPeekIn 0.2s cubic-bezier(0.16,1,0.3,1)' }}>
+        style={{ width: 'min(640px, 92vw)', animation: 'hoverPeekIn 0.2s cubic-bezier(0.16,1,0.3,1)' }}
+        innerClassName="relative bg-[#0D0D0D] border border-white/10 shadow-2xl overflow-hidden flex flex-col sm:flex-row">
         <div className="h-1 w-full sm:hidden" style={{ background: cardColor }} />
 
         {/* Info */}
@@ -136,7 +138,7 @@ function PlayerModal({ player, team, onClose }: { player: any; team: any; onClos
             ✕
           </button>
         </div>
-      </div>
+      </Tilt>
     </div>
   )
 }
@@ -184,30 +186,15 @@ function Reveal({ children, delay = 0, className = '' }: { children: React.React
 // and pulsing colored glow, just keyed to each team's own color instead of
 // one fixed palette.
 function TeamCrestPanel({ team, stats }: { team: any; stats?: TeamStats }) {
-  const panelRef = useRef<HTMLDivElement>(null)
-  const [tilt, setTilt] = useState({ x: 0, y: 0 })
-
-  const handleMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const el = panelRef.current
-    if (!el) return
-    const rect = el.getBoundingClientRect()
-    const px = (e.clientX - rect.left) / rect.width - 0.5
-    const py = (e.clientY - rect.top) / rect.height - 0.5
-    setTilt({ x: py * -8, y: px * 12 })
-  }
-
   return (
+    <Tilt fill={false} max={7} scale={1.015} foil>
     <div
-      ref={panelRef}
-      onMouseMove={handleMove}
-      onMouseLeave={() => setTilt({ x: 0, y: 0 })}
       className="relative overflow-hidden border p-7 flex flex-col justify-between team-crest-glow"
       style={{
         aspectRatio: '4 / 3',
         borderColor: `${team.color}40`,
         background: `linear-gradient(160deg, ${team.color}20, #0D0D0D 75%)`,
-        transform: `perspective(1000px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale3d(1.01,1.01,1.01)`,
-        transition: 'transform 0.15s ease-out, border-color 0.6s ease, background 0.6s ease',
+        transition: 'border-color 0.6s ease, background 0.6s ease',
         ['--crest-glow-a' as any]: `${team.color}25`,
         ['--crest-glow-b' as any]: `${team.color}55`,
       }}>
@@ -242,6 +229,7 @@ function TeamCrestPanel({ team, stats }: { team: any; stats?: TeamStats }) {
         )}
       </div>
     </div>
+    </Tilt>
   )
 }
 
