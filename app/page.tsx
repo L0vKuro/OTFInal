@@ -6,6 +6,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ChevronRight, MessageCircle, ArrowRight, X, ShoppingBag, Tag } from 'lucide-react'
 import { teams, news } from '@/lib/data'
+import Tilt from '@/components/Tilt'
 
 const stats = [
   { label: 'Active Rosters', value: '10', unit: '' },
@@ -269,8 +270,9 @@ function BattleLog() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {teams.map((t: any) => (
-              <Link key={t.id} href={`/teams#${t.id}`}
-                className="group relative bg-[#141414] border border-white/5 hover:border-white/20 p-6 overflow-hidden transition-colors"
+              <Tilt key={t.id} max={6} scale={1.025}>
+              <Link href={`/teams#${t.id}`}
+                className="group relative block h-full bg-[#141414] border border-white/5 hover:border-white/20 p-6 overflow-hidden transition-colors"
                 style={{ borderTopColor: `${t.color}40`, borderTopWidth: '2px' }}>
                 <div className="absolute top-0 right-0 w-28 h-28 blur-[60px] opacity-10 group-hover:opacity-20 transition-opacity" style={{ background: t.color }} />
                 <span className="text-xs font-mono uppercase tracking-widest" style={{ color: t.color }}>{t.region}</span>
@@ -279,6 +281,7 @@ function BattleLog() {
                   View Roster <ChevronRight size={12} />
                 </div>
               </Link>
+              </Tilt>
             ))}
           </div>
         )}
@@ -463,7 +466,8 @@ export default function HomePage() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
               {news.map((article) => (
-                <a key={article.id} href={`/news/${article.id}`}
+                <Tilt key={article.id} max={5} scale={1.02}>
+                <a href={`/news/${article.id}`}
                   onClick={e => {
                     // Plain left-clicks open the animated in-app article page.
                     // Ctrl/Cmd/middle-click still work normally (new tab, etc.)
@@ -472,7 +476,7 @@ export default function HomePage() {
                     e.preventDefault()
                     openArticle(article.id)
                   }}
-                  className="group relative bg-[#0D0D0D] border border-white/5 hover:border-[#E8191A]/30 overflow-hidden card-hover block">
+                  className="group relative bg-[#0D0D0D] border border-white/5 hover:border-[#E8191A]/30 overflow-hidden block h-full">
                   <div className="h-48 relative overflow-hidden bg-[#1A1A1A]">
                     <img src={article.image} alt={article.title}
                       style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.25)', transition: 'filter 0.5s ease, transform 0.5s ease' }}
@@ -496,6 +500,7 @@ export default function HomePage() {
                     <div className="flex items-center gap-2 mt-4 text-xs text-[#E8191A] font-medium">Read Article <ChevronRight size={12} /></div>
                   </div>
                 </a>
+                </Tilt>
               ))}
             </div>
           </div>
