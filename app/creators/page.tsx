@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { creators } from '@/lib/data'
+import Tilt from '@/components/Tilt'
 import { ExternalLink, Users, TrendingUp, Tv, Video, Upload, Eye, Trophy, Play, Calendar, Sparkles, Crown } from 'lucide-react'
 
 type TwitchStream = {
@@ -694,15 +695,19 @@ export default function CreatorsPage() {
 
                       return (
                         <Reveal key={creator.id} delay={(i % 10) * 40}>
+                          {/* Hover-peek handlers live on the Tilt wrapper (which never moves)
+                              instead of the tilting card, so the card's rotation can't make the
+                              pointer flicker in/out at its edges and flash the peek open/shut. */}
+                          <Tilt fill={false} max={6} scale={1.03} foil={tier === 1}
+                            onMouseEnter={() => handleCardEnter(creator)}
+                            onMouseLeave={handleCardLeave}>
                           <div
                             className="group relative bg-[#141414] border border-white/5 overflow-hidden cursor-pointer"
                             style={{
                               borderColor: live ? `${PLATFORM_COLORS[livePlatform!]}40` : 'rgba(255,255,255,0.05)',
                               transition: 'all 0.3s ease',
                             }}
-                            onClick={() => setSelected(creator)}
-                            onMouseEnter={() => handleCardEnter(creator)}
-                            onMouseLeave={handleCardLeave}>
+                            onClick={() => setSelected(creator)}>
 
                             {/* Top color line */}
                             <div className="h-px w-full"
@@ -785,6 +790,7 @@ export default function CreatorsPage() {
                               </a>
                             )}
                           </div>
+                          </Tilt>
                         </Reveal>
                       )
                     })}
