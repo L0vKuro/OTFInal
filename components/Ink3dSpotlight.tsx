@@ -1,7 +1,7 @@
 'use client'
 
-import { useRef, useState } from 'react'
 import { ChevronRight, Sparkles, Zap } from 'lucide-react'
+import Tilt from '@/components/Tilt'
 
 type Partner = {
   name: string
@@ -17,20 +17,6 @@ type Partner = {
 // tilting image panel, and a looping marquee ribbon, to read as the org's
 // most exclusive partnership rather than one tile among many.
 export default function Ink3dSpotlight({ partner }: { partner: Partner }) {
-  const panelRef = useRef<HTMLDivElement>(null)
-  const [tilt, setTilt] = useState({ x: 0, y: 0 })
-
-  const handleMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const el = panelRef.current
-    if (!el) return
-    const rect = el.getBoundingClientRect()
-    const px = (e.clientX - rect.left) / rect.width - 0.5
-    const py = (e.clientY - rect.top) / rect.height - 0.5
-    setTilt({ x: py * -10, y: px * 14 })
-  }
-
-  const resetTilt = () => setTilt({ x: 0, y: 0 })
-
   const marqueeText = 'CUSTOM 3D DESIGNS  •  EXCLUSIVE OVERTAKE PARTNER  •  LOGOS  •  APPAREL  •  COLLECTIBLES  •  '
 
   return (
@@ -49,7 +35,7 @@ export default function Ink3dSpotlight({ partner }: { partner: Partner }) {
           -webkit-text-fill-color: transparent;
           animation: ink3d-holo 6s ease infinite;
         }
-        .ink3d-panel { animation: ink3d-glow 4s ease-in-out infinite; transition: transform 0.15s ease-out; }
+        .ink3d-panel { animation: ink3d-glow 4s ease-in-out infinite; }
       `}</style>
 
       {/* Top marquee ribbon */}
@@ -77,15 +63,10 @@ export default function Ink3dSpotlight({ partner }: { partner: Partner }) {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center mt-8">
           {/* Image / tilt panel */}
+          <Tilt fill={false} max={7} scale={1.015} foil>
           <div
-            ref={panelRef}
-            onMouseMove={handleMove}
-            onMouseLeave={resetTilt}
             className="ink3d-panel relative overflow-hidden rounded-sm border border-white/10"
-            style={{
-              aspectRatio: '4/3',
-              transform: `perspective(1000px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale3d(1.01,1.01,1.01)`,
-            }}>
+            style={{ aspectRatio: '4/3' }}>
             <img src="/ink3dpartner.jpg" alt="Overtake x Ink3D"
               className="absolute inset-0 w-full h-full object-cover"
               onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
@@ -114,6 +95,7 @@ export default function Ink3dSpotlight({ partner }: { partner: Partner }) {
               <span className="text-[10px] font-black uppercase tracking-widest text-[#A855F7]">Featured</span>
             </div>
           </div>
+          </Tilt>
 
           {/* Copy */}
           <div>
