@@ -3,6 +3,7 @@ import './globals.css'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import Cursor from '@/components/Cursor'
+import FX from '@/components/FX'
 import { Analytics } from '@vercel/analytics/react'
 import { CartProvider } from '@/components/CartContext'
 
@@ -35,6 +36,7 @@ export default function RootLayout({
       <body className="bg-[#0D0D0D] text-[#F2F2F2] min-h-screen flex flex-col">
         <CartProvider>
           <Cursor />
+          <FX />
           <Navbar />
           <main className="flex-1">
             {children}
