@@ -11,14 +11,21 @@ type OrderItem = {
   nameOnBack: string
   numberOnBack: string
   isVNeck: boolean
+  personalize?: boolean
   price: number
+}
+
+// Customer-typed text (name, address, name-on-back) ends up inside HTML emails,
+// so escape it rather than trusting it.
+function esc(v: unknown): string {
+  return String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 }
 
 function itemsTableRows(items: OrderItem[]): string {
   return items.map(item => `
     <tr>
-      <td style="color:#F2F2F2;font-size:14px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">${item.name} (${item.size})</td>
-      <td style="color:#F2F2F2;opacity:0.6;font-size:13px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">${item.nameOnBack}${item.isVNeck ? ` #${item.numberOnBack}` : ''}</td>
+      <td style="color:#F2F2F2;font-size:14px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">${esc(item.name)} (${esc(item.size)})</td>
+      <td style="color:#F2F2F2;opacity:0.6;font-size:13px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">${item.personalize === false ? 'No personalization' : `${esc(item.nameOnBack)}${item.isVNeck ? ` #${esc(item.numberOnBack)}` : ''}`}</td>
       <td style="color:#E8191A;font-size:14px;font-weight:bold;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);text-align:right;">$${item.price}.00</td>
     </tr>`).join('')
 }
@@ -35,17 +42,17 @@ function customerEmailHtml(opts: { customerName: string; items: OrderItem[]; add
             <p style="color:#F2F2F2;opacity:0.4;margin:4px 0 0;font-size:12px;text-transform:uppercase;letter-spacing:2px;">Order Confirmation</p>
           </div>
           <h2 style="color:#F2F2F2;font-size:24px;text-transform:uppercase;">Your Order is Confirmed! 🎯</h2>
-          <p style="color:#F2F2F2;opacity:0.6;line-height:1.6;">Hey ${customerName}, thanks for repping Overtake — your order is confirmed and we're on it.</p>
+          <p style="color:#F2F2F2;opacity:0.6;line-height:1.6;">Hey ${esc(customerName)}, thanks for repping Overtake — your order is confirmed and we're on it.</p>
           <div style="background:#141414;border:1px solid rgba(255,255,255,0.1);border-left:3px solid #E8191A;padding:24px;margin:24px 0;">
             <h3 style="color:#E8191A;font-size:12px;text-transform:uppercase;letter-spacing:2px;margin:0 0 16px;">Order Summary</h3>
             <table style="width:100%;border-collapse:collapse;">${itemsTableRows(items)}</table>
-            ${discountLabel !== 'None' ? `<p style="color:#00A878;font-size:13px;margin:12px 0 0;">Discount applied: ${discountLabel}</p>` : ''}
+            ${discountLabel !== 'None' ? `<p style="color:#00A878;font-size:13px;margin:12px 0 0;">Discount applied: ${esc(discountLabel)}</p>` : ''}
             <p style="color:#F2F2F2;font-size:18px;font-weight:bold;margin:16px 0 0;text-align:right;">Total: <span style="color:#E8191A;">$${total}</span></p>
             <p style="color:#F2F2F2;opacity:0.3;font-size:11px;margin:12px 0 0;">Order ID: ${orderId}</p>
           </div>
           <div style="background:#141414;border:1px solid rgba(255,255,255,0.1);border-left:3px solid #E8191A;padding:24px;margin:24px 0;">
             <h3 style="color:#E8191A;font-size:12px;text-transform:uppercase;letter-spacing:2px;margin:0 0 16px;">Shipping To</h3>
-            <p style="color:#F2F2F2;opacity:0.8;margin:0;line-height:1.8;">${customerName}<br>${address}<br>${city}, ${state} ${zip}<br>${country}</p>
+            <p style="color:#F2F2F2;opacity:0.8;margin:0;line-height:1.8;">${esc(customerName)}<br>${esc(address)}<br>${esc(city)}, ${esc(state)} ${esc(zip)}<br>${esc(country)}</p>
           </div>
           <p style="color:#F2F2F2;opacity:0.4;font-size:13px;line-height:1.6;">Questions? Contact us at <a href="mailto:overtakesect@gmail.com" style="color:#E8191A;">overtakesect@gmail.com</a></p>
           <div style="border-top:1px solid rgba(255,255,255,0.1);margin-top:40px;padding-top:20px;text-align:center;">
@@ -68,15 +75,15 @@ function ownerEmailHtml(opts: { customerName: string; customerEmail: string; ite
           <div style="background:#141414;border:1px solid rgba(255,255,255,0.1);border-left:3px solid #E8191A;padding:24px;margin:24px 0;">
             <h3 style="color:#E8191A;font-size:12px;text-transform:uppercase;letter-spacing:2px;margin:0 0 16px;">Customer Info</h3>
             <table style="width:100%;border-collapse:collapse;">
-              <tr><td style="color:#F2F2F2;opacity:0.4;font-size:12px;padding:6px 0;text-transform:uppercase;">Name</td><td style="color:#F2F2F2;font-size:14px;padding:6px 0;">${customerName}</td></tr>
-              <tr><td style="color:#F2F2F2;opacity:0.4;font-size:12px;padding:6px 0;text-transform:uppercase;">Email</td><td style="color:#F2F2F2;font-size:14px;padding:6px 0;">${customerEmail}</td></tr>
-              <tr><td style="color:#F2F2F2;opacity:0.4;font-size:12px;padding:6px 0;text-transform:uppercase;">Address</td><td style="color:#F2F2F2;font-size:14px;padding:6px 0;">${address}, ${city}, ${state} ${zip}, ${country}</td></tr>
+              <tr><td style="color:#F2F2F2;opacity:0.4;font-size:12px;padding:6px 0;text-transform:uppercase;">Name</td><td style="color:#F2F2F2;font-size:14px;padding:6px 0;">${esc(customerName)}</td></tr>
+              <tr><td style="color:#F2F2F2;opacity:0.4;font-size:12px;padding:6px 0;text-transform:uppercase;">Email</td><td style="color:#F2F2F2;font-size:14px;padding:6px 0;">${esc(customerEmail)}</td></tr>
+              <tr><td style="color:#F2F2F2;opacity:0.4;font-size:12px;padding:6px 0;text-transform:uppercase;">Address</td><td style="color:#F2F2F2;font-size:14px;padding:6px 0;">${esc(address)}, ${esc(city)}, ${esc(state)} ${esc(zip)}, ${esc(country)}</td></tr>
             </table>
           </div>
           <div style="background:#141414;border:1px solid rgba(255,255,255,0.1);border-left:3px solid #E8191A;padding:24px;margin:24px 0;">
             <h3 style="color:#E8191A;font-size:12px;text-transform:uppercase;letter-spacing:2px;margin:0 0 16px;">Order Details</h3>
             <table style="width:100%;border-collapse:collapse;">${itemsTableRows(items)}</table>
-            ${discountLabel !== 'None' ? `<p style="color:#00A878;font-size:13px;margin:12px 0 0;">Discount applied: ${discountLabel}</p>` : ''}
+            ${discountLabel !== 'None' ? `<p style="color:#00A878;font-size:13px;margin:12px 0 0;">Discount applied: ${esc(discountLabel)}</p>` : ''}
             <p style="color:#F2F2F2;font-size:18px;font-weight:bold;margin:16px 0 0;text-align:right;">Total charged: <span style="color:#E8191A;">$${total}</span></p>
             <p style="color:#F2F2F2;opacity:0.3;font-size:11px;margin:12px 0 0;">Stripe Session: ${orderId}</p>
           </div>
