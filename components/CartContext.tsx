@@ -15,6 +15,24 @@ export type CartItem = {
   personalize: boolean
 }
 
+const CART_KEY = 'ot-cart-v2'
+
+// Guards against stale/corrupt saved carts (e.g. items saved before the
+// `personalize` field existed) — anything that doesn't match the current shape
+// is dropped rather than risking a broken checkout.
+function isValidItem(i: any): i is CartItem {
+  return !!i &&
+    typeof i.id === 'string' &&
+    typeof i.name === 'string' &&
+    typeof i.price === 'number' &&
+    typeof i.image === 'string' &&
+    typeof i.size === 'string' &&
+    typeof i.nameOnBack === 'string' &&
+    typeof i.numberOnBack === 'string' &&
+    typeof i.isVNeck === 'boolean' &&
+    typeof i.personalize === 'boolean'
+}
+
 type CartContextType = {
   items: CartItem[]
   addItem: (item: CartItem) => void
@@ -42,11 +60,40 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [loaded, setLoaded] = useState(false)
   const [lastAdded, setLastAdded] = useState<CartItem | null>(null)
 
-  // Mark as loaded immediately — no localStorage read
+  // Restore the cart from this browser on first load. Before this, the cart
+  // lived only in memory — so a refresh, opening /checkout directly, or coming
+  // back from Stripe's cancel link (a full page load) all emptied it, even
+  // though the checkout page told people their items were still there.
   useEffect(() => {
-    // Clear any old saved cart from previous version
     try { localStorage.removeItem('ot-cart') } catch {}
+    try {
+      const raw = localStorage.getItem(CART_KEY)
+      if (raw) {
+        const parsed = JSON.parse(raw)
+        if (Array.isArray(parsed)) setItems(parsed.filter(isValidItem))
+      }
+    } catch {}
     setLoaded(true)
+  }, [])
+
+  // Save on every change (only after the initial restore, so an empty first
+  // render can't wipe the saved cart).
+  useEffect(() => {
+    if (!loaded) return
+    try { localStorage.setItem(CART_KEY, JSON.stringify(items)) } catch {}
+  }, [items, loaded])
+
+  // Keep multiple open tabs in sync.
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key !== CART_KEY) return
+      try {
+        const parsed = e.newValue ? JSON.parse(e.newValue) : []
+        if (Array.isArray(parsed)) setItems(parsed.filter(isValidItem))
+      } catch {}
+    }
+    window.addEventListener('storage', onStorage)
+    return () => window.removeEventListener('storage', onStorage)
   }, [])
 
   const addItem = (item: CartItem) => {
