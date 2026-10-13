@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js'
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
 import { stripe } from '@/lib/stripe'
+import { PRODUCT_CATALOG, SIZES } from '@/lib/products'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -14,7 +15,18 @@ const ratelimit = new Ratelimit({
   limiter: Ratelimit.slidingWindow(5, '1 m'),
 })
 
-type CartItem = {
+// What the browser sends for each cart line. Only `id`, `size` and the
+// name/number to print are used — name, price and options all come from
+// PRODUCT_CATALOG on the server, so a cart can't change what it costs.
+type ClientCartItem = {
+  id?: string
+  size?: string
+  nameOnBack?: string
+  numberOnBack?: string
+}
+
+type OrderItem = {
+  id: string
   name: string
   price: number
   size: string
@@ -85,20 +97,26 @@ export async function POST(req: NextRequest) {
     const origin = process.env.NEXT_PUBLIC_SITE_URL || req.headers.get('origin') || `https://${host}`
 
     const ip = req.headers.get('x-forwarded-for') ?? 'anonymous'
-    const { success } = await ratelimit.limit(ip)
-    if (!success) {
-      return NextResponse.json({ error: 'Too many requests. Try again later.' }, { status: 429 })
+    // Fail open: if the rate-limit service itself is down or misconfigured,
+    // customers should still be able to check out rather than getting a 500.
+    try {
+      const { success } = await ratelimit.limit(ip)
+      if (!success) {
+        return NextResponse.json({ error: 'Too many requests. Try again in a minute.' }, { status: 429 })
+      }
+    } catch (err) {
+      console.error('Rate limiter unavailable, allowing request:', err)
     }
 
     const body = await req.json()
-    const items: CartItem[] = Array.isArray(body?.items) ? body.items : []
+    const rawItems: ClientCartItem[] = Array.isArray(body?.items) ? body.items : []
     const form = body?.form ?? {}
     const discountCode = (body?.discountCode ?? '').toString()
 
-    if (items.length === 0) {
+    if (rawItems.length === 0) {
       return NextResponse.json({ error: 'Cart is empty' }, { status: 400 })
     }
-    if (items.length > 20) {
+    if (rawItems.length > 20) {
       return NextResponse.json({ error: 'Too many items in cart' }, { status: 400 })
     }
 
@@ -113,12 +131,26 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid email address' }, { status: 400 })
     }
 
-    for (const item of items) {
-      // Name-on-back is only required for items that actually support
-      // personalization (e.g. the jerseys) — a plain hoodie has no print field.
-      if (!item.name || typeof item.price !== 'number' || item.price <= 0 || item.price > 1000 || !item.size || (item.personalize && !item.nameOnBack)) {
-        return NextResponse.json({ error: 'Invalid cart item' }, { status: 400 })
+    // Rebuild every line from the server-side catalog.
+    const items: OrderItem[] = []
+    for (const raw of rawItems) {
+      const def = raw?.id ? PRODUCT_CATALOG[raw.id] : undefined
+      if (!raw || !raw.id || !def) {
+        return NextResponse.json({ error: 'An item in your cart is no longer available. Please remove it and add it again from the store.' }, { status: 400 })
       }
+      const size = typeof raw.size === 'string' ? raw.size : ''
+      if (!SIZES.includes(size)) {
+        return NextResponse.json({ error: `Please choose a size for ${def.name}.` }, { status: 400 })
+      }
+      const nameOnBack = def.personalize ? String(raw.nameOnBack ?? '').trim().slice(0, 20) : ''
+      const numberOnBack = def.isVNeck ? String(raw.numberOnBack ?? '').trim().slice(0, 3) : ''
+      if (def.personalize && !nameOnBack) {
+        return NextResponse.json({ error: `Name on back is required for ${def.name}.` }, { status: 400 })
+      }
+      if (def.isVNeck && !numberOnBack) {
+        return NextResponse.json({ error: `Number on back is required for ${def.name}.` }, { status: 400 })
+      }
+      items.push({ id: raw.id, name: def.name, price: def.price, size, nameOnBack, numberOnBack, isVNeck: def.isVNeck, personalize: def.personalize })
     }
 
     const discount = await revalidateDiscount(discountCode)
