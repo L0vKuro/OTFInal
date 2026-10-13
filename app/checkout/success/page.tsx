@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ChevronRight, XCircle } from 'lucide-react'
+import { useCart } from '@/components/CartContext'
 
 type OrderItem = {
   name: string
@@ -10,6 +11,7 @@ type OrderItem = {
   nameOnBack: string
   numberOnBack: string
   isVNeck: boolean
+  personalize?: boolean
   price: number
 }
 
@@ -25,6 +27,7 @@ function SuccessContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const sessionId = searchParams.get('session_id')
+  const { clearCart } = useCart()
 
   const [order, setOrder] = useState<OrderSummary | null>(null)
   const [error, setError] = useState('')
@@ -43,10 +46,13 @@ function SuccessContent() {
           setError(data.error)
         } else {
           setOrder(data)
+          // Payment is confirmed — the saved cart has served its purpose.
+          clearCart()
         }
       })
       .catch(() => setError('Could not load your order.'))
       .finally(() => setLoading(false))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionId])
 
   if (loading) {
@@ -105,7 +111,9 @@ function SuccessContent() {
               <div key={i} className="flex items-center justify-between py-2 border-b border-white/5 last:border-b-0">
                 <div>
                   <p className="text-[#F2F2F2] text-sm font-bold">{item.name} <span className="text-[#F2F2F2]/40 font-mono text-xs">({item.size})</span></p>
-                  <p className="text-[#F2F2F2]/30 text-xs font-mono">{item.nameOnBack}{item.isVNeck ? ` #${item.numberOnBack}` : ''}</p>
+                  {item.personalize !== false && (
+                    <p className="text-[#F2F2F2]/30 text-xs font-mono">{item.nameOnBack}{item.isVNeck ? ` #${item.numberOnBack}` : ''}</p>
+                  )}
                 </div>
                 <span className="text-[#E8191A] font-black text-sm">${item.price}.00</span>
               </div>
