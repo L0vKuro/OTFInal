@@ -24,7 +24,6 @@ export default function Navbar() {
   const [cartOpen, setCartOpen] = useState(false)
   const [cartBump, setCartBump] = useState(false)
   const lastScroll = useRef(0)
-  const prevCount = useRef(0)
   const pathname = usePathname()
   const router = useRouter()
   const { items, removeItem, total, count, lastAdded } = useCart()
@@ -40,14 +39,17 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  // Fires only when something was actually added (lastAdded), not when a saved
+  // cart is restored on page load. On /store the add-to-cart modal already
+  // offers "Checkout Now", so the drawer stays closed there.
   useEffect(() => {
-    if (count > prevCount.current) {
-      setCartBump(true)
-      setTimeout(() => setCartBump(false), 400)
-      setCartOpen(true)
-    }
-    prevCount.current = count
-  }, [count])
+    if (!lastAdded) return
+    setCartBump(true)
+    const t = setTimeout(() => setCartBump(false), 400)
+    if (pathname !== '/store') setCartOpen(true)
+    return () => clearTimeout(t)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lastAdded])
 
   useEffect(() => { setMenuOpen(false); setCartOpen(false) }, [pathname])
 
